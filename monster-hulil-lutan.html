@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hulil Lutan — Frozen Sick</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+
+  :root { --ink:#0d1b14; --gold:#c9a84c; --gold-light:#e8c97a; --parchment:#f0ede0; --silver:#b8bfc4; --red:#c84040; --green:#90e8a0; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body {
+    background: var(--ink);
+    background-image: radial-gradient(ellipse at 30% 10%, rgba(180,60,60,0.04) 0%, transparent 60%), radial-gradient(ellipse at 70% 90%, rgba(40,100,60,0.04) 0%, transparent 60%);
+    font-family: 'Crimson Pro', Georgia, serif;
+    color: var(--parchment);
+    min-height: 100vh;
+    padding: 30px 16px 60px;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .back-link { display:inline-flex;align-items:center;gap:6px;font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(201,168,76,0.45);text-decoration:none;margin-bottom:24px;transition:color 0.2s; }
+  .back-link:hover { color:rgba(201,168,76,0.9); }
+  @keyframes fadeSlide { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes pulse { 0%,100%{opacity:0.5} 50%{opacity:1} }
+
+  /* CARD */
+  .monster-card {
+    background: linear-gradient(160deg,#1a2a1a 0%,#111a11 60%,#0c150c 100%);
+    border:1px solid rgba(201,168,76,0.22);
+    border-radius:4px; position:relative; overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,0,0,0.7), inset 0 1px 0 rgba(201,168,76,0.12);
+    animation: fadeSlide 0.5s ease both;
+  }
+  .monster-card::after { content:''; position:absolute; top:8px;right:8px; width:28px;height:28px; border-top:1px solid rgba(201,168,76,0.25); border-right:1px solid rgba(201,168,76,0.25); }
+  .card-corner-bl { position:absolute; bottom:8px;left:8px; width:28px;height:28px; border-bottom:1px solid rgba(201,168,76,0.25); border-left:1px solid rgba(201,168,76,0.25); }
+  .color-bar { height:3px; width:100%; }
+
+  /* HEADER */
+  .card-header { padding:22px 26px 16px; display:flex; gap:18px; align-items:flex-start; border-bottom:1px solid rgba(201,168,76,0.1); }
+  .monster-avatar { width:68px;height:68px;border-radius:50%;border:2px solid rgba(201,168,76,0.35);display:flex;align-items:center;justify-content:center;font-size:1.9rem;flex-shrink:0;position:relative;box-shadow:0 0 20px rgba(0,0,0,0.5); }
+  .monster-identity { flex:1; }
+  .monster-name { font-family:'Cinzel',serif; font-size:1.3rem; font-weight:700; color:var(--gold-light); letter-spacing:0.04em; line-height:1.2; }
+  .monster-type { font-style:italic; font-size:0.9rem; color:rgba(201,168,76,0.55); margin-top:3px; }
+  .monster-meta { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+  .meta-badge { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; padding:2px 8px; border-radius:2px; border:1px solid rgba(201,168,76,0.3); color:var(--gold); background:rgba(201,168,76,0.07); }
+  .meta-badge.red { border-color:rgba(200,64,64,0.4); color:#e88080; background:rgba(200,64,64,0.07); }
+  .meta-badge.blue { border-color:rgba(80,140,200,0.4); color:#90b8e8; background:rgba(80,140,200,0.07); }
+  .initiative-badge { font-family:'Cinzel',serif; font-size:0.7rem; color:var(--gold-light); margin-left:auto; white-space:nowrap; align-self:flex-start; opacity:0.8; }
+
+  /* STATS BAR */
+  .stats-bar { display:grid; grid-template-columns:repeat(6,1fr); padding:10px 26px; border-bottom:1px solid rgba(201,168,76,0.1); background:rgba(0,0,0,0.18); gap:2px; }
+  .stat { text-align:center; }
+  .stat-label { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--silver); opacity:0.65; display:block; margin-bottom:1px; }
+  .stat-value { font-family:'Cinzel',serif; font-size:1rem; font-weight:700; color:var(--parchment); display:block; line-height:1; }
+  .stat-mods { font-size:0.62rem; color:rgba(201,168,76,0.7); display:block; margin-top:1px; }
+
+  /* COMBAT ROW */
+  .combat-row { display:flex; padding:9px 26px; border-bottom:1px solid rgba(201,168,76,0.08); background:rgba(0,0,0,0.1); }
+  .combat-stat { flex:1; text-align:center; position:relative; }
+  .combat-stat+.combat-stat::before { content:''; position:absolute; left:0; top:10%;bottom:10%; width:1px; background:rgba(201,168,76,0.12); }
+  .combat-label { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--silver); opacity:0.6; display:block; }
+  .combat-value { font-family:'Cinzel',serif; font-size:0.95rem; font-weight:600; color:var(--gold-light); display:block; margin-top:1px; }
+
+  /* BODY */
+  .card-body { padding:0 26px; }
+  .section { padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+  .section:last-child { border-bottom:none; }
+  .section-title { font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold); opacity:0.75; margin-bottom:7px; display:flex; align-items:center; gap:8px; }
+  .section-title::after { content:''; flex:1; height:1px; background:linear-gradient(to right,rgba(201,168,76,0.18),transparent); }
+
+  /* TRAITS */
+  .trait-row { display:flex; gap:6px; margin-bottom:4px; font-size:0.83rem; line-height:1.45; }
+  .trait-key { font-family:'Cinzel',serif; font-size:0.72rem; font-weight:600; color:var(--gold-light); white-space:nowrap; }
+  .trait-val { color:rgba(240,237,224,0.78); }
+
+  /* ABILITIES */
+  .ability-item { margin-bottom:7px; padding-left:13px; position:relative; }
+  .ability-item::before { content:'✦'; position:absolute; left:0; top:1px; color:var(--gold); font-size:0.58rem; opacity:0.65; }
+  .ability-name { font-family:'Cinzel',serif; font-size:0.75rem; font-weight:600; color:rgba(168,216,234,0.9); margin-bottom:1px; }
+  .ability-desc { font-size:0.82rem; color:rgba(240,237,224,0.7); line-height:1.5; }
+
+  /* ACTIONS */
+  .action-item { margin-bottom:7px; padding-left:13px; position:relative; font-size:0.84rem; line-height:1.5; color:rgba(240,237,224,0.78); }
+  .action-item::before { content:'▸'; position:absolute; left:0; top:2px; color:var(--red); font-size:0.6rem; opacity:0.7; }
+  .action-name { font-family:'Cinzel',serif; font-size:0.75rem; font-weight:700; color:var(--parchment); }
+
+  /* INTERACTIVE */
+  .interactive-panel { background:rgba(0,0,0,0.3); border:1px solid rgba(201,168,76,0.18); border-radius:4px; padding:13px 15px; margin:13px 0 0; }
+  .interactive-title { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold); opacity:0.85; margin-bottom:11px; display:flex; align-items:center; justify-content:space-between; }
+  .reset-btn { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.1em; text-transform:uppercase; padding:3px 9px; border-radius:2px; border:1px solid rgba(255,100,100,0.28); color:rgba(255,150,150,0.55); background:rgba(255,100,100,0.04); cursor:pointer; transition:all 0.2s; }
+  .reset-btn:hover { border-color:rgba(255,100,100,0.6); color:rgba(255,180,180,0.9); background:rgba(255,100,100,0.1); }
+
+  /* HP */
+  .hp-row { display:flex; align-items:center; gap:9px; margin-bottom:11px; padding-bottom:11px; border-bottom:1px solid rgba(255,255,255,0.05); }
+  .hp-label { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--silver); opacity:0.65; min-width:24px; }
+  .hp-display { font-family:'Cinzel',serif; font-size:1.35rem; font-weight:700; color:var(--parchment); min-width:38px; text-align:center; transition:color 0.3s; }
+  .hp-display.full { color:#90e8a0; } .hp-display.mid { color:#ffd080; } .hp-display.low { color:#ff8080; }
+  .hp-max { font-family:'Cinzel',serif; font-size:0.72rem; color:var(--silver); opacity:0.45; }
+  .hp-bar-wrap { flex:1; height:5px; background:rgba(0,0,0,0.45); border-radius:3px; overflow:hidden; border:1px solid rgba(255,255,255,0.04); }
+  .hp-bar { height:100%; border-radius:3px; transition:width 0.4s ease, background 0.4s ease; }
+  .hp-btn { width:26px;height:26px;border-radius:50%;border:1px solid rgba(201,168,76,0.32);background:rgba(201,168,76,0.07);color:var(--gold-light);font-size:1rem;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+  .hp-btn:hover { background:rgba(201,168,76,0.22); border-color:rgba(201,168,76,0.6); }
+  .hp-input { width:42px;text-align:center;background:rgba(0,0,0,0.3);border:1px solid rgba(201,168,76,0.18);border-radius:2px;color:var(--parchment);font-family:'Cinzel',serif;font-size:0.78rem;padding:3px 4px; }
+  .hp-input:focus { outline:none; border-color:rgba(201,168,76,0.5); }
+  .hp-apply-btn { font-family:'Cinzel',serif;font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;padding:4px 9px;border-radius:2px;border:1px solid rgba(200,64,64,0.35);color:rgba(232,128,128,0.8);background:rgba(200,64,64,0.06);cursor:pointer;transition:all 0.2s; }
+  .hp-apply-btn:hover { background:rgba(200,64,64,0.15); border-color:rgba(200,64,64,0.65); }
+
+  /* PIPS */
+  .slots-section { margin-bottom:9px; }
+  .slots-row { display:flex; align-items:center; gap:8px; margin-bottom:5px; flex-wrap:wrap; }
+  .slots-label { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--silver); opacity:0.65; min-width:54px; }
+  .pip-group { display:flex; gap:5px; flex-wrap:wrap; }
+  .pip { width:17px;height:17px;border-radius:50%;border:1.5px solid rgba(168,216,234,0.48);background:rgba(168,216,234,0.14);cursor:pointer;transition:all 0.15s;position:relative; }
+  .pip.used { background:rgba(0,0,0,0.4); border-color:rgba(168,216,234,0.15); }
+  .pip.used::after { content:'×';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:0.68rem;color:rgba(168,216,234,0.28);line-height:1; }
+  .pip:hover:not(.used) { background:rgba(168,216,234,0.35); border-color:rgba(168,216,234,0.9); transform:scale(1.15); }
+
+  /* USE PIPS */
+  .uses-section { }
+  .uses-row { display:flex; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap; }
+  .uses-label { font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.07em; color:rgba(168,216,234,0.85); flex:1; min-width:100px; }
+  .uses-pips { display:flex; gap:5px; }
+  .use-pip { width:15px;height:15px;border-radius:2px;border:1.5px solid rgba(201,168,76,0.42);background:rgba(201,168,76,0.13);cursor:pointer;transition:all 0.15s;position:relative; }
+  .use-pip.used { background:rgba(0,0,0,0.4); border-color:rgba(201,168,76,0.13); }
+  .use-pip.used::after { content:'×';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:0.62rem;color:rgba(201,168,76,0.22);line-height:1; }
+  .use-pip:hover:not(.used) { background:rgba(201,168,76,0.32); border-color:rgba(201,168,76,0.9); transform:scale(1.1); }
+  .recharge-tag { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.08em; text-transform:uppercase; color:rgba(168,216,234,0.45); background:rgba(168,216,234,0.05); border:1px solid rgba(168,216,234,0.12); padding:1px 5px; border-radius:2px; }
+
+  /* FOOTER */
+  .card-footer { padding:10px 26px 18px; display:flex; justify-content:space-between; align-items:center; opacity:0.45; }
+  .footer-fluff { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--silver); }
+  .xp-val { font-family:'Cinzel',serif; font-size:0.65rem; color:var(--gold); }
+
+  .monster-card { background: linear-gradient(160deg, #1e1a14 0%, #141008 60%, #0f0c06 100%); }
+  .monster-avatar { background: radial-gradient(135deg, rgba(30,20,10,0.9), rgba(15,10,5,0.95)); border-color: rgba(160,40,40,0.8); box-shadow: 0 0 20px rgba(180,40,40,0.35), inset 0 0 15px rgba(0,0,0,0.4); }
+  .color-bar { background: linear-gradient(90deg, transparent, rgba(160,40,40,0.8), rgba(160,40,40,1.0), rgba(160,40,40,0.8), transparent); }
+</style>
+</head>
+<body>
+
+<a class="back-link" href="syrinlya-npcs.html">← Volver al índice</a>
+
+<div class="monster-card">
+  <div class="card-corner-bl"></div>
+  <div class="color-bar"></div>
+
+  <div class="card-header">
+    <div class="monster-avatar">🔱</div>
+    <div class="monster-identity">
+      <div class="monster-name">Hulil Lutan</div>
+      <div class="monster-type">Humanoide mediano (enana), Neutral Evil</div>
+      <div class="monster-meta">
+        <span class="meta-badge red">CA 13</span>
+        <span class="meta-badge">VD 1 · 200 XP</span>
+        <span class="meta-badge blue">BC +2</span>
+        <span class="initiative-badge">Iniciativa +2 (12)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat"><span class="stat-label">FUE</span><span class="stat-value">11</span><span class="stat-mods">+0 / +0</span></div>
+<div class="stat"><span class="stat-label">DES</span><span class="stat-value">14</span><span class="stat-mods">+2 / +2</span></div>
+<div class="stat"><span class="stat-label">CON</span><span class="stat-value">14</span><span class="stat-mods">+2 / +4</span></div>
+<div class="stat"><span class="stat-label">INT</span><span class="stat-value">10</span><span class="stat-mods">+0 / +0</span></div>
+<div class="stat"><span class="stat-label">SAB</span><span class="stat-value">13</span><span class="stat-mods">+1 / +3</span></div>
+<div class="stat"><span class="stat-label">CAR</span><span class="stat-value">14</span><span class="stat-mods">+2 / +2</span></div>
+
+  </div>
+
+  <div class="combat-row">
+    <div class="combat-stat"><span class="combat-label">PG</span><span class="combat-value">45 (6d8 + 18)</span></div>
+    <div class="combat-stat"><span class="combat-label">Velocidad</span><span class="combat-value">25 ft</span></div>
+    <div class="combat-stat"><span class="combat-label">CA</span><span class="combat-value">13</span></div>
+    <div class="combat-stat"><span class="combat-label">VD / XP</span><span class="combat-value">1 / 200</span></div>
+  </div>
+
+  <div class="card-body">
+
+    
+    <div class="interactive-panel">
+      <div class="interactive-title">
+        <span>⚙ Estado de sesión</span>
+        <button class="reset-btn" onclick="resetNPC('hulil-lutan')">↺ Resetear</button>
+      </div>
+      <div class="hp-row">
+        <span class="hp-label">PG</span>
+        <div id="hulil-lutan-hp-display" class="hp-display full">45</div>
+        <span class="hp-max">/ 45</span>
+        <div class="hp-bar-wrap"><div id="hulil-lutan-hp-bar" class="hp-bar" style="width:100%;background:#90e8a0"></div></div>
+        <button class="hp-btn" onclick="changeHP('hulil-lutan',45,1)">+</button>
+        <input id="hulil-lutan-hp-input" class="hp-input" type="number" min="1" value="1">
+        <button class="hp-apply-btn" onclick="applyDmg('hulil-lutan',45)">Daño</button>
+        <button class="hp-btn" onclick="changeHP('hulil-lutan',45,-1)">−</button>
+      </div>
+      <div class="slots-section"><div class="slots-row"><span class="slots-label">Ranuras Nv.1</span><div class="pip-group" id="hulil-lutan-slots-1"></div></div>
+<div class="slots-row"><span class="slots-label">Ranuras Nv.2</span><div class="pip-group" id="hulil-lutan-slots-2"></div></div>
+</div>
+      <div class="uses-section"><div class="uses-row"><span class="uses-label">Ranuras Nv.1 (command, shield of faith)</span><div class="uses-pips" id="hulil-lutan-slots_1"></div><span class="recharge-tag">desc. largo</span></div>
+<div class="uses-row"><span class="uses-label">Ranuras Nv.2 (spiritual weapon)</span><div class="uses-pips" id="hulil-lutan-slots_2"></div><span class="recharge-tag">desc. largo</span></div>
+</div>
+    </div>
+    
+
+    <div class="section">
+      <div class="section-title">Características</div>
+      <div class="trait-row"><span class="trait-key">Habilidades:</span><span class="trait-val">Engaño +4, Persuasión +4, Religión +3</span></div>
+<div class="trait-row"><span class="trait-key">Resistencias:</span><span class="trait-val">veneno</span></div>
+<div class="trait-row"><span class="trait-key">Sentidos:</span><span class="trait-val">Visión en la oscuridad 60 ft., PP 11</span></div>
+<div class="trait-row"><span class="trait-key">Idiomas:</span><span class="trait-val">Común, Enano</span></div>
+<div class="trait-row" style="margin-top:4px;"><span class="trait-key">Conjuros:</span><span class="trait-val">Conjuros (SAB, CD 12, +4): Trucos: luz, llama sagrada · Nv.1: command, shield of faith · Nv.2: spiritual weapon</span></div>
+
+    </div>
+
+    <div class="section"><div class="section-title">Atributos</div><div class="ability-item"><div class="ability-name">Devoción Oscura</div><div class="ability-desc">Ventaja en TS contra ser encantado o asustado.</div></div>
+<div class="ability-item"><div class="ability-name">Resiliencia Enana</div><div class="ability-desc">Ventaja en TS contra veneno; resistencia al daño por veneno.</div></div>
+</div>
+    <div class="section"><div class="section-title">Acciones</div><div class="action-item"><span class="action-name">Daga. </span>Tirada de ataque: +4, alcance 5 ft. o 20/60 ft. Acierto: 1d4 + 2 de daño perforante.</div>
+</div>
+    
+    
+
+  </div>
+
+  <div class="card-footer">
+    <span class="footer-fluff">Frozen Sick · Wildemount · PHB 2024</span>
+    <span class="xp-val">200 XP</span>
+  </div>
+</div>
+
+<script>
+
+const NPC_CONFIG = {
+  hulil-lutan: {
+    hp: 45,
+    slots: {"1": 3, "2": 1},
+    uses: {"slots_1": 3, "slots_2": 1}
+  }
+};
+
+function save(key, val) { try { localStorage.setItem('syrinlya_' + key, JSON.stringify(val)); } catch(e){} }
+function load(key, def) { try { const v = localStorage.getItem('syrinlya_' + key); return v !== null ? JSON.parse(v) : def; } catch(e){ return def; } }
+
+function updateHPDisplay(npc, maxHp, current) {
+  const disp = document.getElementById(npc + '-hp-display');
+  const bar  = document.getElementById(npc + '-hp-bar');
+  if (!disp || !bar) return;
+  current = Math.max(0, Math.min(maxHp, current));
+  disp.textContent = current;
+  const pct = (current / maxHp) * 100;
+  bar.style.width = pct + '%';
+  if (pct > 60)      { bar.style.background='#90e8a0'; disp.className='hp-display full'; }
+  else if (pct > 25) { bar.style.background='#ffd080'; disp.className='hp-display mid'; }
+  else               { bar.style.background='#ff8080'; disp.className='hp-display low'; }
+}
+function changeHP(npc, maxHp, delta) {
+  let cur = load(npc + '_hp', maxHp);
+  cur = Math.max(0, Math.min(maxHp, cur + delta));
+  save(npc + '_hp', cur);
+  updateHPDisplay(npc, maxHp, cur);
+}
+function applyDmg(npc, maxHp) {
+  const inp = document.getElementById(npc + '-hp-input');
+  const dmg = parseInt(inp.value) || 0;
+  if (dmg <= 0) return;
+  let cur = load(npc + '_hp', maxHp);
+  cur = Math.max(0, cur - dmg);
+  save(npc + '_hp', cur);
+  updateHPDisplay(npc, maxHp, cur);
+  inp.value = 1;
+}
+function buildSlots(npc, level, total) {
+  const key = npc + '_slots_' + level;
+  const used = load(key, []);
+  const container = document.getElementById(npc + '-slots-' + level);
+  if (!container) return;
+  container.innerHTML = '';
+  for (let i = 0; i < total; i++) {
+    const pip = document.createElement('div');
+    pip.className = 'pip' + (used[i] ? ' used' : '');
+    pip.onclick = () => { used[i] = !used[i]; save(key, used); buildSlots(npc, level, total); };
+    container.appendChild(pip);
+  }
+}
+function buildUses(npc, abilityKey, total) {
+  const storageKey = npc + '_use_' + abilityKey;
+  const used = load(storageKey, []);
+  const container = document.getElementById(npc + '-' + abilityKey);
+  if (!container) return;
+  container.innerHTML = '';
+  for (let i = 0; i < total; i++) {
+    const pip = document.createElement('div');
+    pip.className = 'use-pip' + (used[i] ? ' used' : '');
+    pip.onclick = () => { used[i] = !used[i]; save(storageKey, used); buildUses(npc, abilityKey, total); };
+    container.appendChild(pip);
+  }
+}
+function initNPC(npc) {
+  const cfg = NPC_CONFIG[npc];
+  updateHPDisplay(npc, cfg.hp, load(npc + '_hp', cfg.hp));
+  for (const [level, total] of Object.entries(cfg.slots)) buildSlots(npc, level, total);
+  for (const [key, total] of Object.entries(cfg.uses)) buildUses(npc, key, total);
+}
+function resetNPC(npc) {
+  const cfg = NPC_CONFIG[npc];
+  save(npc + '_hp', cfg.hp);
+  for (const level of Object.keys(cfg.slots)) save(npc + '_slots_' + level, []);
+  for (const key of Object.keys(cfg.uses)) save(npc + '_use_' + key, []);
+  initNPC(npc);
+}
+window.addEventListener('DOMContentLoaded', () => initNPC('hulil-lutan'));
+
+</script>
+</body>
+</html>

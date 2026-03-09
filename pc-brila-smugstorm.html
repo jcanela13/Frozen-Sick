@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brila Smugstorm — Clérigo Nv.3</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1520;
+    --gold: #c9a84c; --gold-light: #e8c97a;
+    --parchment: #f0ede0; --silver: #b8bfc4;
+    --storm: #7ab0d4; --storm-dark: #4a7a9e;
+    --lightning: #d4c97a; --green: #90e8a0;
+    --red: #e08080;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--ink);
+    background-image:
+      radial-gradient(ellipse at 15% 10%, rgba(100,150,200,0.07) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 90%, rgba(200,180,80,0.05) 0%, transparent 50%);
+    font-family: 'Crimson Pro', Georgia, serif;
+    color: var(--parchment);
+    min-height: 100vh;
+    padding: 30px 16px 60px;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .back-link { display:inline-flex;align-items:center;gap:6px;font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(122,176,212,0.45);text-decoration:none;margin-bottom:24px;transition:color 0.2s; }
+  .back-link:hover { color:rgba(122,176,212,0.9); }
+  @keyframes fadeSlide { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes pulse { 0%,100%{opacity:0.5;transform:scale(1)} 50%{opacity:1;transform:scale(1.05)} }
+
+  /* CARD */
+  .char-card {
+    background: linear-gradient(160deg,#141e2c 0%,#0e1620 65%,#091018 100%);
+    border: 1px solid rgba(122,176,212,0.25);
+    border-radius: 4px; position: relative; overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.75), inset 0 1px 0 rgba(122,176,212,0.1);
+    animation: fadeSlide 0.5s ease both;
+  }
+  .char-card::after { content:''; position:absolute; top:8px;right:8px; width:28px;height:28px; border-top:1px solid rgba(201,168,76,0.25); border-right:1px solid rgba(201,168,76,0.25); }
+  .card-corner-bl { position:absolute; bottom:8px;left:8px; width:28px;height:28px; border-bottom:1px solid rgba(201,168,76,0.25); border-left:1px solid rgba(201,168,76,0.25); }
+  .color-bar { height:3px; background:linear-gradient(90deg,transparent,var(--storm-dark),var(--storm),var(--lightning),var(--storm),var(--storm-dark),transparent); }
+
+  /* HEADER */
+  .card-header { padding:22px 26px 18px; display:flex; gap:20px; align-items:flex-start; border-bottom:1px solid rgba(122,176,212,0.1); }
+  .char-avatar { width:72px;height:72px;border-radius:50%;border:2px solid rgba(122,176,212,0.5);display:flex;align-items:center;justify-content:center;font-size:2.2rem;flex-shrink:0;background:radial-gradient(135deg,#1a2535,#0c1520);box-shadow:0 0 24px rgba(80,140,200,0.3),inset 0 0 18px rgba(0,0,0,0.5);position:relative; }
+  .char-avatar::after { content:'⚡'; position:absolute; bottom:-2px; right:-2px; font-size:0.9rem; }
+  .char-identity { flex:1; }
+  .char-name { font-family:'Cinzel',serif; font-size:1.5rem; font-weight:700; color:var(--gold-light); letter-spacing:0.05em; line-height:1.2; }
+  .char-subtitle { font-style:italic; font-size:0.92rem; color:var(--storm); opacity:0.85; margin-top:3px; }
+  .char-tags { display:flex; gap:7px; flex-wrap:wrap; margin-top:9px; }
+  .tag { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; padding:2px 8px; border-radius:2px; border:1px solid; }
+  .tag-class { border-color:rgba(122,176,212,0.4); color:var(--storm); background:rgba(122,176,212,0.07); }
+  .tag-race  { border-color:rgba(201,168,76,0.35); color:var(--gold); background:rgba(201,168,76,0.07); }
+  .tag-bg    { border-color:rgba(189,195,199,0.3); color:var(--silver); background:rgba(189,195,199,0.05); }
+  .tag-new   { border-color:rgba(100,200,120,0.35); color:var(--green); background:rgba(100,200,120,0.06); }
+  .personality-quote { font-style:italic; font-size:0.82rem; color:rgba(122,176,212,0.6); margin-top:8px; line-height:1.5; border-left:2px solid rgba(122,176,212,0.25); padding-left:10px; }
+
+  /* STATS */
+  .stats-bar { display:grid; grid-template-columns:repeat(6,1fr); padding:10px 26px; border-bottom:1px solid rgba(122,176,212,0.08); background:rgba(0,0,0,0.2); gap:2px; }
+  .stat { text-align:center; }
+  .stat-label { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--silver); opacity:0.65; display:block; margin-bottom:1px; }
+  .stat-value { font-family:'Cinzel',serif; font-size:1.05rem; font-weight:700; color:var(--parchment); display:block; line-height:1; }
+  .stat-mod { font-size:0.68rem; color:var(--storm); display:block; margin-top:2px; }
+  .stat-save { font-size:0.6rem; color:rgba(201,168,76,0.65); display:block; }
+
+  /* COMBAT ROW */
+  .combat-row { display:flex; padding:9px 26px; border-bottom:1px solid rgba(122,176,212,0.07); background:rgba(0,0,0,0.12); flex-wrap:wrap; gap:4px; }
+  .combat-stat { flex:1; min-width:80px; text-align:center; position:relative; }
+  .combat-stat+.combat-stat::before { content:''; position:absolute; left:0; top:10%;bottom:10%; width:1px; background:rgba(122,176,212,0.1); }
+  .combat-label { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--silver); opacity:0.6; display:block; }
+  .combat-value { font-family:'Cinzel',serif; font-size:1rem; font-weight:600; color:var(--gold-light); display:block; margin-top:1px; }
+
+  /* BODY */
+  .card-body { padding:0 26px; }
+  .section { padding:13px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+  .section:last-child { border-bottom:none; }
+  .section-title { font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); opacity:0.8; margin-bottom:9px; display:flex; align-items:center; gap:8px; }
+  .section-title::after { content:''; flex:1; height:1px; background:linear-gradient(to right,rgba(201,168,76,0.2),transparent); }
+
+  /* SKILLS GRID */
+  .skills-grid { display:grid; grid-template-columns:1fr 1fr; gap:3px 16px; }
+  .skill-row { display:flex; align-items:center; gap:6px; font-size:0.8rem; padding:2px 0; }
+  .skill-prof { width:10px;height:10px;border-radius:50%;border:1.5px solid rgba(122,176,212,0.4);flex-shrink:0; }
+  .skill-prof.yes { background:var(--storm); border-color:var(--storm); }
+  .skill-prof.exp { background:var(--gold); border-color:var(--gold); }
+  .skill-name { color:rgba(240,237,224,0.72); flex:1; }
+  .skill-val { font-family:'Cinzel',serif; font-size:0.72rem; font-weight:600; color:var(--storm); }
+
+  /* WEAPONS */
+  .attacks-list { display:flex; flex-direction:column; gap:6px; }
+  .attack-item { display:flex; align-items:center; gap:10px; background:rgba(0,0,0,0.2); padding:8px 12px; border-radius:2px; border-left:2px solid rgba(122,176,212,0.3); }
+  .attack-name { font-family:'Cinzel',serif; font-size:0.76rem; font-weight:600; color:var(--parchment); flex:1; }
+  .attack-bonus { font-size:0.82rem; color:var(--gold-light); font-weight:600; white-space:nowrap; }
+  .attack-dmg { font-size:0.82rem; color:var(--storm); white-space:nowrap; }
+  .attack-note { font-size:0.7rem; color:var(--silver); opacity:0.6; white-space:nowrap; }
+
+  /* ABILITIES */
+  .ability-item { margin-bottom:9px; padding-left:14px; position:relative; }
+  .ability-item::before { content:'✦'; position:absolute; left:0; top:1px; color:var(--storm); font-size:0.58rem; opacity:0.7; }
+  .ability-name { font-family:'Cinzel',serif; font-size:0.76rem; font-weight:600; color:var(--storm); margin-bottom:2px; }
+  .ability-desc { font-size:0.83rem; color:rgba(240,237,224,0.72); line-height:1.55; }
+
+  /* SPELLS TABLE */
+  .spell-item { display:flex; align-items:flex-start; gap:8px; padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.03); font-size:0.82rem; }
+  .spell-item:last-child { border-bottom:none; }
+  .spell-level-badge { font-family:'Cinzel',serif; font-size:0.56rem; letter-spacing:0.08em; text-transform:uppercase; padding:2px 6px; border-radius:2px; border:1px solid rgba(122,176,212,0.3); color:var(--storm); background:rgba(122,176,212,0.07); white-space:nowrap; flex-shrink:0; align-self:center; }
+  .spell-name { font-family:'Cinzel',serif; font-size:0.74rem; font-weight:600; color:var(--parchment); min-width:140px; }
+  .spell-cast { font-size:0.75rem; color:rgba(240,237,224,0.55); min-width:60px; }
+  .spell-range { font-size:0.75rem; color:rgba(122,176,212,0.6); min-width:70px; }
+  .spell-notes { font-size:0.75rem; color:rgba(240,237,224,0.65); flex:1; }
+
+  /* EQUIPMENT */
+  .equip-list { display:flex; flex-direction:column; gap:4px; }
+  .equip-item { font-size:0.83rem; color:rgba(240,237,224,0.75); padding-left:12px; position:relative; line-height:1.4; }
+  .equip-item::before { content:'◆'; position:absolute; left:0; color:var(--gold); font-size:0.45rem; top:4px; opacity:0.55; }
+
+  /* TRAITS ROW */
+  .trait-row { display:flex; gap:6px; margin-bottom:4px; font-size:0.83rem; line-height:1.5; }
+  .trait-key { font-family:'Cinzel',serif; font-size:0.72rem; font-weight:600; color:var(--gold-light); white-space:nowrap; }
+  .trait-val { color:rgba(240,237,224,0.78); }
+
+  /* ============ INTERACTIVE ============ */
+  .interactive-panel { background:rgba(0,0,0,0.3); border:1px solid rgba(122,176,212,0.2); border-radius:4px; padding:14px 16px; margin:14px 0 0; }
+  .interactive-title { font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--storm); opacity:0.9; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; }
+  .reset-btn { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.1em; text-transform:uppercase; padding:3px 9px; border-radius:2px; border:1px solid rgba(255,100,100,0.28); color:rgba(255,150,150,0.55); background:rgba(255,100,100,0.04); cursor:pointer; transition:all 0.2s; }
+  .reset-btn:hover { border-color:rgba(255,100,100,0.6); color:rgba(255,180,180,0.9); background:rgba(255,100,100,0.1); }
+
+  /* HP */
+  .hp-row { display:flex; align-items:center; gap:9px; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.05); }
+  .hp-label { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--silver); opacity:0.65; min-width:24px; }
+  .hp-display { font-family:'Cinzel',serif; font-size:1.4rem; font-weight:700; min-width:36px; text-align:center; transition:color 0.3s; }
+  .hp-display.full { color:#90e8a0; } .hp-display.mid { color:#ffd080; } .hp-display.low { color:#ff8080; }
+  .hp-max { font-family:'Cinzel',serif; font-size:0.72rem; color:var(--silver); opacity:0.4; }
+  .hp-bar-wrap { flex:1; height:5px; background:rgba(0,0,0,0.45); border-radius:3px; overflow:hidden; }
+  .hp-bar { height:100%; border-radius:3px; transition:width 0.4s ease,background 0.4s ease; }
+  .hp-btn { width:26px;height:26px;border-radius:50%;border:1px solid rgba(122,176,212,0.3);background:rgba(122,176,212,0.07);color:var(--storm);font-size:1rem;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+  .hp-btn:hover { background:rgba(122,176,212,0.22); border-color:rgba(122,176,212,0.6); }
+  .hp-input { width:42px;text-align:center;background:rgba(0,0,0,0.3);border:1px solid rgba(122,176,212,0.18);border-radius:2px;color:var(--parchment);font-family:'Cinzel',serif;font-size:0.78rem;padding:3px 4px; }
+  .hp-input:focus { outline:none; border-color:rgba(122,176,212,0.5); }
+  .hp-apply-btn { font-family:'Cinzel',serif;font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;padding:4px 9px;border-radius:2px;border:1px solid rgba(200,64,64,0.35);color:rgba(232,128,128,0.8);background:rgba(200,64,64,0.06);cursor:pointer;transition:all 0.2s; }
+  .hp-apply-btn:hover { background:rgba(200,64,64,0.15); border-color:rgba(200,64,64,0.65); }
+
+  /* DEATH SAVES */
+  .death-saves-row { display:flex; align-items:center; gap:14px; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.05); }
+  .ds-label { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--silver); opacity:0.6; min-width:80px; }
+  .ds-group { display:flex; align-items:center; gap:6px; }
+  .ds-sublabel { font-family:'Cinzel',serif; font-size:0.58rem; color:var(--silver); opacity:0.55; }
+  .ds-pips { display:flex; gap:5px; }
+  .ds-pip { width:18px;height:18px;border-radius:50%;border:1.5px solid;cursor:pointer;transition:all 0.15s;position:relative;flex-shrink:0; }
+  .ds-pip.success { border-color:rgba(100,200,120,0.5); background:rgba(100,200,120,0.1); }
+  .ds-pip.success.marked { background:var(--green); border-color:var(--green); }
+  .ds-pip.failure { border-color:rgba(200,80,80,0.5); background:rgba(200,80,80,0.1); }
+  .ds-pip.failure.marked { background:var(--red); border-color:var(--red); }
+  .ds-pip:hover { transform:scale(1.15); }
+
+  /* INSPIRATION */
+  .inspiration-row { display:flex; align-items:center; gap:10px; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.05); }
+  .insp-label { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--silver); opacity:0.6; }
+  .insp-pip { width:22px;height:22px;border-radius:50%;border:1.5px solid rgba(201,168,76,0.45);background:rgba(201,168,76,0.08);cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;font-size:0.9rem; }
+  .insp-pip.active { background:rgba(201,168,76,0.3); border-color:var(--gold-light); box-shadow:0 0 8px rgba(201,168,76,0.4); }
+  .insp-pip:hover { transform:scale(1.1); }
+
+  /* SPELL SLOTS */
+  .slots-section { margin-bottom:10px; }
+  .slots-row { display:flex; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap; }
+  .slots-label { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--silver); opacity:0.65; min-width:52px; }
+  .pip-group { display:flex; gap:5px; flex-wrap:wrap; }
+  .pip { width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(122,176,212,0.5);background:rgba(122,176,212,0.14);cursor:pointer;transition:all 0.15s;position:relative; }
+  .pip.used { background:rgba(0,0,0,0.4); border-color:rgba(122,176,212,0.15); }
+  .pip.used::after { content:'×';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:rgba(122,176,212,0.3);line-height:1; }
+  .pip:hover:not(.used) { background:rgba(122,176,212,0.35); border-color:rgba(122,176,212,0.9); transform:scale(1.12); }
+  .pip:hover.used { border-color:rgba(122,176,212,0.4); }
+
+  /* CHANNEL DIVINITY */
+  .uses-row { display:flex; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap; }
+  .uses-label { font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.07em; color:rgba(122,176,212,0.85); flex:1; min-width:130px; }
+  .uses-pips { display:flex; gap:5px; }
+  .use-pip { width:16px;height:16px;border-radius:2px;border:1.5px solid rgba(201,168,76,0.42);background:rgba(201,168,76,0.13);cursor:pointer;transition:all 0.15s;position:relative; }
+  .use-pip.used { background:rgba(0,0,0,0.4); border-color:rgba(201,168,76,0.13); }
+  .use-pip.used::after { content:'×';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:0.62rem;color:rgba(201,168,76,0.22);line-height:1; }
+  .use-pip:hover:not(.used) { background:rgba(201,168,76,0.32); border-color:rgba(201,168,76,0.9); transform:scale(1.1); }
+  .recharge-tag { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.08em; text-transform:uppercase; color:rgba(122,176,212,0.45); background:rgba(122,176,212,0.05); border:1px solid rgba(122,176,212,0.12); padding:1px 5px; border-radius:2px; }
+
+  /* FOOTER */
+  .card-footer { padding:10px 26px 18px; display:flex; justify-content:space-between; align-items:center; opacity:0.45; }
+  .footer-fluff { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--silver); }
+  .xp-val { font-family:'Cinzel',serif; font-size:0.65rem; color:var(--gold); }
+
+  @media(max-width:520px){ .skills-grid{grid-template-columns:1fr} .spell-cast,.spell-range{display:none} }
+</style>
+</head>
+<body>
+
+<a class="back-link" href="syrinlya-npcs.html">← Volver al índice</a>
+
+<div class="char-card">
+  <div class="card-corner-bl"></div>
+  <div class="color-bar"></div>
+
+  <!-- HEADER -->
+  <div class="card-header">
+    <div class="char-avatar">⛏️</div>
+    <div class="char-identity">
+      <div class="char-name">Brila Smugstorm</div>
+      <div class="char-subtitle">Clérigo de la Tormenta · Nivel 3 · Enana</div>
+      <div class="char-tags">
+        <span class="tag tag-class">Clérigo Nv.3</span>
+        <span class="tag tag-race">Enana</span>
+        <span class="tag tag-bg">Trasfondo: Guardia</span>
+        <span class="tag tag-new">PHB 2024</span>
+      </div>
+      <div class="personality-quote">
+        "Valentía por encima de todo. La fuerza es el camino a la grandeza.<br>La gloria de Kord es mi gloria."
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat">
+      <span class="stat-label">FUE</span>
+      <span class="stat-value">14</span>
+      <span class="stat-mod">+2</span>
+      <span class="stat-save">TS +4</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">DES</span>
+      <span class="stat-value">9</span>
+      <span class="stat-mod">−1</span>
+      <span class="stat-save">TS −1</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">CON</span>
+      <span class="stat-value">13</span>
+      <span class="stat-mod">+1</span>
+      <span class="stat-save">TS +1</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">INT</span>
+      <span class="stat-value">10</span>
+      <span class="stat-mod">+0</span>
+      <span class="stat-save">TS +0</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">SAB</span>
+      <span class="stat-value">16</span>
+      <span class="stat-mod">+3</span>
+      <span class="stat-save">TS +5</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">CAR</span>
+      <span class="stat-value">12</span>
+      <span class="stat-mod">+1</span>
+      <span class="stat-save">TS +3</span>
+    </div>
+  </div>
+
+  <!-- COMBAT ROW -->
+  <div class="combat-row">
+    <div class="combat-stat"><span class="combat-label">CA</span><span class="combat-value">18</span></div>
+    <div class="combat-stat"><span class="combat-label">PG Máx.</span><span class="combat-value">24</span></div>
+    <div class="combat-stat"><span class="combat-label">Velocidad</span><span class="combat-value">30 ft</span></div>
+    <div class="combat-stat"><span class="combat-label">Iniciativa</span><span class="combat-value">+1</span></div>
+    <div class="combat-stat"><span class="combat-label">Percepción P.</span><span class="combat-value">15</span></div>
+    <div class="combat-stat"><span class="combat-label">CD Conjuros</span><span class="combat-value">13</span></div>
+    <div class="combat-stat"><span class="combat-label">Atq. Conjuro</span><span class="combat-value">+5</span></div>
+  </div>
+
+  <div class="card-body">
+
+    <!-- INTERACTIVE PANEL -->
+    <div class="interactive-panel">
+      <div class="interactive-title">
+        <span>⚙ Estado de sesión</span>
+        <button class="reset-btn" onclick="resetAll()">↺ Resetear todo</button>
+      </div>
+
+      <!-- HP -->
+      <div class="hp-row">
+        <span class="hp-label">PG</span>
+        <div id="brila-hp-display" class="hp-display full">24</div>
+        <span class="hp-max">/ 24</span>
+        <div class="hp-bar-wrap"><div id="brila-hp-bar" class="hp-bar" style="width:100%;background:#90e8a0"></div></div>
+        <button class="hp-btn" onclick="changeHP(1)">+</button>
+        <input id="brila-hp-input" class="hp-input" type="number" min="1" value="1">
+        <button class="hp-apply-btn" onclick="applyDmg()">Daño</button>
+        <button class="hp-btn" onclick="changeHP(-1)">−</button>
+      </div>
+
+      <!-- INSPIRATION -->
+      <div class="inspiration-row">
+        <span class="insp-label">Inspiración Heroica</span>
+        <div id="brila-inspiration" class="insp-pip" onclick="toggleInspiration()">☆</div>
+        <span style="font-size:0.75rem;color:rgba(240,237,224,0.45);font-style:italic;">clic para activar/desactivar</span>
+      </div>
+
+      <!-- DEATH SAVES -->
+      <div class="death-saves-row">
+        <span class="ds-label">Tiradas de Muerte</span>
+        <div class="ds-group">
+          <span class="ds-sublabel">Éxitos</span>
+          <div class="ds-pips">
+            <div class="ds-pip success" id="ds-s0" onclick="toggleDS('success',0)"></div>
+            <div class="ds-pip success" id="ds-s1" onclick="toggleDS('success',1)"></div>
+            <div class="ds-pip success" id="ds-s2" onclick="toggleDS('success',2)"></div>
+          </div>
+        </div>
+        <div class="ds-group">
+          <span class="ds-sublabel">Fallos</span>
+          <div class="ds-pips">
+            <div class="ds-pip failure" id="ds-f0" onclick="toggleDS('failure',0)"></div>
+            <div class="ds-pip failure" id="ds-f1" onclick="toggleDS('failure',1)"></div>
+            <div class="ds-pip failure" id="ds-f2" onclick="toggleDS('failure',2)"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SPELL SLOTS -->
+      <div class="slots-section">
+        <div class="slots-row">
+          <span class="slots-label">Nv. 1</span>
+          <div class="pip-group" id="slots-1"></div>
+          <span style="font-size:0.65rem;color:rgba(240,237,224,0.3);font-style:italic;">4 ranuras</span>
+        </div>
+        <div class="slots-row">
+          <span class="slots-label">Nv. 2</span>
+          <div class="pip-group" id="slots-2"></div>
+          <span style="font-size:0.65rem;color:rgba(240,237,224,0.3);font-style:italic;">2 ranuras</span>
+        </div>
+      </div>
+
+      <!-- CHANNEL DIVINITY & USES -->
+      <div class="uses-row">
+        <span class="uses-label">Canalizar Divinidad</span>
+        <div class="uses-pips" id="uses-channel"></div>
+        <span class="recharge-tag">desc. corto</span>
+      </div>
+      <div class="uses-row">
+        <span class="uses-label">Afinidad con la Piedra</span>
+        <div class="uses-pips" id="uses-stone"></div>
+        <span class="recharge-tag">desc. corto</span>
+      </div>
+    </div>
+
+    <!-- ATTACKS -->
+    <div class="section">
+      <div class="section-title">Armas y Ataques</div>
+      <div class="attacks-list">
+        <div class="attack-item">
+          <span class="attack-name">Martillo de Guerra (1H)</span>
+          <span class="attack-bonus">+4</span>
+          <span class="attack-dmg">1d8+2 cont.</span>
+          <span class="attack-note">versátil</span>
+        </div>
+        <div class="attack-item">
+          <span class="attack-name">Martillo de Guerra (2H)</span>
+          <span class="attack-bonus">+4</span>
+          <span class="attack-dmg">1d10+2 cont.</span>
+          <span class="attack-note">dos manos</span>
+        </div>
+        <div class="attack-item">
+          <span class="attack-name">Llama Sagrada (truco)</span>
+          <span class="attack-bonus">CD 13 DES</span>
+          <span class="attack-dmg">1d8 radiante</span>
+          <span class="attack-note">60 ft · no cobertura</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLASS FEATURES -->
+    <div class="section">
+      <div class="section-title">Rasgos de Clase · Canalizar Divinidad</div>
+      <div class="ability-item">
+        <div class="ability-name">Chispa Divina ★ 1 acc</div>
+        <div class="ability-desc">A una criatura a 30 ft: recupera 1d8+SAB PG, <em>o</em> hace una tirada de salvación de CON CD 13 y recibe 1d8+SAB de daño necrótico o radiante (si supera, la mitad).</div>
+      </div>
+      <div class="ability-item">
+        <div class="ability-name">Expulsar Muertos Vivientes ★ 1 acc</div>
+        <div class="ability-desc">Cada muerto viviente a tu elección a 30 ft debe superar una TS de DES CD 13. Si falla: Asustado + Incapacitado 1 min. Termina antes si recibe daño, si tú estás incapacitado o si mueres.</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Dominio de la Tormenta</div>
+      <div class="ability-item">
+        <div class="ability-name">Ira Destructiva (pasivo)</div>
+        <div class="ability-desc">Haces el daño máximo cuando haces daño sónico o eléctrico sin tirar los dados.</div>
+      </div>
+      <div class="ability-item">
+        <div class="ability-name">Ira de la Tormenta ★ Reacción</div>
+        <div class="ability-desc">Cuando una criatura a menos de 5 ft te ataca: TS DES CD 13. <em>Fallo:</em> 2d8 de daño sónico/eléctrico. <em>Éxito:</em> la mitad.</div>
+      </div>
+    </div>
+
+    <!-- SPECIES TRAITS -->
+    <div class="section">
+      <div class="section-title">Rasgos de Especie · Enana</div>
+      <div class="ability-item">
+        <div class="ability-name">Afinidad con la Piedra ★ 1 acc (desc. corto)</div>
+        <div class="ability-desc">Puedes sentir vibraciones con un alcance de 60 ft durante 10 min. Debes encontrarte en contacto con una superficie de piedra.</div>
+      </div>
+      <div class="ability-item">
+        <div class="ability-name">Resistencia al Veneno</div>
+        <div class="ability-desc">Ventaja en tiradas de Salvación contra venenos.</div>
+      </div>
+      <div class="ability-item">
+        <div class="ability-name">Darkvision 120 ft</div>
+        <div class="ability-desc">Ves en la oscuridad como si fuera luz tenue hasta 120 ft, y en luz tenue como si fuera luz brillante.</div>
+      </div>
+    </div>
+
+    <!-- FEAT -->
+    <div class="section">
+      <div class="section-title">Dote · Trasfondo: Guardia</div>
+      <div class="ability-item">
+        <div class="ability-name">Alerta</div>
+        <div class="ability-desc">Puedes ceder tu tirada de iniciativa a otro jugador, si los dos estáis de acuerdo y ninguno está incapacitado.</div>
+      </div>
+    </div>
+
+    <!-- SKILLS -->
+    <div class="section">
+      <div class="section-title">Habilidades y Competencias</div>
+      <div class="skills-grid">
+        <div class="skill-row"><div class="skill-prof yes"></div><span class="skill-name">Atletismo</span><span class="skill-val">+4</span></div>
+        <div class="skill-row"><div class="skill-prof yes"></div><span class="skill-name">Perspicacia</span><span class="skill-val">+5</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Manejo Animales</span><span class="skill-val">+3</span></div>
+        <div class="skill-row"><div class="skill-prof yes"></div><span class="skill-name">Medicina</span><span class="skill-val">+3</span></div>
+        <div class="skill-row"><div class="skill-prof yes"></div><span class="skill-name">Percepción</span><span class="skill-val">+5</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Supervivencia</span><span class="skill-val">+3</span></div>
+        <div class="skill-row"><div class="skill-prof yes"></div><span class="skill-name">Historia</span><span class="skill-val">+2</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Engaño</span><span class="skill-val">+1</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Intimidación</span><span class="skill-val">+1</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Persuasión</span><span class="skill-val">+1</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Acrobacias</span><span class="skill-val">−1</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Sigilo</span><span class="skill-val">−1</span></div>
+      </div>
+      <div style="margin-top:10px;">
+        <div class="trait-row"><span class="trait-key">Armaduras:</span><span class="trait-val">Ligera, Media, Pesada, Escudos</span></div>
+        <div class="trait-row"><span class="trait-key">Armas:</span><span class="trait-val">Simples y marciales</span></div>
+        <div class="trait-row"><span class="trait-key">Herramientas:</span><span class="trait-val">Herramientas de Herrero</span></div>
+      </div>
+    </div>
+
+    <!-- SPELLS -->
+    <div class="section">
+      <div class="section-title">Conjuros Preparados · Lanzamiento: Sabiduría</div>
+
+      <div style="margin-bottom:8px;">
+        <span style="font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(122,176,212,0.6);">Trucos (a voluntad)</span>
+      </div>
+      <div class="spell-item">
+        <span class="spell-level-badge">Truco</span>
+        <span class="spell-name">Llama Sagrada</span>
+        <span class="spell-cast">1 acc</span>
+        <span class="spell-range">60 ft</span>
+        <span class="spell-notes">1d8 radiante · TS DES · sin cobertura</span>
+      </div>
+      <div class="spell-item">
+        <span class="spell-level-badge">Truco</span>
+        <span class="spell-name">Taumaturgia</span>
+        <span class="spell-cast">1 acc</span>
+        <span class="spell-range">30 ft</span>
+        <span class="spell-notes">1 min duración · efectos ambientales</span>
+      </div>
+      <div class="spell-item">
+        <span class="spell-level-badge">Truco</span>
+        <span class="spell-name">Resistencia</span>
+        <span class="spell-cast">1 acc</span>
+        <span class="spell-range">toque</span>
+        <span class="spell-notes">Concentración · 1 min · +1d4 en 1 TS</span>
+      </div>
+
+      <div style="margin:10px 0 8px;">
+        <span style="font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(122,176,212,0.6);">Nivel 1</span>
+      </div>
+      <div class="spell-item">
+        <span class="spell-level-badge">Nv. 1</span>
+        <span class="spell-name">Nube de Oscurecimiento</span>
+        <span class="spell-cast">1 acc</span>
+        <span class="spell-range">120 ft/20 ft</span>
+        <span class="spell-notes">Concentración · 1h</span>
+      </div>
+      <div class="spell-item">
+        <span class="spell-level-badge">Nv. 1</span>
+        <span class="spell-name">Ola Atronadora</span>
+        <span class="spell-cast">1 acc</span>
+        <span class="spell-range">15 ft área</span>
+        <span class="spell-notes">TS CON · 2d8 eléctrico · mitad si éxito</span>
+      </div>
+      <div class="spell-item">
+        <span class="spell-level-badge">Nv. 1</span>
+        <span class="spell-name">Infligir Heridas</span>
+        <span class="spell-cast">1 acc</span>
+        <span class="spell-range">toque</span>
+        <span class="spell-notes">TS CON · 2d10 necrótico · mitad si éxito</span>
+      </div>
+      <div class="spell-item">
+        <span class="spell-level-badge">Nv. 1</span>
+        <span class="spell-name">Saeta Guiada</span>
+        <span class="spell-cast">1 acc</span>
+        <span class="spell-range">120 ft</span>
+        <span class="spell-notes">4d6 radiante · ventaja 1 ronda</span>
+      </div>
+      <div class="spell-item">
+        <span class="spell-level-badge">Nv. 1</span>
+        <span class="spell-name">Orden Imperiosa</span>
+        <span class="spell-cast">1 acc</span>
+        <span class="spell-range">60 ft</span>
+        <span class="spell-notes">TS CAR · 1 ronda</span>
+      </div>
+      <div class="spell-item">
+        <span class="spell-level-badge">Nv. 1</span>
+        <span class="spell-name">Palabra de Curación</span>
+        <span class="spell-cast">1 acc ad</span>
+        <span class="spell-range">60 ft</span>
+        <span class="spell-notes">2d4+5 PG recuperados</span>
+      </div>
+
+      <div style="margin:10px 0 8px;">
+        <span style="font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(122,176,212,0.6);">Nivel 2</span>
+      </div>
+      <div class="spell-item">
+        <span class="spell-level-badge">Nv. 2</span>
+        <span class="spell-name">Ráfaga de Viento</span>
+        <span class="spell-cast">1 acc</span>
+        <span class="spell-range">personal</span>
+        <span class="spell-notes">Concentración · empujar 15 ft · 60×10 ft</span>
+      </div>
+      <div class="spell-item">
+        <span class="spell-level-badge">Nv. 2</span>
+        <span class="spell-name">Hacer Añicos</span>
+        <span class="spell-cast">1 acc</span>
+        <span class="spell-range">60 ft</span>
+        <span class="spell-notes">Radio 10 ft · 3d8 sónico · TS CON</span>
+      </div>
+      <div class="spell-item">
+        <span class="spell-level-badge">Nv. 2</span>
+        <span class="spell-name">Arma Espiritual</span>
+        <span class="spell-cast">1 acc ad</span>
+        <span class="spell-range">60 ft</span>
+        <span class="spell-notes">Concentración · 1 min · 1d8+5</span>
+      </div>
+      <div class="spell-item">
+        <span class="spell-level-badge">Nv. 2</span>
+        <span class="spell-name">Auxilio</span>
+        <span class="spell-cast">1 acc</span>
+        <span class="spell-range">30 ft</span>
+        <span class="spell-notes">8h · +5 PG temp y actual · 3 criaturas</span>
+      </div>
+    </div>
+
+    <!-- EQUIPMENT -->
+    <div class="section">
+      <div class="section-title">Equipo</div>
+      <div class="equip-list">
+        <div class="equip-item">Cota de malla — CA base 16 (+2 escudo = CA 18)</div>
+        <div class="equip-item">Escudo — +2 CA</div>
+        <div class="equip-item">Martillo de guerra</div>
+        <div class="equip-item">Herramientas de Herrero</div>
+        <div class="equip-item">Raciones</div>
+      </div>
+    </div>
+
+  </div><!-- end card-body -->
+
+  <div class="card-footer">
+    <span class="footer-fluff">Frozen Sick · Wildemount · PHB 2024</span>
+    <span class="xp-val">Clérigo Nv.3 · Tormenta · Dados: 3d8</span>
+  </div>
+</div>
+
+<script>
+const MAX_HP = 24;
+
+function save(k,v){try{localStorage.setItem('brila_'+k,JSON.stringify(v));}catch(e){}}
+function load(k,d){try{const v=localStorage.getItem('brila_'+k);return v!==null?JSON.parse(v):d;}catch(e){return d;}}
+
+/* HP */
+function updateHPDisplay(cur){
+  const d=document.getElementById('brila-hp-display'),b=document.getElementById('brila-hp-bar');
+  cur=Math.max(0,Math.min(MAX_HP,cur));
+  d.textContent=cur;
+  const p=(cur/MAX_HP)*100;
+  b.style.width=p+'%';
+  if(p>60){b.style.background='#90e8a0';d.className='hp-display full';}
+  else if(p>25){b.style.background='#ffd080';d.className='hp-display mid';}
+  else{b.style.background='#ff8080';d.className='hp-display low';}
+}
+function changeHP(delta){
+  let cur=load('hp',MAX_HP);
+  cur=Math.max(0,Math.min(MAX_HP,cur+delta));
+  save('hp',cur); updateHPDisplay(cur);
+}
+function applyDmg(){
+  const inp=document.getElementById('brila-hp-input');
+  const dmg=parseInt(inp.value)||0; if(dmg<=0)return;
+  let cur=load('hp',MAX_HP);
+  cur=Math.max(0,cur-dmg);
+  save('hp',cur); updateHPDisplay(cur); inp.value=1;
+}
+
+/* INSPIRATION */
+function toggleInspiration(){
+  const active=!load('inspiration',false);
+  save('inspiration',active);
+  renderInspiration(active);
+}
+function renderInspiration(active){
+  const el=document.getElementById('brila-inspiration');
+  el.textContent=active?'★':'☆';
+  el.className='insp-pip'+(active?' active':'');
+}
+
+/* DEATH SAVES */
+function toggleDS(type,idx){
+  const key='ds_'+type;
+  const arr=load(key,[false,false,false]);
+  arr[idx]=!arr[idx];
+  save(key,arr); renderDS(type,arr);
+}
+function renderDS(type,arr){
+  arr.forEach((marked,i)=>{
+    const el=document.getElementById('ds-'+type[0]+i);
+    if(marked) el.classList.add('marked'); else el.classList.remove('marked');
+  });
+}
+
+/* SPELL SLOTS */
+function buildSlots(level,total){
+  const key='slots_'+level;
+  const used=load(key,[]);
+  const container=document.getElementById('slots-'+level);
+  if(!container)return;
+  container.innerHTML='';
+  for(let i=0;i<total;i++){
+    const pip=document.createElement('div');
+    pip.className='pip'+(used[i]?' used':'');
+    pip.title='Ranura Nv.'+level+' #'+(i+1);
+    pip.onclick=()=>{used[i]=!used[i];save(key,used);buildSlots(level,total);};
+    container.appendChild(pip);
+  }
+}
+
+/* USES */
+function buildUses(id,total){
+  const key='use_'+id;
+  const used=load(key,[]);
+  const container=document.getElementById('uses-'+id);
+  if(!container)return;
+  container.innerHTML='';
+  for(let i=0;i<total;i++){
+    const pip=document.createElement('div');
+    pip.className='use-pip'+(used[i]?' used':'');
+    pip.onclick=()=>{used[i]=!used[i];save(key,used);buildUses(id,total);};
+    container.appendChild(pip);
+  }
+}
+
+/* RESET */
+function resetAll(){
+  if(!confirm('¿Reiniciar todo el estado de sesión de Brila?'))return;
+  save('hp',MAX_HP);
+  save('inspiration',false);
+  save('ds_success',[false,false,false]);
+  save('ds_failure',[false,false,false]);
+  save('slots_1',[]);
+  save('slots_2',[]);
+  save('use_channel',[]);
+  save('use_stone',[]);
+  init();
+}
+
+/* INIT */
+function init(){
+  updateHPDisplay(load('hp',MAX_HP));
+  renderInspiration(load('inspiration',false));
+  renderDS('success',load('ds_success',[false,false,false]));
+  renderDS('failure',load('ds_failure',[false,false,false]));
+  buildSlots(1,4);
+  buildSlots(2,2);
+  buildUses('channel',1);
+  buildUses('stone',1);
+}
+
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

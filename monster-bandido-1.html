@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bandido 1 — Frozen Sick</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#0d1117; --gold:#c9a84c; --gold-light:#e8c97a; --parchment:#f0ede0; --silver:#b8bfc4; --red:#c84040; --green:#90e8a0; --accent:#b85050; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--ink); background-image:radial-gradient(ellipse at 25% 15%,rgba(180,60,60,0.06) 0%,transparent 55%),radial-gradient(ellipse at 75% 85%,rgba(120,30,30,0.04) 0%,transparent 55%); font-family:'Crimson Pro',Georgia,serif; color:var(--parchment); min-height:100vh; padding:30px 16px 60px; max-width:640px; margin:0 auto; }
+  .back-link { display:inline-flex;align-items:center;gap:6px;font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(184,80,80,0.45);text-decoration:none;margin-bottom:24px;transition:color 0.2s; }
+  .back-link:hover { color:rgba(184,80,80,0.9); }
+  @keyframes fadeSlide { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+  .monster-card { background:linear-gradient(160deg,#1e1414 0%,#150e0e 65%,#100909 100%); border:1px solid rgba(184,80,80,0.22); border-radius:4px; position:relative; overflow:hidden; box-shadow:0 24px 64px rgba(0,0,0,0.75),inset 0 1px 0 rgba(184,80,80,0.1); animation:fadeSlide 0.5s ease both; }
+  .monster-card::after { content:''; position:absolute; top:8px;right:8px; width:28px;height:28px; border-top:1px solid rgba(201,168,76,0.22); border-right:1px solid rgba(201,168,76,0.22); }
+  .card-corner-bl { position:absolute; bottom:8px;left:8px; width:28px;height:28px; border-bottom:1px solid rgba(201,168,76,0.22); border-left:1px solid rgba(201,168,76,0.22); }
+  .color-bar { height:3px; background:linear-gradient(90deg,transparent,rgba(140,40,40,0.7),rgba(184,80,80,1),rgba(140,40,40,0.7),transparent); }
+  .card-header { padding:22px 26px 16px; display:flex; gap:18px; align-items:flex-start; border-bottom:1px solid rgba(184,80,80,0.1); }
+  .monster-avatar { width:68px;height:68px;border-radius:50%;border:2px solid rgba(184,80,80,0.45);display:flex;align-items:center;justify-content:center;font-size:1.9rem;flex-shrink:0;background:radial-gradient(135deg,#2a1414,#150909);box-shadow:0 0 24px rgba(180,60,60,0.25),inset 0 0 16px rgba(0,0,0,0.5); }
+  .monster-identity { flex:1; }
+  .monster-name { font-family:'Cinzel',serif; font-size:1.4rem; font-weight:700; color:var(--gold-light); letter-spacing:0.05em; line-height:1.2; }
+  .monster-type { font-style:italic; font-size:0.9rem; color:rgba(184,80,80,0.65); margin-top:3px; }
+  .monster-meta { display:flex; gap:7px; flex-wrap:wrap; margin-top:9px; }
+  .meta-badge { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; padding:2px 8px; border-radius:2px; border:1px solid rgba(201,168,76,0.3); color:var(--gold); background:rgba(201,168,76,0.07); }
+  .meta-badge.red { border-color:rgba(184,80,80,0.4); color:#e88080; background:rgba(184,80,80,0.07); }
+  .initiative-badge { font-family:'Cinzel',serif; font-size:0.7rem; color:var(--gold-light); margin-left:auto; white-space:nowrap; align-self:flex-start; opacity:0.8; }
+  .stats-bar { display:grid; grid-template-columns:repeat(6,1fr); padding:10px 26px; border-bottom:1px solid rgba(184,80,80,0.08); background:rgba(0,0,0,0.2); gap:2px; }
+  .stat { text-align:center; }
+  .stat-label { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--silver); opacity:0.65; display:block; margin-bottom:1px; }
+  .stat-value { font-family:'Cinzel',serif; font-size:1.05rem; font-weight:700; color:var(--parchment); display:block; line-height:1; }
+  .stat-mods { font-size:0.62rem; color:rgba(184,80,80,0.75); display:block; margin-top:2px; }
+  .combat-row { display:flex; padding:9px 26px; border-bottom:1px solid rgba(184,80,80,0.07); background:rgba(0,0,0,0.12); }
+  .combat-stat { flex:1; text-align:center; position:relative; }
+  .combat-stat+.combat-stat::before { content:''; position:absolute; left:0; top:10%;bottom:10%; width:1px; background:rgba(184,80,80,0.1); }
+  .combat-label { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--silver); opacity:0.6; display:block; }
+  .combat-value { font-family:'Cinzel',serif; font-size:0.95rem; font-weight:600; color:var(--gold-light); display:block; margin-top:1px; }
+  .card-body { padding:0 26px; }
+  .section { padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+  .section:last-child { border-bottom:none; }
+  .section-title { font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold); opacity:0.75; margin-bottom:7px; display:flex; align-items:center; gap:8px; }
+  .section-title::after { content:''; flex:1; height:1px; background:linear-gradient(to right,rgba(201,168,76,0.18),transparent); }
+  .trait-row { display:flex; gap:6px; margin-bottom:4px; font-size:0.83rem; line-height:1.45; }
+  .trait-key { font-family:'Cinzel',serif; font-size:0.72rem; font-weight:600; color:var(--gold-light); white-space:nowrap; }
+  .trait-val { color:rgba(240,237,224,0.78); }
+  .attacks-list { display:flex; flex-direction:column; gap:6px; }
+  .attack-item { display:flex; align-items:center; gap:10px; background:rgba(0,0,0,0.2); padding:8px 12px; border-radius:2px; border-left:2px solid rgba(184,80,80,0.35); }
+  .attack-name { font-family:'Cinzel',serif; font-size:0.76rem; font-weight:600; color:var(--parchment); flex:1; }
+  .attack-bonus { font-size:0.82rem; color:var(--gold-light); font-weight:600; white-space:nowrap; }
+  .attack-dmg { font-size:0.82rem; color:#e88080; white-space:nowrap; }
+  .attack-note { font-size:0.7rem; color:var(--silver); opacity:0.6; white-space:nowrap; }
+  .action-item { margin-bottom:7px; padding-left:13px; position:relative; font-size:0.84rem; line-height:1.5; color:rgba(240,237,224,0.78); }
+  .action-item::before { content:'▸'; position:absolute; left:0; top:2px; color:rgba(184,80,80,0.7); font-size:0.6rem; }
+  .action-name { font-family:'Cinzel',serif; font-size:0.75rem; font-weight:700; color:var(--parchment); }
+  .interactive-panel { background:rgba(0,0,0,0.3); border:1px solid rgba(184,80,80,0.18); border-radius:4px; padding:13px 15px; margin:13px 0 0; }
+  .interactive-title { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.18em; text-transform:uppercase; color:#e88080; opacity:0.9; margin-bottom:11px; display:flex; align-items:center; justify-content:space-between; }
+  .reset-btn { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.1em; text-transform:uppercase; padding:3px 9px; border-radius:2px; border:1px solid rgba(255,100,100,0.28); color:rgba(255,150,150,0.55); background:rgba(255,100,100,0.04); cursor:pointer; transition:all 0.2s; }
+  .reset-btn:hover { border-color:rgba(255,100,100,0.6); color:rgba(255,180,180,0.9); background:rgba(255,100,100,0.1); }
+  .hp-row { display:flex; align-items:center; gap:9px; }
+  .hp-label { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--silver); opacity:0.65; min-width:24px; }
+  .hp-display { font-family:'Cinzel',serif; font-size:1.35rem; font-weight:700; min-width:36px; text-align:center; transition:color 0.3s; }
+  .hp-display.full { color:#90e8a0; } .hp-display.mid { color:#ffd080; } .hp-display.low { color:#ff8080; }
+  .hp-max { font-family:'Cinzel',serif; font-size:0.72rem; color:var(--silver); opacity:0.4; }
+  .hp-bar-wrap { flex:1; height:5px; background:rgba(0,0,0,0.45); border-radius:3px; overflow:hidden; border:1px solid rgba(255,255,255,0.04); }
+  .hp-bar { height:100%; border-radius:3px; transition:width 0.4s ease,background 0.4s ease; }
+  .hp-btn { width:26px;height:26px;border-radius:50%;border:1px solid rgba(184,80,80,0.35);background:rgba(184,80,80,0.08);color:#e88080;font-size:1rem;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+  .hp-btn:hover { background:rgba(184,80,80,0.22); border-color:rgba(184,80,80,0.65); }
+  .hp-input { width:42px;text-align:center;background:rgba(0,0,0,0.3);border:1px solid rgba(184,80,80,0.2);border-radius:2px;color:var(--parchment);font-family:'Cinzel',serif;font-size:0.78rem;padding:3px 4px; }
+  .hp-input:focus { outline:none; border-color:rgba(184,80,80,0.55); }
+  .hp-apply-btn { font-family:'Cinzel',serif;font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;padding:4px 9px;border-radius:2px;border:1px solid rgba(200,64,64,0.35);color:rgba(232,128,128,0.8);background:rgba(200,64,64,0.06);cursor:pointer;transition:all 0.2s; }
+  .hp-apply-btn:hover { background:rgba(200,64,64,0.15); border-color:rgba(200,64,64,0.65); }
+  .card-footer { padding:10px 26px 18px; display:flex; justify-content:space-between; align-items:center; opacity:0.45; }
+  .footer-fluff { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--silver); }
+  .xp-val { font-family:'Cinzel',serif; font-size:0.65rem; color:var(--gold); }
+</style>
+</head>
+<body>
+
+<a class="back-link" href="syrinlya-npcs.html">← Volver al índice</a>
+
+<div class="monster-card">
+  <div class="card-corner-bl"></div>
+  <div class="color-bar"></div>
+
+  <div class="card-header">
+    <div class="monster-avatar">🗡️</div>
+    <div class="monster-identity">
+      <div class="monster-name">Bandido 1</div>
+      <div class="monster-type">Humanoide Mediano o Pequeño, neutral</div>
+      <div class="monster-meta">
+        <span class="meta-badge red">CA 12</span>
+        <span class="meta-badge">VD 1/8 · 25 XP · BC +2</span>
+        <span class="initiative-badge">Iniciativa +1 (11)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat"><span class="stat-label">FUE</span><span class="stat-value">11</span><span class="stat-mods">+0 / +0</span></div>
+    <div class="stat"><span class="stat-label">DES</span><span class="stat-value">12</span><span class="stat-mods">+1 / +1</span></div>
+    <div class="stat"><span class="stat-label">CON</span><span class="stat-value">12</span><span class="stat-mods">+1 / +1</span></div>
+    <div class="stat"><span class="stat-label">INT</span><span class="stat-value">10</span><span class="stat-mods">+0 / +0</span></div>
+    <div class="stat"><span class="stat-label">SAB</span><span class="stat-value">10</span><span class="stat-mods">+0 / +0</span></div>
+    <div class="stat"><span class="stat-label">CAR</span><span class="stat-value">10</span><span class="stat-mods">+0 / +0</span></div>
+  </div>
+
+  <div class="combat-row">
+    <div class="combat-stat"><span class="combat-label">PG</span><span class="combat-value">15 (personalizado)</span></div>
+    <div class="combat-stat"><span class="combat-label">Velocidad</span><span class="combat-value">9 m (30 ft)</span></div>
+    <div class="combat-stat"><span class="combat-label">CA</span><span class="combat-value">12 (cuero)</span></div>
+    <div class="combat-stat"><span class="combat-label">Perc. Pasiva</span><span class="combat-value">10</span></div>
+  </div>
+
+  <div class="card-body">
+
+    <div class="interactive-panel">
+      <div class="interactive-title">
+        <span>⚙ Estado de sesión</span>
+        <button class="reset-btn" onclick="resetNPC('bandido-1')">↺ Resetear</button>
+      </div>
+      <div class="hp-row">
+        <span class="hp-label">PG</span>
+        <div id="bandido-1-hp-display" class="hp-display full">15</div>
+        <span class="hp-max">/ 15</span>
+        <div class="hp-bar-wrap"><div id="bandido-1-hp-bar" class="hp-bar" style="width:100%;background:#90e8a0"></div></div>
+        <button class="hp-btn" onclick="changeHP('bandido-1',15,1)">+</button>
+        <input id="bandido-1-hp-input" class="hp-input" type="number" min="1" value="1">
+        <button class="hp-apply-btn" onclick="applyDmg('bandido-1',15)">Daño</button>
+        <button class="hp-btn" onclick="changeHP('bandido-1',15,-1)">−</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Características</div>
+      <div class="trait-row"><span class="trait-key">Equipamiento:</span><span class="trait-val">Armadura de cuero, ballesta ligera, cimitarra</span></div>
+      <div class="trait-row"><span class="trait-key">Sentidos:</span><span class="trait-val">Percepción pasiva 10</span></div>
+      <div class="trait-row"><span class="trait-key">Idiomas:</span><span class="trait-val">común, jerga de ladrones</span></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Acciones</div>
+      <div class="attacks-list">
+        <div class="attack-item">
+          <span class="attack-name">Cimitarra</span>
+          <span class="attack-bonus">+3</span>
+          <span class="attack-dmg">1d6+1 cortante</span>
+          <span class="attack-note">alcance 1,50 m</span>
+        </div>
+        <div class="attack-item">
+          <span class="attack-name">Ballesta ligera</span>
+          <span class="attack-bonus">+3</span>
+          <span class="attack-dmg">1d8+1 perforante</span>
+          <span class="attack-note">24/96 m</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="card-footer">
+    <span class="footer-fluff">Frozen Sick · Wildemount</span>
+    <span class="xp-val">VD 1/8 · 25 XP</span>
+  </div>
+</div>
+
+<script>
+const NPC_CONFIG = { 'bandido-1': { hp: 15 } };
+function save(k,v){try{localStorage.setItem('syrinlya_'+k,JSON.stringify(v));}catch(e){}}
+function load(k,d){try{const v=localStorage.getItem('syrinlya_'+k);return v!==null?JSON.parse(v):d;}catch(e){return d;}}
+function updateHPDisplay(npc,max,cur){
+  const d=document.getElementById(npc+'-hp-display'),b=document.getElementById(npc+'-hp-bar');
+  if(!d||!b)return;
+  cur=Math.max(0,Math.min(max,cur));
+  d.textContent=cur;
+  const p=(cur/max)*100;
+  b.style.width=p+'%';
+  if(p>60){b.style.background='#90e8a0';d.className='hp-display full';}
+  else if(p>25){b.style.background='#ffd080';d.className='hp-display mid';}
+  else{b.style.background='#ff8080';d.className='hp-display low';}
+}
+function changeHP(npc,max,delta){
+  let cur=load(npc+'_hp',max);
+  cur=Math.max(0,Math.min(max,cur+delta));
+  save(npc+'_hp',cur);updateHPDisplay(npc,max,cur);
+}
+function applyDmg(npc,max){
+  const inp=document.getElementById(npc+'-hp-input');
+  const dmg=parseInt(inp.value)||0;if(dmg<=0)return;
+  let cur=load(npc+'_hp',max);
+  cur=Math.max(0,cur-dmg);
+  save(npc+'_hp',cur);updateHPDisplay(npc,max,cur);inp.value=1;
+}
+function resetNPC(npc){save(npc+'_hp',NPC_CONFIG[npc].hp);updateHPDisplay(npc,NPC_CONFIG[npc].hp,NPC_CONFIG[npc].hp);}
+window.addEventListener('DOMContentLoaded',()=>updateHPDisplay('bandido-1',15,load('bandido-1_hp',15)));
+</script>
+</body>
+</html>

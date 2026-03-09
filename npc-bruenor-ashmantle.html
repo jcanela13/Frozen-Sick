@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bruenor Ashmantle — Guerrero Enano · PHB 2024</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+
+  :root {
+    --ice: #a8d8ea; --frost: #d6eaf8; --ink: #0d1b2a;
+    --gold: #c9a84c; --gold-light: #e8c97a; --parchment: #f5efe0;
+    --silver: #bdc3c7; --green: #90e8a0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--ink);
+    background-image: radial-gradient(ellipse at 20% 20%, rgba(168,216,234,0.05) 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, rgba(201,168,76,0.04) 0%, transparent 60%);
+    font-family: 'Crimson Pro', Georgia, serif;
+    color: var(--parchment);
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+  .page-header { text-align:center; margin-bottom:50px; }
+  .page-header::before { content:'❄'; display:block; font-size:2rem; color:var(--ice); margin-bottom:10px; animation:pulse 3s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:0.6;transform:scale(1)} 50%{opacity:1;transform:scale(1.1)} }
+  .page-title { font-family:'Cinzel',serif; font-size:clamp(1.8rem,4vw,3rem); font-weight:700; color:var(--gold-light); letter-spacing:0.1em; text-shadow:0 0 40px rgba(201,168,76,0.3); }
+  .page-subtitle { font-style:italic; font-size:1.1rem; color:var(--ice); margin-top:8px; opacity:0.85; }
+  .divider { display:flex; align-items:center; gap:16px; margin:20px auto; max-width:400px; }
+  .divider-line { flex:1; height:1px; background:linear-gradient(to right,transparent,var(--gold),transparent); }
+  .divider-gem { color:var(--gold); font-size:0.8rem; }
+
+  /* RESET ALL BUTTON */
+  .reset-all-btn {
+    display: block; margin: 0 auto 40px;
+    font-family:'Cinzel',serif; font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase;
+    padding: 8px 20px; border-radius:3px;
+    border: 1px solid rgba(255,100,100,0.3); color:rgba(255,150,150,0.7);
+    background: rgba(255,100,100,0.05); cursor:pointer; transition:all 0.2s;
+  }
+  .reset-all-btn:hover { border-color:rgba(255,100,100,0.6); color:rgba(255,180,180,0.9); background:rgba(255,100,100,0.1); }
+
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(520px,1fr)); gap:40px; max-width:1200px; margin:0 auto; }
+
+  /* CARD BASE */
+  .npc-card {
+    background: linear-gradient(160deg,#1c2d3d 0%,#141f2a 60%,#0f1a23 100%);
+    border:1px solid rgba(201,168,76,0.25); border-radius:4px;
+    position:relative; overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(201,168,76,0.15);
+    transition:transform 0.3s ease, box-shadow 0.3s ease;
+    animation:fadeSlide 0.6s ease both;
+  }
+  .npc-card:nth-child(1){animation-delay:0.1s} .npc-card:nth-child(2){animation-delay:0.2s}
+  .npc-card:nth-child(3){animation-delay:0.3s} .npc-card:nth-child(4){animation-delay:0.4s}
+  @keyframes fadeSlide { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+  .npc-card:hover { transform:translateY(-3px); box-shadow:0 30px 70px rgba(0,0,0,0.7),0 0 30px rgba(168,216,234,0.05),inset 0 1px 0 rgba(201,168,76,0.2); }
+  .npc-card::before { content:''; position:absolute; top:0;left:0;right:0;height:3px; background:linear-gradient(90deg,transparent,var(--ice),var(--gold),var(--ice),transparent); opacity:0.7; }
+  .npc-card::after { content:''; position:absolute; top:8px;right:8px; width:30px;height:30px; border-top:1px solid rgba(201,168,76,0.3); border-right:1px solid rgba(201,168,76,0.3); }
+  .card-corner-bl { position:absolute; bottom:8px;left:8px; width:30px;height:30px; border-bottom:1px solid rgba(201,168,76,0.3); border-left:1px solid rgba(201,168,76,0.3); }
+
+  /* HEADER */
+  .card-header { padding:24px 28px 18px; display:flex; gap:20px; align-items:flex-start; border-bottom:1px solid rgba(201,168,76,0.12); }
+  .npc-avatar { width:72px;height:72px;border-radius:50%;border:2px solid rgba(201,168,76,0.4);display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0;box-shadow:0 0 20px rgba(0,0,0,0.4),inset 0 0 20px rgba(0,0,0,0.3);position:relative; }
+  .npc-avatar::after { content:'';position:absolute;inset:-4px;border-radius:50%;border:1px solid rgba(168,216,234,0.1); }
+  .npc-identity { flex:1; }
+  .npc-name { font-family:'Cinzel',serif; font-size:1.35rem; font-weight:600; color:var(--gold-light); letter-spacing:0.05em; line-height:1.2; }
+  .npc-title { font-style:italic; font-size:0.95rem; color:var(--ice); opacity:0.8; margin-top:2px; }
+  .npc-tags { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+  .tag { font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase; padding:2px 8px; border-radius:2px; border:1px solid; }
+  .tag-class{border-color:rgba(201,168,76,0.4);color:var(--gold);background:rgba(201,168,76,0.07)}
+  .tag-race{border-color:rgba(168,216,234,0.35);color:var(--ice);background:rgba(168,216,234,0.07)}
+  .tag-align{border-color:rgba(189,195,199,0.3);color:var(--silver);background:rgba(189,195,199,0.05)}
+  .tag-new{border-color:rgba(100,200,120,0.4);color:var(--green);background:rgba(100,200,120,0.07)}
+
+  /* STATS */
+  .stats-bar { display:grid;grid-template-columns:repeat(6,1fr);padding:12px 28px;border-bottom:1px solid rgba(201,168,76,0.12);background:rgba(0,0,0,0.15);gap:4px; }
+  .stat{text-align:center}
+  .stat-label{font-family:'Cinzel',serif;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--silver);opacity:0.7;display:block;margin-bottom:2px}
+  .stat-value{font-family:'Cinzel',serif;font-size:1.1rem;font-weight:600;color:var(--parchment);display:block;line-height:1}
+  .stat-mod{font-size:0.7rem;color:var(--ice);opacity:0.75;display:block;margin-top:1px}
+  .combat-row{display:flex;padding:10px 28px;border-bottom:1px solid rgba(201,168,76,0.1);background:rgba(0,0,0,0.1)}
+  .combat-stat{flex:1;text-align:center;position:relative}
+  .combat-stat+.combat-stat::before{content:'';position:absolute;left:0;top:15%;bottom:15%;width:1px;background:rgba(201,168,76,0.15)}
+  .combat-label{font-family:'Cinzel',serif;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--silver);opacity:0.65;display:block}
+  .combat-value{font-family:'Cinzel',serif;font-size:1rem;font-weight:600;color:var(--gold-light);display:block;margin-top:1px}
+
+  /* BODY */
+  .card-body{padding:0 28px}
+  .section{padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+  .section:last-child{border-bottom:none}
+  .section-title{font-family:'Cinzel',serif;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);opacity:0.8;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .section-title::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(201,168,76,0.2),transparent)}
+  .description-text{font-size:0.92rem;line-height:1.65;color:rgba(245,239,224,0.82);font-style:italic}
+  .rules-note{font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.1em;padding:2px 8px;border-radius:2px;border:1px solid rgba(100,200,120,0.3);color:var(--green);background:rgba(100,200,120,0.06);display:inline-block;margin-bottom:6px}
+  .traits-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .trait-item{font-size:0.82rem;color:rgba(245,239,224,0.78);line-height:1.4;padding-left:12px;position:relative}
+  .trait-item::before{content:'◆';position:absolute;left:0;color:var(--ice);font-size:0.5rem;top:3px;opacity:0.6}
+  .attacks-list{display:flex;flex-direction:column;gap:6px}
+  .attack-item{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,0.2);padding:8px 12px;border-radius:2px;border-left:2px solid rgba(201,168,76,0.3)}
+  .attack-name{font-family:'Cinzel',serif;font-size:0.78rem;font-weight:600;color:var(--parchment);flex:1}
+  .attack-bonus{font-size:0.82rem;color:var(--gold-light);font-weight:600;white-space:nowrap}
+  .attack-dmg{font-size:0.82rem;color:var(--ice);white-space:nowrap;opacity:0.9}
+  .attack-type{font-size:0.7rem;color:var(--silver);opacity:0.6;white-space:nowrap}
+  .ability-item{margin-bottom:8px;padding-left:14px;position:relative}
+  .ability-item::before{content:'✦';position:absolute;left:0;top:1px;color:var(--gold);font-size:0.6rem;opacity:0.7}
+  .ability-name{font-family:'Cinzel',serif;font-size:0.78rem;font-weight:600;color:var(--ice);margin-bottom:2px}
+  .ability-desc{font-size:0.83rem;color:rgba(245,239,224,0.72);line-height:1.5}
+  .saves-row{display:flex;flex-wrap:wrap;gap:6px}
+  .save-badge{font-family:'Cinzel',serif;font-size:0.65rem;padding:2px 8px;background:rgba(168,216,234,0.08);border:1px solid rgba(168,216,234,0.2);border-radius:2px;color:var(--ice)}
+  .skill-badge{font-family:'Cinzel',serif;font-size:0.65rem;padding:2px 8px;background:rgba(201,168,76,0.07);border:1px solid rgba(201,168,76,0.2);border-radius:2px;color:var(--gold-light)}
+  .companion-note{font-size:0.82rem;color:rgba(245,239,224,0.65);font-style:italic;background:rgba(168,216,234,0.04);border-left:2px solid rgba(168,216,234,0.3);padding:8px 12px;border-radius:0 2px 2px 0;margin-top:6px;line-height:1.5}
+
+  /* SHOP */
+  .shop-section{background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.12);border-radius:3px;padding:14px 16px;margin:14px 0}
+  .shop-title{font-family:'Cinzel',serif;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .shop-title::after{content:'';flex:1;height:1px;background:rgba(201,168,76,0.2)}
+  .shop-items{display:flex;flex-direction:column;gap:5px}
+  .shop-item{display:flex;align-items:flex-start;gap:10px;padding:6px 8px;background:rgba(0,0,0,0.15);border-radius:2px;border-left:2px solid transparent;transition:border-color 0.2s}
+  .shop-item:hover{border-left-color:rgba(201,168,76,0.4)}
+  .item-name{font-family:'Cinzel',serif;font-size:0.75rem;color:var(--parchment);flex:1}
+  .item-name small{display:block;font-family:'Crimson Pro',serif;font-size:0.78rem;color:rgba(245,239,224,0.6);font-weight:normal;letter-spacing:0;margin-top:1px;font-style:italic}
+  .item-price{font-family:'Cinzel',serif;font-size:0.75rem;color:var(--gold);white-space:nowrap;font-weight:600}
+  .item-stock{font-size:0.7rem;color:var(--silver);opacity:0.5;white-space:nowrap;align-self:center}
+
+  /* CARD FOOTER */
+  .card-footer{padding:12px 28px 20px;display:flex;justify-content:space-between;align-items:center;opacity:0.5}
+  .footer-fluff{font-family:'Cinzel',serif;font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--silver)}
+  .xp-val{font-family:'Cinzel',serif;font-size:0.7rem;color:var(--gold)}
+
+  /* AVATAR THEMES */
+  .card-bruenor .npc-avatar{background:radial-gradient(135deg,#2a1a0a,#1a0f06);border-color:rgba(180,100,40,0.5)}
+  .card-ysolde .npc-avatar{background:radial-gradient(135deg,#0a1a2a,#06121e);border-color:rgba(80,160,210,0.5)}
+  .card-mirax .npc-avatar{background:radial-gradient(135deg,#1a0a1a,#120812);border-color:rgba(150,80,200,0.5)}
+  .card-thordak .npc-avatar{background:radial-gradient(135deg,#0a1a0a,#071207);border-color:rgba(60,150,80,0.5)}
+  .card-bruenor::before{background:linear-gradient(90deg,transparent,#c67840,#c9a84c,#c67840,transparent)}
+  .card-ysolde::before{background:linear-gradient(90deg,transparent,#50a0d2,#a8d8ea,#50a0d2,transparent)}
+  .card-mirax::before{background:linear-gradient(90deg,transparent,#9650c8,#c8a8ea,#9650c8,transparent)}
+  .card-thordak::before{background:linear-gradient(90deg,transparent,#3c9650,#a8d8b0,#3c9650,transparent)}
+
+  /* ===========================
+     INTERACTIVE ELEMENTS
+  =========================== */
+
+  .interactive-panel {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 4px;
+    padding: 14px 16px;
+    margin: 14px 0 0;
+  }
+
+  .interactive-title {
+    font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.2em;
+    text-transform:uppercase; color:var(--gold); opacity:0.9;
+    margin-bottom:12px; display:flex; align-items:center; justify-content:space-between;
+  }
+
+  .reset-btn {
+    font-family:'Cinzel',serif; font-size:0.55rem; letter-spacing:0.1em;
+    text-transform:uppercase; padding:3px 10px; border-radius:2px;
+    border:1px solid rgba(255,100,100,0.3); color:rgba(255,150,150,0.6);
+    background:rgba(255,100,100,0.05); cursor:pointer; transition:all 0.2s;
+  }
+  .reset-btn:hover { border-color:rgba(255,100,100,0.6); color:rgba(255,180,180,0.9); background:rgba(255,100,100,0.1); }
+
+  /* HP TRACKER */
+  .hp-row {
+    display:flex; align-items:center; gap:10px; margin-bottom:12px;
+    padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+  .hp-label {
+    font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.12em;
+    text-transform:uppercase; color:var(--silver); opacity:0.7; min-width:28px;
+  }
+  .hp-display {
+    font-family:'Cinzel',serif; font-size:1.4rem; font-weight:700;
+    color:var(--parchment); min-width:42px; text-align:center;
+    transition: color 0.3s;
+  }
+  .hp-display.low { color:#ff8080; }
+  .hp-display.mid { color:#ffd080; }
+  .hp-display.full { color:#90e8a0; }
+  .hp-max { font-family:'Cinzel',serif; font-size:0.75rem; color:var(--silver); opacity:0.5; }
+  .hp-btn {
+    width:28px; height:28px; border-radius:50%;
+    border:1px solid rgba(201,168,76,0.35);
+    background:rgba(201,168,76,0.08);
+    color:var(--gold-light); font-size:1rem; line-height:1;
+    cursor:pointer; transition:all 0.15s; display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .hp-btn:hover { background:rgba(201,168,76,0.2); border-color:rgba(201,168,76,0.6); }
+  .hp-btn:active { transform:scale(0.92); }
+  .hp-input {
+    width:46px; text-align:center;
+    background:rgba(0,0,0,0.3); border:1px solid rgba(201,168,76,0.2);
+    border-radius:2px; color:var(--parchment);
+    font-family:'Cinzel',serif; font-size:0.8rem; padding:3px 4px;
+  }
+  .hp-input:focus { outline:none; border-color:rgba(201,168,76,0.5); }
+  .hp-apply-btn {
+    font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.1em;
+    text-transform:uppercase; padding:4px 10px; border-radius:2px;
+    border:1px solid rgba(168,216,234,0.3); color:var(--ice);
+    background:rgba(168,216,234,0.06); cursor:pointer; transition:all 0.2s;
+  }
+  .hp-apply-btn:hover { background:rgba(168,216,234,0.15); border-color:rgba(168,216,234,0.6); }
+  .hp-bar-wrap {
+    flex:1; height:6px; background:rgba(0,0,0,0.4); border-radius:3px; overflow:hidden;
+    border:1px solid rgba(255,255,255,0.05);
+  }
+  .hp-bar {
+    height:100%; border-radius:3px; transition:width 0.4s ease, background 0.4s ease;
+  }
+
+  /* SLOT PIPS */
+  .slots-section { margin-bottom:10px; }
+  .slots-row { display:flex; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap; }
+  .slots-label {
+    font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--silver); opacity:0.7; min-width:52px;
+  }
+  .pip-group { display:flex; gap:5px; flex-wrap:wrap; }
+  .pip {
+    width:18px; height:18px; border-radius:50%;
+    border:1.5px solid rgba(168,216,234,0.5);
+    background:rgba(168,216,234,0.15);
+    cursor:pointer; transition:all 0.15s;
+    position:relative;
+  }
+  .pip.used {
+    background:rgba(0,0,0,0.4);
+    border-color:rgba(168,216,234,0.18);
+  }
+  .pip.used::after {
+    content:'×'; position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:0.7rem; color:rgba(168,216,234,0.3); line-height:1;
+  }
+  .pip:hover:not(.used) { background:rgba(168,216,234,0.35); border-color:rgba(168,216,234,0.9); transform:scale(1.15); }
+  .pip:hover.used { border-color:rgba(168,216,234,0.4); transform:scale(1.1); }
+
+  /* ABILITY USES */
+  .uses-section { margin-bottom:6px; }
+  .uses-row { display:flex; align-items:center; gap:8px; margin-bottom:7px; flex-wrap:wrap; }
+  .uses-label {
+    font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:0.08em;
+    color:var(--ice); flex:1; min-width:120px;
+  }
+  .uses-pips { display:flex; gap:5px; }
+  .use-pip {
+    width:16px; height:16px; border-radius:2px;
+    border:1.5px solid rgba(201,168,76,0.45);
+    background:rgba(201,168,76,0.15);
+    cursor:pointer; transition:all 0.15s;
+    position:relative;
+  }
+  .use-pip.used {
+    background:rgba(0,0,0,0.4);
+    border-color:rgba(201,168,76,0.15);
+  }
+  .use-pip.used::after {
+    content:'×'; position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:0.65rem; color:rgba(201,168,76,0.25); line-height:1;
+  }
+  .use-pip:hover:not(.used) { background:rgba(201,168,76,0.35); border-color:rgba(201,168,76,0.9); transform:scale(1.1); }
+  .use-pip:hover.used { border-color:rgba(201,168,76,0.4); }
+  .recharge-tag {
+    font-family:'Cinzel',serif; font-size:0.55rem; letter-spacing:0.08em;
+    text-transform:uppercase; color:rgba(168,216,234,0.5);
+    background:rgba(168,216,234,0.06); border:1px solid rgba(168,216,234,0.15);
+    padding:1px 6px; border-radius:2px;
+  }
+
+  @media(max-width:600px){.grid{grid-template-columns:1fr}.stats-bar{grid-template-columns:repeat(3,1fr)}.traits-grid{grid-template-columns:1fr}}
+
+  /* Single card layout */
+  body { max-width: 620px; margin: 0 auto; padding: 30px 16px 60px; }
+  .npc-card { animation: fadeSlide 0.5s ease both; }
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: "Cinzel", serif; font-size: 0.6rem; letter-spacing: 0.15em;
+    text-transform: uppercase; color: rgba(168,216,234,0.5);
+    text-decoration: none; margin-bottom: 24px;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: rgba(168,216,234,0.9); }
+</style>
+</head>
+<body>
+
+<a class="back-link" href="syrinlya-npcs.html">← Volver a todos los aventureros</a>
+
+<div class="npc-card card-bruenor">
+  <div class="card-corner-bl"></div>
+  <div class="card-header">
+    <div class="npc-avatar">⚒️</div>
+    <div class="npc-identity">
+      <div class="npc-name">Bruenor Ashmantle</div>
+      <div class="npc-title">"El Yunque del Norte" · Veterano de las Minas de Vermaloc</div>
+      <div class="npc-tags">
+        <span class="tag tag-class">Guerrero Nv.3</span>
+        <span class="tag tag-race">Enano</span>
+        <span class="tag tag-align">Legal Neutral</span>
+        <span class="tag tag-new">PHB 2024</span>
+      </div>
+    </div>
+  </div>
+  <div class="stats-bar">
+    <div class="stat"><span class="stat-label">FUE</span><span class="stat-value">16</span><span class="stat-mod">+3</span></div>
+    <div class="stat"><span class="stat-label">DES</span><span class="stat-value">10</span><span class="stat-mod">+0</span></div>
+    <div class="stat"><span class="stat-label">CON</span><span class="stat-value">16</span><span class="stat-mod">+3</span></div>
+    <div class="stat"><span class="stat-label">INT</span><span class="stat-value">10</span><span class="stat-mod">+0</span></div>
+    <div class="stat"><span class="stat-label">SAB</span><span class="stat-value">12</span><span class="stat-mod">+1</span></div>
+    <div class="stat"><span class="stat-label">CAR</span><span class="stat-value">8</span><span class="stat-mod">-1</span></div>
+  </div>
+  <div class="combat-row">
+    <div class="combat-stat"><span class="combat-label">CA</span><span class="combat-value">17</span></div>
+    <div class="combat-stat"><span class="combat-label">PG Máx.</span><span class="combat-value">34</span></div>
+    <div class="combat-stat"><span class="combat-label">Velocidad</span><span class="combat-value">25 ft</span></div>
+    <div class="combat-stat"><span class="combat-label">Iniciativa</span><span class="combat-value">+2</span></div>
+    <div class="combat-stat"><span class="combat-label">Prof.</span><span class="combat-value">+2</span></div>
+  </div>
+  <div class="card-body">
+
+    <!-- INTERACTIVE PANEL -->
+    <div class="interactive-panel">
+      <div class="interactive-title">
+        <span>⚙ Estado de sesión</span>
+        <button class="reset-btn" onclick="resetNPC('bruenor')">↺ Resetear</button>
+      </div>
+      <!-- HP -->
+      <div class="hp-row">
+        <span class="hp-label">PG</span>
+        <div id="bruenor-hp-display" class="hp-display full">34</div>
+        <span class="hp-max">/ 34</span>
+        <div class="hp-bar-wrap"><div id="bruenor-hp-bar" class="hp-bar" style="width:100%;background:#90e8a0"></div></div>
+        <button class="hp-btn" onclick="changeHP('bruenor',34,1)">+</button>
+        <input id="bruenor-hp-input" class="hp-input" type="number" min="1" value="1" placeholder="n">
+        <button class="hp-apply-btn" onclick="applyDmg('bruenor',34)">Daño</button>
+        <button class="hp-btn" onclick="changeHP('bruenor',34,-1)">−</button>
+      </div>
+      <!-- ABILITY USES -->
+      <div class="uses-section">
+        <div class="uses-row">
+          <span class="uses-label">Oleada de Acción</span>
+          <div class="uses-pips" id="bruenor-surge"></div>
+          <span class="recharge-tag">desc. corto</span>
+        </div>
+        <div class="uses-row">
+          <span class="uses-label">Segunda Oportunidad</span>
+          <div class="uses-pips" id="bruenor-second"></div>
+          <span class="recharge-tag">desc. corto</span>
+        </div>
+        <div class="uses-row">
+          <span class="uses-label">Iniciado Magia de Guerra</span>
+          <div class="uses-pips" id="bruenor-magic"></div>
+          <span class="recharge-tag">desc. largo</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Descripción</div>
+      <span class="rules-note">⚙ Especie: Enano · Trasfondo: Soldado · Talento: Iniciado en Magia de Guerra</span>
+      <p class="description-text">Enano de complexión robusta, piel curtida y barba trenzada con anillos de hierro. Llegó a Syrinlya buscando minerales raros, pero se quedó porque "el frío mantiene la mente despierta". Desconfía de los magos y adora las hachas.</p>
+    </div>
+    <div class="section">
+      <div class="section-title">Ataques</div>
+      <div class="attacks-list">
+        <div class="attack-item"><span class="attack-name">Hacha de Guerra</span><span class="attack-bonus">+5</span><span class="attack-dmg">1d8+3 cortante</span><span class="attack-type">Versátil 1d10</span></div>
+        <div class="attack-item"><span class="attack-name">Hacha de mano (lanzada)</span><span class="attack-bonus">+5</span><span class="attack-dmg">1d6+3 cortante</span><span class="attack-type">20/60 ft · Ligera</span></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Especie: Enano (2024)</div>
+      <div class="ability-item"><div class="ability-name">Resiliencia Enana</div><div class="ability-desc">Ventaja en TS contra veneno; resistencia al daño por veneno.</div></div>
+      <div class="ability-item"><div class="ability-name">Sin penalización de velocidad por armadura pesada</div></div>
+      <div class="ability-item"><div class="ability-name">Visión en la Oscuridad 60 ft</div></div>
+    </div>
+    <div class="section">
+      <div class="section-title">Clase: Guerrero (2024)</div>
+      <div class="ability-item"><div class="ability-name">Estilo de Combate: Defensa</div><div class="ability-desc">+1 CA con armadura (CA total 17).</div></div>
+      <div class="ability-item"><div class="ability-name">Segunda Oportunidad ★ 1/desc. corto</div><div class="ability-desc">Reacción: cuando un ataque le impacta, obliga al atacante a repetir la tirada y usar el nuevo resultado.</div></div>
+      <div class="ability-item"><div class="ability-name">Oleada de Acción ★ 1/desc. corto</div><div class="ability-desc">Acción adicional en su turno. En 2024 recarga con descanso corto.</div></div>
+      <div class="ability-item"><div class="ability-name">Arquetipo: Campeón (subclase 2014)</div><div class="ability-desc">Crítico con 19-20. Atleta Extraordinario: añade la mitad del bono de prof. a tiradas de FUE/DES/CON sin competencia.</div></div>
+    </div>
+    <div class="section">
+      <div class="section-title">Trasfondo: Soldado · Talento inicial</div>
+      <div class="ability-item"><div class="ability-name">Iniciado en Magia de Guerra ★ 1/desc. largo</div><div class="ability-desc">Trucos: Taumaturgia y Chispa de Fuego. Puede lanzar un hechizo de Nv.1 una vez sin ranura por descanso largo.</div></div>
+    </div>
+    <div class="section">
+      <div class="section-title">Tiradas de Salvación · Competencias</div>
+      <div class="saves-row">
+        <span class="save-badge">FUE +5</span><span class="save-badge">CON +5</span>
+        <span class="skill-badge">Atletismo +5</span><span class="skill-badge">Intimidación +1</span><span class="skill-badge">Percepción +3</span><span class="skill-badge">Supervivencia +3</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Nota de compañero</div>
+      <div class="companion-note">💬 Segunda Oportunidad puede anular un crítico al grupo entero. Oleada de Acción recarga en descanso corto: muy eficiente. Ideal si el grupo carece de frontliner. No inicia conversaciones; hay que ganarse su respeto en combate.</div>
+    </div>
+    <div class="shop-section">
+      <div class="shop-title">🛒 Vende en Syrinlya</div>
+      <div class="shop-items">
+        <div class="shop-item"><div class="item-name">Hacha de guerra de permafrost<small>+1 daño extra contra criaturas del frío en la primera ronda. Versátil (1d10).</small></div><span class="item-price">80 po</span><span class="item-stock">×1</span></div>
+        <div class="shop-item"><div class="item-name">Aceite Calorífico (3 dosis)<small>1 hora: ignora penalización por frío extremo en CA, o +1d4 fuego al arma impregnada.</small></div><span class="item-price">15 po</span><span class="item-stock">×5</span></div>
+        <div class="shop-item"><div class="item-name">Arpón de escalar + cuerda de seda (15 m)<small>Ventaja en trepar hielo. Equipo de escalada según PHB 2024.</small></div><span class="item-price">20 po</span><span class="item-stock">×3</span></div>
+        <div class="shop-item"><div class="item-name">Ración ártica (7 días)<small>Cancela el nivel de Agotamiento leve por exposición al frío ese día.</small></div><span class="item-price">10 po</span><span class="item-stock">×8</span></div>
+        <div class="shop-item"><div class="item-name">Mapa parcial de Eiselcross<small>Ventaja en Supervivencia para orientarse durante 5 días de travesía al norte.</small></div><span class="item-price">25 po</span><span class="item-stock">×2</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="card-footer"><span class="footer-fluff">Syrinlya · Puerto del Hielo · PHB 2024</span><span class="xp-val">CR equiv. ½ · 100 XP</span></div>
+</div>
+
+<script>
+
+const NPC_CONFIG = {
+  bruenor: {
+    hp: 34,
+    slots: {},
+    uses: {
+      surge:  { label:'Oleada de Acción',        total:1 },
+      second: { label:'Segunda Oportunidad',      total:1 },
+      magic:  { label:'Iniciado Magia de Guerra', total:1 }
+    }
+  }
+};
+
+// ============================================================
+//  STORAGE HELPERS
+// ============================================================
+function save(key, val) {
+  try { localStorage.setItem('syrinlya_' + key, JSON.stringify(val)); } catch(e){}
+}
+function load(key, def) {
+  try {
+    const v = localStorage.getItem('syrinlya_' + key);
+    return v !== null ? JSON.parse(v) : def;
+  } catch(e){ return def; }
+}
+
+// ============================================================
+//  HP
+// ============================================================
+function updateHPDisplay(npc, maxHp, current) {
+  const disp = document.getElementById(npc + '-hp-display');
+  const bar  = document.getElementById(npc + '-hp-bar');
+  if (!disp || !bar) return;
+  current = Math.max(0, Math.min(maxHp, current));
+  disp.textContent = current;
+  const pct = (current / maxHp) * 100;
+  bar.style.width = pct + '%';
+  if (pct > 60)      { bar.style.background='#90e8a0'; disp.className='hp-display full'; }
+  else if (pct > 25) { bar.style.background='#ffd080'; disp.className='hp-display mid'; }
+  else               { bar.style.background='#ff8080'; disp.className='hp-display low'; }
+}
+
+function changeHP(npc, maxHp, delta) {
+  let cur = load(npc + '_hp', maxHp);
+  cur = Math.max(0, Math.min(maxHp, cur + delta));
+  save(npc + '_hp', cur);
+  updateHPDisplay(npc, maxHp, cur);
+}
+
+function applyDmg(npc, maxHp) {
+  const inp = document.getElementById(npc + '-hp-input');
+  const dmg = parseInt(inp.value) || 0;
+  if (dmg <= 0) return;
+  let cur = load(npc + '_hp', maxHp);
+  cur = Math.max(0, cur - dmg);
+  save(npc + '_hp', cur);
+  updateHPDisplay(npc, maxHp, cur);
+  inp.value = 1;
+}
+
+// ============================================================
+//  SPELL SLOTS (pips)
+// ============================================================
+function buildSlots(npc, level, total) {
+  const key = npc + (level === 'sorcery' ? '_sorcery' : '_slots_' + level);
+  const used = load(key, []);
+  const containerId = npc + (level === 'sorcery' ? '-sorcery' : '-slots-' + level);
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+  for (let i = 0; i < total; i++) {
+    const pip = document.createElement('div');
+    pip.className = 'pip' + (used[i] ? ' used' : '');
+    pip.title = level === 'sorcery' ? 'Punto de hechicería ' + (i+1) : 'Ranura Nv.' + level + ' #' + (i+1);
+    pip.onclick = () => toggleSlot(npc, level, i, total);
+    container.appendChild(pip);
+  }
+}
+
+function toggleSlot(npc, level, idx, total) {
+  const key = npc + (level === 'sorcery' ? '_sorcery' : '_slots_' + level);
+  const used = load(key, []);
+  used[idx] = !used[idx];
+  save(key, used);
+  buildSlots(npc, level, total);
+}
+
+// ============================================================
+//  ABILITY USES (square pips)
+// ============================================================
+function buildUses(npc, abilityKey, total) {
+  const storageKey = npc + '_use_' + abilityKey;
+  const used = load(storageKey, []);
+  const container = document.getElementById(npc + '-' + abilityKey);
+  if (!container) return;
+  container.innerHTML = '';
+  for (let i = 0; i < total; i++) {
+    const pip = document.createElement('div');
+    pip.className = 'use-pip' + (used[i] ? ' used' : '');
+    pip.onclick = () => toggleUse(npc, abilityKey, i, total);
+    container.appendChild(pip);
+  }
+}
+
+function toggleUse(npc, abilityKey, idx, total) {
+  const storageKey = npc + '_use_' + abilityKey;
+  const used = load(storageKey, []);
+  used[idx] = !used[idx];
+  save(storageKey, used);
+  buildUses(npc, abilityKey, total);
+}
+
+// ============================================================
+//  INIT & RESET
+// ============================================================
+function initNPC(npc) {
+  const cfg = NPC_CONFIG[npc];
+  // HP
+  const curHp = load(npc + '_hp', cfg.hp);
+  updateHPDisplay(npc, cfg.hp, curHp);
+  // Slots
+  for (const [level, total] of Object.entries(cfg.slots)) {
+    buildSlots(npc, level, total);
+  }
+  // Uses
+  for (const [key, data] of Object.entries(cfg.uses)) {
+    buildUses(npc, key, data.total);
+  }
+}
+
+function resetNPC(npc) {
+  const cfg = NPC_CONFIG[npc];
+  save(npc + '_hp', cfg.hp);
+  for (const level of Object.keys(cfg.slots)) {
+    const storageKey = npc + (level === 'sorcery' ? '_sorcery' : '_slots_' + level);
+    save(storageKey, []);
+  }
+  for (const key of Object.keys(cfg.uses)) {
+    save(npc + '_use_' + key, []);
+  }
+  initNPC(npc);
+}
+
+function resetAll() { resetNPC('bruenor'); }
+
+// ============================================================
+//  BOOT
+// ============================================================
+window.addEventListener('DOMContentLoaded', () => { initNPC('bruenor'); });
+
+
+</script>
+</body>
+</html>
