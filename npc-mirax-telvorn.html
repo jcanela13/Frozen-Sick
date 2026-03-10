@@ -287,6 +287,62 @@
     transition: color 0.2s;
   }
   .back-link:hover { color: rgba(168,216,234,0.9); }
+
+  /* ===== EDITABLE NAME ===== */
+  .npc-name-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed rgba(201,168,76,0.0);
+    color: var(--gold-light, #f0d080);
+    font-family: 'Cinzel', serif;
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    line-height: 1.2;
+    outline: none;
+    width: 100%;
+    cursor: text;
+    transition: border-color 0.25s, background 0.25s;
+    padding: 0;
+  }
+  .npc-name-input:hover { border-bottom-color: rgba(201,168,76,0.2); }
+  .npc-name-input:focus { border-bottom-color: rgba(201,168,76,0.6); background: rgba(201,168,76,0.04); }
+
+  /* ===== STATUS BAR ===== */
+  .status-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 28px;
+    border-bottom: 1px solid rgba(201,168,76,0.07);
+    background: rgba(0,0,0,0.18);
+    flex-wrap: wrap;
+  }
+  .status-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(189,195,199,0.45);
+    flex-shrink: 0;
+  }
+  .status-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed rgba(200,100,100,0.0);
+    color: rgba(232,128,128,0.8);
+    font-family: 'Cinzel', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    min-width: 200px;
+    outline: none;
+    padding: 1px 4px;
+    transition: border-color 0.25s, background 0.25s;
+  }
+  .status-input::placeholder { color: rgba(189,195,199,0.25); font-style: italic; }
+  .status-input:hover { border-bottom-color: rgba(200,100,100,0.3); }
+  .status-input:focus { border-bottom-color: rgba(200,100,100,0.65); background: rgba(200,100,100,0.04); }
+
 </style>
 </head>
 <body>
@@ -298,7 +354,7 @@
   <div class="card-header">
     <div class="npc-avatar">🔮</div>
     <div class="npc-identity">
-      <div class="npc-name">Mirax Telvorn</div>
+      <input class="npc-name-input" id="mirax-name-input" type="text" value="Mirax Telvorn">
       <div class="npc-title">"La Compradora de Secretos" · Comerciante y maga menor</div>
       <div class="npc-tags">
         <span class="tag tag-class">Hechicera Nv.3</span>
@@ -306,6 +362,11 @@
         <span class="tag tag-align">Neutral Caótica</span>
         <span class="tag tag-new">PHB 2024</span>
       </div>
+  <div class="status-bar">
+    <span class="status-label">Estado / Condiciones:</span>
+    <input class="status-input" id="mirax-status" placeholder="Normal — sin condiciones activas" type="text">
+  </div>
+
     </div>
   </div>
   <div class="stats-bar">
@@ -599,7 +660,23 @@ function resetNPC(npc) {
   initNPC(npc);
 }
 
-function resetAll() { resetNPC('mirax'); }
+function resetAll() { resetNPC('mirax'); 
+  // Save/load status
+  const statusEl = document.getElementById('mirax-status');
+  if(statusEl) {
+    const savedStatus = localStorage.getItem('mirax_status');
+    if(savedStatus) statusEl.value = savedStatus;
+    statusEl.addEventListener('input', () => localStorage.setItem('mirax_status', statusEl.value));
+  }
+  // Save/load name
+  const nameEl = document.getElementById('mirax-name-input');
+  if(nameEl) {
+    const savedName = localStorage.getItem('mirax_name');
+    if(savedName) nameEl.value = savedName;
+    nameEl.addEventListener('input', () => localStorage.setItem('mirax_name', nameEl.value));
+  }
+
+}
 
 // ============================================================
 //  BOOT
