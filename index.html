@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frozen Sick — DM Index</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #0e1118;
+    --border: rgba(255,255,255,0.07);
+    --gold: #c9a84c;
+    --gold-dim: rgba(201,168,76,0.55);
+    --text: #e8e4d8;
+    --muted: rgba(232,228,216,0.45);
+
+    --c-pc:      #4a9eff;
+    --c-npc:     #b06eff;
+    --c-boss:    #ff9f1c;
+    --c-monster: #ff5c5c;
+    --c-item:    #4ecf8a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Crimson Pro', Georgia, serif;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(180deg, #0c0e14 0%, #090b10 100%);
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+    padding: 36px 24px 28px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.07) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .header-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 8px;
+  }
+  h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.06em;
+    line-height: 1.15;
+  }
+  .header-sub {
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+
+  /* ── SEARCH + FILTER BAR ── */
+  .toolbar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 18px 24px;
+    background: #0b0d12;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 180px;
+  }
+  .search-wrap input {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    padding: 8px 12px 8px 34px;
+    color: var(--text);
+    font-family: 'Crimson Pro', serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-wrap input:focus { border-color: var(--gold-dim); }
+  .search-wrap input::placeholder { color: var(--muted); }
+  .search-icon {
+    position: absolute;
+    left: 10px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 0.85rem;
+    pointer-events: none;
+  }
+
+  .filter-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+  .filter-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 3px;
+    border: 1px solid;
+    cursor: pointer;
+    background: transparent;
+    transition: background 0.15s, color 0.15s;
+  }
+  .filter-btn[data-cat="all"]     { border-color: rgba(255,255,255,0.2); color: var(--text); }
+  .filter-btn[data-cat="pc"]      { border-color: var(--c-pc);      color: var(--c-pc); }
+  .filter-btn[data-cat="npc"]     { border-color: var(--c-npc);     color: var(--c-npc); }
+  .filter-btn[data-cat="boss"]    { border-color: var(--c-boss);    color: var(--c-boss); }
+  .filter-btn[data-cat="monster"] { border-color: var(--c-monster); color: var(--c-monster); }
+  .filter-btn[data-cat="item"]    { border-color: var(--c-item);    color: var(--c-item); }
+
+  .filter-btn.active,
+  .filter-btn:hover {
+    color: #0a0c10 !important;
+  }
+  .filter-btn[data-cat="all"].active,
+  .filter-btn[data-cat="all"]:hover    { background: var(--text); }
+  .filter-btn[data-cat="pc"].active,
+  .filter-btn[data-cat="pc"]:hover     { background: var(--c-pc); }
+  .filter-btn[data-cat="npc"].active,
+  .filter-btn[data-cat="npc"]:hover    { background: var(--c-npc); }
+  .filter-btn[data-cat="boss"].active,
+  .filter-btn[data-cat="boss"]:hover   { background: var(--c-boss); }
+  .filter-btn[data-cat="monster"].active,
+  .filter-btn[data-cat="monster"]:hover{ background: var(--c-monster); }
+  .filter-btn[data-cat="item"].active,
+  .filter-btn[data-cat="item"]:hover   { background: var(--c-item); }
+
+  /* ── MAIN ── */
+  main { padding: 24px; max-width: 1200px; margin: 0 auto; }
+
+  /* ── SECTION ── */
+  .section { margin-bottom: 36px; }
+  .section-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    border-bottom: 1px solid rgba(201,168,76,0.15);
+    padding-bottom: 8px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-count {
+    font-size: 0.6rem;
+    background: rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 1px 7px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── GRID ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 11px 13px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    text-decoration: none;
+    color: var(--text);
+    transition: transform 0.15s, border-color 0.15s, background 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+  }
+  .card[data-cat="pc"]::before      { background: var(--c-pc); }
+  .card[data-cat="npc"]::before     { background: var(--c-npc); }
+  .card[data-cat="boss"]::before    { background: var(--c-boss); }
+  .card[data-cat="monster"]::before { background: var(--c-monster); }
+  .card[data-cat="item"]::before    { background: var(--c-item); }
+
+  .card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255,255,255,0.15);
+    background: #131720;
+  }
+
+  .card-icon {
+    font-size: 1.3rem;
+    flex-shrink: 0;
+    width: 32px;
+    text-align: center;
+  }
+
+  .card-info { flex: 1; min-width: 0; }
+  .card-name {
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .card-meta {
+    font-size: 0.72rem;
+    font-style: italic;
+    color: var(--muted);
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .card-badge {
+    font-family: 'Cinzel', serif;
+    font-size: 0.48rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    border: 1px solid;
+  }
+  .card[data-cat="pc"]      .card-badge { color: var(--c-pc);      border-color: var(--c-pc);      background: rgba(74,158,255,0.08); }
+  .card[data-cat="npc"]     .card-badge { color: var(--c-npc);     border-color: var(--c-npc);     background: rgba(176,110,255,0.08); }
+  .card[data-cat="boss"]    .card-badge { color: var(--c-boss);    border-color: var(--c-boss);    background: rgba(255,159,28,0.08); }
+  .card[data-cat="monster"] .card-badge { color: var(--c-monster); border-color: var(--c-monster); background: rgba(255,92,92,0.08); }
+  .card[data-cat="item"]    .card-badge { color: var(--c-item);    border-color: var(--c-item);    background: rgba(78,207,138,0.08); }
+
+  /* ── HIDDEN ── */
+  .card.hidden { display: none; }
+
+  /* ── EMPTY STATE ── */
+  .empty {
+    display: none;
+    text-align: center;
+    padding: 40px;
+    color: var(--muted);
+    font-style: italic;
+    grid-column: 1/-1;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 24px;
+    font-size: 0.78rem;
+    font-style: italic;
+    color: rgba(232,228,216,0.2);
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-eyebrow">D&amp;D 5e · Eiselcross</div>
+  <h1>Frozen Sick</h1>
+  <div class="header-sub">Fichas de personajes, PNJs, jefes, monstruos y objetos</div>
+</header>
+
+<div class="toolbar">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search" placeholder="Buscar por nombre…" oninput="filterCards()">
+  </div>
+  <div class="filter-btns">
+    <button class="filter-btn active" data-cat="all"     onclick="setFilter('all')">Todo</button>
+    <button class="filter-btn"        data-cat="pc"      onclick="setFilter('pc')">Jugador</button>
+    <button class="filter-btn"        data-cat="npc"     onclick="setFilter('npc')">PNJ</button>
+    <button class="filter-btn"        data-cat="boss"    onclick="setFilter('boss')">Jefe</button>
+    <button class="filter-btn"        data-cat="monster" onclick="setFilter('monster')">Monstruo</button>
+    <button class="filter-btn"        data-cat="item"    onclick="setFilter('item')">Objeto</button>
+  </div>
+</div>
+
+<main>
+
+  <!-- ══ JUGADORES ══ -->
+  <div class="section" data-section="pc">
+    <div class="section-title">⚔️ Jugadores <span class="section-count" id="count-pc"></span></div>
+    <div class="grid" id="grid-pc">
+      <a class="card" data-cat="pc" data-name="Brila Smugstorm" href="pc-brila-smugstorm.html" target="_blank">
+        <span class="card-icon">🧝</span>
+        <div class="card-info">
+          <div class="card-name">Brila Smugstorm</div>
+          <div class="card-meta">Enana · Clérigo Nv.3 · Tormenta</div>
+        </div>
+        <span class="card-badge">PJ</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ══ NPCs ══ -->
+  <div class="section" data-section="npc">
+    <div class="section-title">🗣️ Personajes No Jugadores <span class="section-count" id="count-npc"></span></div>
+    <div class="grid" id="grid-npc">
+      <a class="card" data-cat="npc" data-name="Bruenor Ashmantle" href="npc-bruenor-ashmantle.html" target="_blank">
+        <span class="card-icon">🧔</span>
+        <div class="card-info">
+          <div class="card-name">Bruenor Ashmantle</div>
+          <div class="card-meta">Palebank Village</div>
+        </div>
+        <span class="card-badge">PNJ</span>
+      </a>
+      <a class="card" data-cat="npc" data-name="Mirax Telvorn" href="npc-mirax-telvorn.html" target="_blank">
+        <span class="card-icon">🧝‍♀️</span>
+        <div class="card-info">
+          <div class="card-name">Mirax Telvorn</div>
+          <div class="card-meta">Palebank Village</div>
+        </div>
+        <span class="card-badge">PNJ</span>
+      </a>
+      <a class="card" data-cat="npc" data-name="Thordak Rootbark" href="npc-thordak-rootbark.html" target="_blank">
+        <span class="card-icon">🧙</span>
+        <div class="card-info">
+          <div class="card-name">Thordak Rootbark</div>
+          <div class="card-meta">Palebank Village</div>
+        </div>
+        <span class="card-badge">PNJ</span>
+      </a>
+      <a class="card" data-cat="npc" data-name="Ysolde Vane" href="npc-ysolde-vane.html" target="_blank">
+        <span class="card-icon">👩</span>
+        <div class="card-info">
+          <div class="card-name">Ysolde Vane</div>
+          <div class="card-meta">Palebank Village</div>
+        </div>
+        <span class="card-badge">PNJ</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ══ JEFES ══ -->
+  <div class="section" data-section="boss">
+    <div class="section-title">💀 Jefes <span class="section-count" id="count-boss"></span></div>
+    <div class="grid" id="grid-boss">
+      <a class="card" data-cat="boss" data-name="Ferol Sal" href="monster-ferol-sal.html" target="_blank">
+        <span class="card-icon">☠️</span>
+        <div class="card-info">
+          <div class="card-name">Ferol Sal</div>
+          <div class="card-meta">Salsvault · Jefe Final</div>
+        </div>
+        <span class="card-badge">Jefe</span>
+      </a>
+      <a class="card" data-cat="boss" data-name="Raeglin Mau" href="monster-raeglin-mau.html" target="_blank">
+        <span class="card-icon">🗡️</span>
+        <div class="card-info">
+          <div class="card-name">Raeglin Mau</div>
+          <div class="card-meta">Frozen Sick · Lugarteniente</div>
+        </div>
+        <span class="card-badge">Jefe</span>
+      </a>
+      <a class="card" data-cat="boss" data-name="Hulil Lutan" href="monster-hulil-lutan.html" target="_blank">
+        <span class="card-icon">🧝‍♀️</span>
+        <div class="card-info">
+          <div class="card-name">Hulil Lutan</div>
+          <div class="card-meta">Frozen Sick · Jefa</div>
+        </div>
+        <span class="card-badge">Jefe</span>
+      </a>
+      <a class="card" data-cat="boss" data-name="Tulgi Lutan" href="monster-tulgi-lutan.html" target="_blank">
+        <span class="card-icon">⚔️</span>
+        <div class="card-info">
+          <div class="card-name">Tulgi Lutan</div>
+          <div class="card-meta">Frozen Sick · Hermana</div>
+        </div>
+        <span class="card-badge">Jefe</span>
+      </a>
+      <a class="card" data-cat="boss" data-name="Croador Anciano" href="monster-croador-anciano.html" target="_blank">
+        <span class="card-icon">🦎</span>
+        <div class="card-info">
+          <div class="card-name">Croador Anciano</div>
+          <div class="card-meta">VD 2 · Frozen Sick</div>
+        </div>
+        <span class="card-badge">Jefe</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ══ OBJETOS ══ -->
+  <div class="section" data-section="item">
+    <div class="section-title">✨ Objetos <span class="section-count" id="count-item"></span></div>
+    <div class="grid" id="grid-item">
+      <a class="card" data-cat="item" data-name="Daga +1" href="item-daga-mas-1.html" target="_blank">
+        <span class="card-icon">🗡️</span>
+        <div class="card-info"><div class="card-name">Daga +1</div><div class="card-meta">Arma · Poco común</div></div>
+        <span class="card-badge">Arma</span>
+      </a>
+      <a class="card" data-cat="item" data-name="Ojo de imitación" href="item-ojo-imitacion.html" target="_blank">
+        <span class="card-icon">👁️</span>
+        <div class="card-info"><div class="card-name">Ojo de imitación</div><div class="card-meta">Maravilloso · Común</div></div>
+        <span class="card-badge">Objeto</span>
+      </a>
+      <a class="card" data-cat="item" data-name="Recibo Pelc Curiosities" href="item-recibo.html" target="_blank">
+        <span class="card-icon">🧾</span>
+        <div class="card-info"><div class="card-name">Recibo — Las Curiosidades de Pelc</div><div class="card-meta">Urgon Wenth · 1000 po</div></div>
+        <span class="card-badge">Doc</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ══ MONSTRUOS ══ -->
+  <div class="section" data-section="monster">
+    <div class="section-title">👹 Monstruos <span class="section-count" id="count-monster"></span></div>
+    <div class="grid" id="grid-monster">
+
+      <!-- Encuentros aleatorios -->
+      <a class="card" data-cat="monster" data-name="Remorhaz Joven" href="monster-remorhaz-joven.html" target="_blank">
+        <span class="card-icon">🐛</span>
+        <div class="card-info"><div class="card-name">Remorhaz Joven</div><div class="card-meta">VD 5 · Encuentro aleatorio</div></div>
+        <span class="card-badge">CR 5</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Batidor" href="monster-batidor.html" target="_blank">
+        <span class="card-icon">🐺</span>
+        <div class="card-info"><div class="card-name">Batidor</div><div class="card-meta">VD ¼ · Encuentro aleatorio</div></div>
+        <span class="card-badge">CR ¼</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Tigre Dientes de Sable" href="monster-tigre-sable.html" target="_blank">
+        <span class="card-icon">🐯</span>
+        <div class="card-info"><div class="card-name">Tigre Dientes de Sable</div><div class="card-meta">VD 2 · Encuentro aleatorio</div></div>
+        <span class="card-badge">CR 2</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Grifo" href="monster-grifo.html" target="_blank">
+        <span class="card-icon">🦅</span>
+        <div class="card-info"><div class="card-name">Grifo</div><div class="card-meta">VD 2 · Encuentro aleatorio</div></div>
+        <span class="card-badge">CR 2</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Mago" href="monster-mago.html" target="_blank">
+        <span class="card-icon">🧙‍♂️</span>
+        <div class="card-info"><div class="card-name">Mago</div><div class="card-meta">VD 6 · Encuentro aleatorio</div></div>
+        <span class="card-badge">CR 6</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Redivivo" href="monster-redivivo.html" target="_blank">
+        <span class="card-icon">🧟</span>
+        <div class="card-info"><div class="card-name">Redivivo</div><div class="card-meta">VD 5 · Encuentro aleatorio</div></div>
+        <span class="card-badge">CR 5</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Dragón Cría Blanco" href="monster-dragon-cria-blanco.html" target="_blank">
+        <span class="card-icon">🐲</span>
+        <div class="card-info"><div class="card-name">Dragón Cría Blanco</div><div class="card-meta">VD 2 · Encuentro aleatorio</div></div>
+        <span class="card-badge">CR 2</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Lobo 1" href="monster-lobo-1.html" target="_blank">
+        <span class="card-icon">🐺</span>
+        <div class="card-info"><div class="card-name">Lobo 1</div><div class="card-meta">VD ¼ · Encuentro aleatorio</div></div>
+        <span class="card-badge">CR ¼</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Lobo 2" href="monster-lobo-2.html" target="_blank">
+        <span class="card-icon">🐺</span>
+        <div class="card-info"><div class="card-name">Lobo 2</div><div class="card-meta">VD ¼ · Encuentro aleatorio</div></div>
+        <span class="card-badge">CR ¼</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Lobo Invernal" href="monster-lobo-invernal.html" target="_blank">
+        <span class="card-icon">❄️</span>
+        <div class="card-info"><div class="card-name">Lobo Invernal</div><div class="card-meta">VD 3 · Encuentro aleatorio</div></div>
+        <span class="card-badge">CR 3</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Rana Gigante" href="monster-rana-gigante.html" target="_blank">
+        <span class="card-icon">🐸</span>
+        <div class="card-info"><div class="card-name">Rana Gigante</div><div class="card-meta">VD ¼ · Encuentro aleatorio</div></div>
+        <span class="card-badge">CR ¼</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Rana Gigante 1" href="monster-rana-gigante-1.html" target="_blank">
+        <span class="card-icon">🐸</span>
+        <div class="card-info"><div class="card-name">Rana Gigante 1</div><div class="card-meta">VD ¼ · Encuentro aleatorio</div></div>
+        <span class="card-badge">CR ¼</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Rana Gigante 2" href="monster-rana-gigante-2.html" target="_blank">
+        <span class="card-icon">🐸</span>
+        <div class="card-info"><div class="card-name">Rana Gigante 2</div><div class="card-meta">VD ¼ · Encuentro aleatorio</div></div>
+        <span class="card-badge">CR ¼</span>
+      </a>
+
+      <!-- Bandidos -->
+      <a class="card" data-cat="monster" data-name="Bandido" href="monster-bandido.html" target="_blank">
+        <span class="card-icon">🗡️</span>
+        <div class="card-info"><div class="card-name">Bandido (plantilla)</div><div class="card-meta">VD ⅛ · Bandidos</div></div>
+        <span class="card-badge">CR ⅛</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Bandido Capitán" href="monster-bandido-capitan.html" target="_blank">
+        <span class="card-icon">👑</span>
+        <div class="card-info"><div class="card-name">Bandido Capitán</div><div class="card-meta">VD 2 · Bandidos</div></div>
+        <span class="card-badge">CR 2</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Bandido 1" href="monster-bandido-1.html" target="_blank">
+        <span class="card-icon">🗡️</span>
+        <div class="card-info"><div class="card-name">Bandido 1</div><div class="card-meta">VD ⅛ · Bandidos</div></div>
+        <span class="card-badge">CR ⅛</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Bandido 2" href="monster-bandido-2.html" target="_blank">
+        <span class="card-icon">🗡️</span>
+        <div class="card-info"><div class="card-name">Bandido 2</div><div class="card-meta">VD ⅛ · Bandidos</div></div>
+        <span class="card-badge">CR ⅛</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Bandido 3" href="monster-bandido-3.html" target="_blank">
+        <span class="card-icon">🗡️</span>
+        <div class="card-info"><div class="card-name">Bandido 3</div><div class="card-meta">VD ⅛ · Bandidos</div></div>
+        <span class="card-badge">CR ⅛</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Bandido 4" href="monster-bandido-4.html" target="_blank">
+        <span class="card-icon">🗡️</span>
+        <div class="card-info"><div class="card-name">Bandido 4</div><div class="card-meta">VD ⅛ · Bandidos</div></div>
+        <span class="card-badge">CR ⅛</span>
+      </a>
+
+      <!-- Salsvault -->
+      <a class="card" data-cat="monster" data-name="Méfito de Ziro" href="monster-mephit-ziro.html" target="_blank">
+        <span class="card-icon">❄️</span>
+        <div class="card-info"><div class="card-name">Méfito de Ziro</div><div class="card-meta">VD ¼ · Salsvault</div></div>
+        <span class="card-badge">CR ¼</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Méfito de Glacies" href="monster-mephit-glacies.html" target="_blank">
+        <span class="card-icon">🧊</span>
+        <div class="card-info"><div class="card-name">Méfito de Glacies</div><div class="card-meta">VD ¼ · Salsvault</div></div>
+        <span class="card-badge">CR ¼</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Armadura Animada 1" href="monster-armadura-animada-1.html" target="_blank">
+        <span class="card-icon">🛡️</span>
+        <div class="card-info"><div class="card-name">Armadura Animada 1</div><div class="card-meta">VD 1 · Salsvault</div></div>
+        <span class="card-badge">CR 1</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Armadura Animada 2" href="monster-armadura-animada-2.html" target="_blank">
+        <span class="card-icon">🛡️</span>
+        <div class="card-info"><div class="card-name">Armadura Animada 2</div><div class="card-meta">VD 1 · Salsvault</div></div>
+        <span class="card-badge">CR 1</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="No-muerto 1" href="monster-no-muerto-1.html" target="_blank">
+        <span class="card-icon">🧟</span>
+        <div class="card-info"><div class="card-name">No-muerto 1 (Zombi)</div><div class="card-meta">VD ¼ · Salsvault</div></div>
+        <span class="card-badge">CR ¼</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="No-muerto 2" href="monster-no-muerto-2.html" target="_blank">
+        <span class="card-icon">🧟</span>
+        <div class="card-info"><div class="card-name">No-muerto 2 (Zombi)</div><div class="card-meta">VD ¼ · Salsvault</div></div>
+        <span class="card-badge">CR ¼</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="No-muerto 3" href="monster-no-muerto-3.html" target="_blank">
+        <span class="card-icon">🧟</span>
+        <div class="card-info"><div class="card-name">No-muerto 3 (Zombi)</div><div class="card-meta">VD ¼ · Salsvault</div></div>
+        <span class="card-badge">CR ¼</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="No-muerto 4" href="monster-no-muerto-4.html" target="_blank">
+        <span class="card-icon">🧟</span>
+        <div class="card-info"><div class="card-name">No-muerto 4 (Zombi)</div><div class="card-meta">VD ¼ · Salsvault</div></div>
+        <span class="card-badge">CR ¼</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Alfombra Asfixiante" href="monster-alfombra-asfixiante.html" target="_blank">
+        <span class="card-icon">🟫</span>
+        <div class="card-info"><div class="card-name">Alfombra Asfixiante</div><div class="card-meta">VD 2 · Salsvault</div></div>
+        <span class="card-badge">CR 2</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Enjambre Serpientes No-muertas" href="monster-enjambre-serpientes-no-muertas.html" target="_blank">
+        <span class="card-icon">🐍</span>
+        <div class="card-info"><div class="card-name">Enjambre Serpientes NM</div><div class="card-meta">VD 2 · Salsvault</div></div>
+        <span class="card-badge">CR 2</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Gólem de Carne Dañado" href="monster-golem-carne-danado.html" target="_blank">
+        <span class="card-icon">🧟‍♂️</span>
+        <div class="card-info"><div class="card-name">Gólem de Carne Dañado</div><div class="card-meta">VD 1 · Salsvault · Furia</div></div>
+        <span class="card-badge">CR 1</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Cuchillo de Cocina 1" href="monster-cuchillo-cocina-1.html" target="_blank">
+        <span class="card-icon">🔪</span>
+        <div class="card-info"><div class="card-name">Cuchillo de Cocina 1</div><div class="card-meta">VD ⅛ · Salsvault</div></div>
+        <span class="card-badge">CR ⅛</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Cuchillo de Cocina 2" href="monster-cuchillo-cocina-2.html" target="_blank">
+        <span class="card-icon">🔪</span>
+        <div class="card-info"><div class="card-name">Cuchillo de Cocina 2</div><div class="card-meta">VD ⅛ · Salsvault</div></div>
+        <span class="card-badge">CR ⅛</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Cuchillo de Cocina 3" href="monster-cuchillo-cocina-3.html" target="_blank">
+        <span class="card-icon">🔪</span>
+        <div class="card-info"><div class="card-name">Cuchillo de Cocina 3</div><div class="card-meta">VD ⅛ · Salsvault</div></div>
+        <span class="card-badge">CR ⅛</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Cuchillo de Cocina 4" href="monster-cuchillo-cocina-4.html" target="_blank">
+        <span class="card-icon">🔪</span>
+        <div class="card-info"><div class="card-name">Cuchillo de Cocina 4</div><div class="card-meta">VD ⅛ · Salsvault</div></div>
+        <span class="card-badge">CR ⅛</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Espada Voladora 1" href="monster-espada-voladora-1.html" target="_blank">
+        <span class="card-icon">⚔️</span>
+        <div class="card-info"><div class="card-name">Espada Voladora 1</div><div class="card-meta">VD ¼ · Salsvault</div></div>
+        <span class="card-badge">CR ¼</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Espada Voladora 2" href="monster-espada-voladora-2.html" target="_blank">
+        <span class="card-icon">⚔️</span>
+        <div class="card-info"><div class="card-name">Espada Voladora 2</div><div class="card-meta">VD ¼ · Salsvault</div></div>
+        <span class="card-badge">CR ¼</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Espada Voladora 3" href="monster-espada-voladora-3.html" target="_blank">
+        <span class="card-icon">⚔️</span>
+        <div class="card-info"><div class="card-name">Espada Voladora 3</div><div class="card-meta">VD ¼ · Salsvault</div></div>
+        <span class="card-badge">CR ¼</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Espada Voladora 4" href="monster-espada-voladora-4.html" target="_blank">
+        <span class="card-icon">⚔️</span>
+        <div class="card-info"><div class="card-name">Espada Voladora 4</div><div class="card-meta">VD ¼ · Salsvault</div></div>
+        <span class="card-badge">CR ¼</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Espada Voladora 5" href="monster-espada-voladora-5.html" target="_blank">
+        <span class="card-icon">⚔️</span>
+        <div class="card-info"><div class="card-name">Espada Voladora 5</div><div class="card-meta">VD ¼ · Salsvault</div></div>
+        <span class="card-badge">CR ¼</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Enjambre Murciélagos" href="monster-enjambre-murcielagos.html" target="_blank">
+        <span class="card-icon">🦇</span>
+        <div class="card-info"><div class="card-name">Enjambre Murciélagos</div><div class="card-meta">VD ¼ · Maltrecho</div></div>
+        <span class="card-badge">CR ¼</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Enjambre Murciélagos 1" href="monster-enjambre-murcielagos-1.html" target="_blank">
+        <span class="card-icon">🦇</span>
+        <div class="card-info"><div class="card-name">Enjambre Murciélagos 1</div><div class="card-meta">VD ¼ · Maltrecho</div></div>
+        <span class="card-badge">CR ¼</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Enjambre Murciélagos 2" href="monster-enjambre-murcielagos-2.html" target="_blank">
+        <span class="card-icon">🦇</span>
+        <div class="card-info"><div class="card-name">Enjambre Murciélagos 2</div><div class="card-meta">VD ¼ · Maltrecho</div></div>
+        <span class="card-badge">CR ¼</span>
+      </a>
+      <a class="card" data-cat="monster" data-name="Pulpo Gigante" href="monster-pulpo-gigante.html" target="_blank">
+        <span class="card-icon">🐙</span>
+        <div class="card-info"><div class="card-name">Pulpo Gigante</div><div class="card-meta">VD 1 · Acuático</div></div>
+        <span class="card-badge">CR 1</span>
+      </a>
+
+    </div>
+  </div>
+
+</main>
+
+<footer>Frozen Sick · D&amp;D 5e · Eiselcross · Explorer's Guide to Wildemount</footer>
+
+<script>
+  let activeFilter = 'all';
+
+  function setFilter(cat) {
+    activeFilter = cat;
+    document.querySelectorAll('.filter-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.cat === cat);
+    });
+    filterCards();
+  }
+
+  function filterCards() {
+    const q = document.getElementById('search').value.toLowerCase().trim();
+    let counts = { pc: 0, npc: 0, boss: 0, monster: 0, item: 0 };
+
+    document.querySelectorAll('.card').forEach(card => {
+      const cat = card.dataset.cat;
+      const name = card.dataset.name.toLowerCase();
+      const meta = card.querySelector('.card-meta').textContent.toLowerCase();
+
+      const matchFilter = activeFilter === 'all' || cat === activeFilter;
+      const matchSearch = !q || name.includes(q) || meta.includes(q);
+      const show = matchFilter && matchSearch;
+
+      card.classList.toggle('hidden', !show);
+      if (show) counts[cat]++;
+    });
+
+    // Update section counts
+    Object.entries(counts).forEach(([cat, n]) => {
+      const el = document.getElementById('count-' + cat);
+      if (el) el.textContent = n;
+    });
+
+    // Hide empty sections
+    document.querySelectorAll('.section').forEach(sec => {
+      const visible = sec.querySelectorAll('.card:not(.hidden)').length;
+      sec.style.display = visible === 0 && (activeFilter !== 'all' || q) ? 'none' : '';
+    });
+  }
+
+  // Init counts
+  filterCards();
+</script>
+</body>
+</html>
