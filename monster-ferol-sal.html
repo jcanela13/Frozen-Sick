@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ferol Sal — Jefe Final · Frozen Sick</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:#06040f;
+    --gold:#c9a84c; --gold-light:#e8c97a;
+    --parchment:#f0ede0; --silver:#b8bfc4;
+    --necro:#8b45b8; --necro-light:#b078d8; --necro-dim:rgba(130,60,180,0.22);
+    --blood:#c83060; --blood-light:#e85080;
+    --green:#48b060; --green-dim:rgba(60,160,80,0.18);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+
+  body {
+    background: #06040f;
+    background-image:
+      radial-gradient(ellipse at 15% 10%, rgba(80,20,120,0.18) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 80%, rgba(150,30,60,0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(40,10,70,0.3) 0%, transparent 80%);
+    font-family: 'Crimson Pro', Georgia, serif;
+    color: var(--parchment);
+    min-height: 100vh;
+    padding: 30px 16px 80px;
+    max-width: 660px;
+    margin: 0 auto;
+  }
+
+  /* ── KEYFRAMES ── */
+  @keyframes fadeSlide { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes necro-pulse { 0%,100%{opacity:0.45} 50%{opacity:1} }
+  @keyframes shimmer-bar { 0%{transform:translateX(-100%)} 100%{transform:translateX(400%)} }
+  @keyframes boss-aura {
+    0%,100%{box-shadow:0 0 40px rgba(100,20,160,0.25),0 32px 80px rgba(0,0,0,0.9),inset 0 0 40px rgba(0,0,0,0.4)}
+    50%{box-shadow:0 0 70px rgba(130,30,200,0.45),0 32px 80px rgba(0,0,0,0.9),inset 0 0 40px rgba(0,0,0,0.4)}
+  }
+  @keyframes rune-spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+  @keyframes flicker { 0%,95%,100%{opacity:1} 96%,99%{opacity:0.5} }
+  @keyframes drain-pulse { 0%,100%{background:rgba(150,30,60,0.1);border-color:rgba(200,50,90,0.3)}
+    50%{background:rgba(180,30,70,0.22);border-color:rgba(220,60,100,0.6)} }
+
+  /* ── BOSS CARD ── */
+  .monster-card {
+    background: linear-gradient(165deg, #12091e 0%, #0c0618 45%, #080412 100%);
+    border: 1px solid rgba(120,50,170,0.35);
+    border-radius: 6px;
+    position: relative; overflow: hidden;
+    animation: fadeSlide 0.6s ease both, boss-aura 4s ease-in-out infinite;
+  }
+
+  /* Decorative rune corners */
+  .rune-corner { position:absolute; width:40px; height:40px; }
+  .rune-corner.tl { top:8px; left:8px; border-top:2px solid rgba(120,50,170,0.5); border-left:2px solid rgba(120,50,170,0.5); }
+  .rune-corner.tr { top:8px; right:8px; border-top:2px solid rgba(120,50,170,0.5); border-right:2px solid rgba(120,50,170,0.5); }
+  .rune-corner.bl { bottom:8px; left:8px; border-bottom:2px solid rgba(120,50,170,0.5); border-left:2px solid rgba(120,50,170,0.5); }
+  .rune-corner.br { bottom:8px; right:8px; border-bottom:2px solid rgba(120,50,170,0.5); border-right:2px solid rgba(120,50,170,0.5); }
+
+  /* Top color bar */
+  .color-bar { height:4px; position:relative; overflow:hidden;
+    background: linear-gradient(90deg, transparent, rgba(100,20,160,0.7), rgba(180,40,220,1), rgba(200,50,90,0.9), rgba(180,40,220,1), rgba(100,20,160,0.7), transparent); }
+  .color-bar::after { content:''; position:absolute; top:0; left:0; width:25%; height:100%;
+    background: linear-gradient(90deg, transparent, rgba(255,220,255,0.9), transparent);
+    animation: shimmer-bar 3s ease-in-out infinite; }
+
+  /* Boss label */
+  .boss-label { text-align:center; padding:8px 26px 6px;
+    background: linear-gradient(90deg, transparent, rgba(100,20,160,0.15), rgba(180,30,70,0.12), rgba(100,20,160,0.15), transparent);
+    border-bottom:1px solid rgba(120,50,170,0.18); }
+  .boss-label span { font-family:'Cinzel Decorative',serif; font-size:0.55rem; letter-spacing:0.35em;
+    text-transform:uppercase; color:rgba(180,120,220,0.7); animation: flicker 8s ease-in-out infinite; }
+
+  /* HEADER */
+  .card-header { padding:18px 26px 16px; display:flex; gap:18px; align-items:flex-start;
+    border-bottom:1px solid rgba(120,50,170,0.15); }
+  .monster-avatar {
+    width:76px; height:76px; border-radius:50%;
+    border:2px solid rgba(130,50,180,0.6);
+    background: radial-gradient(135deg, rgba(18,8,30,0.98), rgba(10,4,18,0.99));
+    display:flex; align-items:center; justify-content:center; font-size:2.3rem;
+    flex-shrink:0; position:relative;
+    box-shadow: 0 0 30px rgba(120,30,180,0.4), inset 0 0 20px rgba(0,0,0,0.6);
+  }
+  .avatar-ring { position:absolute; inset:-8px; border-radius:50%;
+    border:1px dashed rgba(120,50,170,0.35);
+    animation: rune-spin 20s linear infinite; }
+  .avatar-ring::before { content:'✦'; position:absolute; top:-5px; left:50%; transform:translateX(-50%);
+    font-size:0.55rem; color:rgba(160,80,220,0.7); }
+  .avatar-ring::after { content:'✦'; position:absolute; bottom:-5px; left:50%; transform:translateX(-50%);
+    font-size:0.55rem; color:rgba(200,50,90,0.7); }
+
+  .monster-identity { flex:1; }
+  .npc-name-input {
+    background: transparent; border: none;
+    border-bottom: 1px dashed rgba(201,168,76,0.0);
+    color: var(--gold-light); font-family: 'Cinzel Decorative', serif;
+    font-size: 1.1rem; font-weight: 700; letter-spacing: 0.03em; line-height: 1.25;
+    outline: none; width: 100%; cursor: text;
+    transition: border-color 0.25s, background 0.25s; padding: 0;
+  }
+  .npc-name-input:hover { border-bottom-color: rgba(201,168,76,0.25); }
+  .npc-name-input:focus { border-bottom-color: rgba(201,168,76,0.65); background: rgba(201,168,76,0.04); }
+
+  .monster-type { font-style:italic; font-size:0.88rem; color:rgba(150,80,200,0.7); margin-top:3px; }
+  .monster-meta { display:flex; gap:7px; flex-wrap:wrap; margin-top:9px; }
+  .meta-badge { font-family:'Cinzel',serif; font-size:0.57rem; letter-spacing:0.1em;
+    text-transform:uppercase; padding:2px 8px; border-radius:2px; }
+  .mb-gold { border:1px solid rgba(201,168,76,0.3); color:var(--gold); background:rgba(201,168,76,0.07); }
+  .mb-red  { border:1px solid rgba(200,60,90,0.4); color:#e8708a; background:rgba(200,60,90,0.07); }
+  .mb-necro{ border:1px solid rgba(130,50,180,0.45); color:var(--necro-light); background:var(--necro-dim); }
+  .mb-green{ border:1px solid rgba(60,160,80,0.45); color:#80d890; background:var(--green-dim); }
+  .initiative-badge { font-family:'Cinzel',serif; font-size:0.68rem; color:var(--gold-light);
+    margin-left:auto; white-space:nowrap; align-self:flex-start; opacity:0.85; }
+
+  /* STATUS */
+  .status-bar { display:flex; align-items:center; gap:10px; padding:6px 28px;
+    border-bottom:1px solid rgba(120,50,170,0.08); background:rgba(0,0,0,0.25); flex-wrap:wrap; }
+  .status-label { font-family:'Cinzel',serif; font-size:0.54rem; letter-spacing:0.14em;
+    text-transform:uppercase; color:rgba(189,195,199,0.42); flex-shrink:0; }
+  .status-input { background:transparent; border:none;
+    border-bottom:1px dashed rgba(200,80,100,0.0);
+    color:rgba(232,128,128,0.85); font-family:'Cinzel',serif;
+    font-size:0.68rem; letter-spacing:0.05em; min-width:220px; outline:none; padding:1px 4px;
+    transition:border-color 0.25s,background 0.25s; }
+  .status-input::placeholder { color:rgba(189,195,199,0.22); font-style:italic; }
+  .status-input:hover { border-bottom-color:rgba(200,80,100,0.3); }
+  .status-input:focus { border-bottom-color:rgba(200,80,100,0.65); background:rgba(200,80,100,0.04); }
+
+  /* ABILITY SCORES */
+  .stats-bar { display:grid; grid-template-columns:repeat(6,1fr); padding:10px 26px;
+    border-bottom:1px solid rgba(120,50,170,0.1); background:rgba(0,0,0,0.22); gap:2px; }
+  .stat { text-align:center; }
+  .stat-label { font-family:'Cinzel',serif; font-size:0.51rem; letter-spacing:0.12em;
+    text-transform:uppercase; color:var(--silver); opacity:0.6; display:block; margin-bottom:1px; }
+  .stat-value { font-family:'Cinzel',serif; font-size:1rem; font-weight:700;
+    color:var(--parchment); display:block; line-height:1; }
+  .stat-mods { font-size:0.6rem; color:rgba(150,80,200,0.85); display:block; margin-top:1px; }
+
+  /* COMBAT STATS */
+  .combat-row { display:flex; padding:9px 26px; border-bottom:1px solid rgba(120,50,170,0.08);
+    background:rgba(0,0,0,0.12); flex-wrap:wrap; gap:2px; }
+  .combat-stat { flex:1; text-align:center; position:relative; min-width:70px; }
+  .combat-stat+.combat-stat::before { content:''; position:absolute; left:0; top:10%;bottom:10%;
+    width:1px; background:rgba(120,50,170,0.14); }
+  .combat-label { font-family:'Cinzel',serif; font-size:0.51rem; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--silver); opacity:0.58; display:block; }
+  .combat-value { font-family:'Cinzel',serif; font-size:0.93rem; font-weight:600;
+    color:var(--gold-light); display:block; margin-top:1px; }
+
+  /* CARD BODY */
+  .card-body { padding:0 26px; }
+  .section { padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+  .section:last-child { border-bottom:none; }
+  .section-title { font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.18em;
+    text-transform:uppercase; color:var(--gold); opacity:0.75; margin-bottom:8px;
+    display:flex; align-items:center; gap:8px; }
+  .section-title::after { content:''; flex:1; height:1px;
+    background:linear-gradient(to right,rgba(201,168,76,0.2),transparent); }
+
+  .trait-row { display:flex; gap:6px; margin-bottom:4px; font-size:0.83rem; line-height:1.45; flex-wrap:wrap; }
+  .trait-key { font-family:'Cinzel',serif; font-size:0.71rem; font-weight:600;
+    color:var(--gold-light); white-space:nowrap; }
+  .trait-val { color:rgba(240,237,224,0.78); }
+  .badge-row { display:flex; gap:5px; flex-wrap:wrap; margin-top:1px; }
+  .badge { font-family:'Cinzel',serif; font-size:0.56rem; padding:2px 7px; border-radius:10px; }
+  .badge-imm { border:1px solid rgba(200,64,64,0.4); color:#e88080; background:rgba(200,64,64,0.07); }
+  .badge-res { border:1px solid rgba(150,80,200,0.4); color:var(--necro-light); background:var(--necro-dim); }
+  .badge-cond{ border:1px solid rgba(80,140,200,0.35); color:#90b8e0; background:rgba(80,140,200,0.07); }
+
+  /* EXPANDABLE TRAITS */
+  .ability-item { margin-bottom:8px; padding-left:14px; position:relative; cursor:pointer; }
+  .ability-item::before { content:'◆'; position:absolute; left:0; top:3px;
+    color:var(--necro); font-size:0.5rem; opacity:0.7; }
+  .ability-name { font-family:'Cinzel',serif; font-size:0.74rem; font-weight:600;
+    color:rgba(160,90,220,0.95); margin-bottom:1px;
+    display:flex; align-items:center; gap:6px; user-select:none; }
+  .ability-name.drain { color:rgba(220,70,100,0.95); }
+  .expand-caret { font-size:0.54rem; color:rgba(130,50,180,0.4); transition:transform 0.2s, color 0.2s; margin-left:auto; }
+  .ability-item.open .expand-caret { transform:rotate(90deg); color:rgba(160,90,220,0.9); }
+  .ability-desc { font-size:0.82rem; color:rgba(240,237,224,0.68); line-height:1.5; }
+  .ability-detail { display:none; margin-top:6px; padding:9px 12px;
+    background:rgba(0,0,0,0.35); border-left:2px solid rgba(120,50,170,0.4);
+    font-size:0.82rem; color:rgba(240,237,224,0.68); line-height:1.65; border-radius:0 3px 3px 0; }
+  .ability-item.open .ability-detail { display:block; }
+  .ability-detail strong { font-family:'Cinzel',serif; font-size:0.7rem; color:rgba(201,168,76,0.9); }
+  .ability-detail em { color:rgba(200,150,240,0.7); }
+
+  /* ATTACKS QUICK VIEW */
+  .attacks-list { display:flex; flex-direction:column; gap:5px; }
+  .attack-item { display:flex; gap:8px; align-items:baseline; padding:6px 11px;
+    background:rgba(0,0,0,0.25); border-radius:3px; border:1px solid rgba(120,50,170,0.18);
+    font-size:0.82rem; flex-wrap:wrap; }
+  .attack-item.drain-attack { border-color:rgba(200,50,90,0.3);
+    animation: drain-pulse 2.5s ease-in-out infinite; }
+  .attack-name { font-family:'Cinzel',serif; font-size:0.71rem; font-weight:600;
+    color:var(--parchment); flex:1; min-width:100px; }
+  .attack-bonus { color:#90e8a0; font-weight:600; white-space:nowrap; }
+  .attack-dmg { color:#ffd080; white-space:nowrap; }
+  .attack-dmg.necro { color:var(--necro-light); }
+  .attack-type { color:rgba(240,237,224,0.42); font-size:0.74rem; white-space:nowrap; }
+
+  /* ACTIONS */
+  .action-item { margin-bottom:8px; padding-left:14px; position:relative;
+    font-size:0.84rem; line-height:1.5; color:rgba(240,237,224,0.78); cursor:pointer; }
+  .action-item::before { content:'▸'; position:absolute; left:0; top:2px;
+    color:rgba(150,60,200,0.75); font-size:0.62rem; }
+  .action-name { font-family:'Cinzel',serif; font-size:0.74rem; font-weight:700;
+    color:var(--parchment); display:flex; align-items:center; gap:5px; user-select:none; }
+  .action-caret { font-size:0.54rem; color:rgba(130,50,180,0.4); transition:transform 0.2s, color 0.2s; margin-left:auto; }
+  .action-item.open .action-caret { transform:rotate(90deg); color:rgba(160,90,220,0.9); }
+  .action-detail { display:none; margin-top:6px; padding:9px 12px;
+    background:rgba(0,0,0,0.35); border-left:2px solid rgba(120,50,170,0.35);
+    font-size:0.82rem; color:rgba(240,237,224,0.68); line-height:1.65; border-radius:0 3px 3px 0; }
+  .action-item.open .action-detail { display:block; }
+  .action-detail strong { font-family:'Cinzel',serif; font-size:0.7rem; color:rgba(201,168,76,0.9); }
+  .action-detail .warn { color:rgba(220,70,100,0.9); font-family:'Cinzel',serif; font-size:0.7rem; }
+
+  /* ── INTERACTIVE PANEL ── */
+  .interactive-panel { background:rgba(0,0,0,0.38); border:1px solid rgba(120,50,170,0.25);
+    border-radius:5px; padding:14px 16px; margin:13px 0 4px; }
+  .interactive-title { font-family:'Cinzel',serif; font-size:0.57rem; letter-spacing:0.18em;
+    text-transform:uppercase; color:rgba(150,80,210,0.65); margin-bottom:13px;
+    display:flex; align-items:center; justify-content:space-between; }
+  .reset-btn { font-family:'Cinzel',serif; font-size:0.51rem; letter-spacing:0.1em;
+    text-transform:uppercase; padding:3px 10px; border-radius:2px;
+    border:1px solid rgba(255,100,100,0.28); color:rgba(255,150,150,0.55);
+    background:rgba(255,100,100,0.04); cursor:pointer; transition:all 0.2s; }
+  .reset-btn:hover { border-color:rgba(255,100,100,0.65); color:rgba(255,180,180,0.9); background:rgba(255,100,100,0.1); }
+
+  /* HP EDITOR */
+  .hp-edit-row { display:flex; align-items:center; gap:8px; margin-bottom:10px;
+    padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.05); flex-wrap:wrap; }
+  .hp-edit-label { font-family:'Cinzel',serif; font-size:0.54rem; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--silver); opacity:0.55; flex-shrink:0; }
+  .hp-max-input { width:50px; text-align:center; background:rgba(0,0,0,0.4);
+    border:1px solid rgba(120,50,170,0.3); border-radius:2px; color:var(--gold-light);
+    font-family:'Cinzel',serif; font-size:0.85rem; padding:3px 4px; font-weight:700; }
+  .hp-max-input:focus { outline:none; border-color:rgba(160,80,220,0.7);
+    background:rgba(120,50,170,0.12); }
+  .hp-set-btn { font-family:'Cinzel',serif; font-size:0.51rem; letter-spacing:0.08em;
+    text-transform:uppercase; padding:3px 8px; border-radius:2px;
+    border:1px solid rgba(120,50,170,0.4); color:rgba(160,90,220,0.8);
+    background:rgba(120,50,170,0.08); cursor:pointer; transition:all 0.2s; }
+  .hp-set-btn:hover { background:rgba(120,50,170,0.2); border-color:rgba(160,80,220,0.7); }
+
+  /* HP TRACKER */
+  .hp-row { display:flex; align-items:center; gap:9px; margin-bottom:10px;
+    padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.05); }
+  .hp-label { font-family:'Cinzel',serif; font-size:0.57rem; letter-spacing:0.12em;
+    text-transform:uppercase; color:var(--silver); opacity:0.62; min-width:24px; }
+  .hp-display { font-family:'Cinzel Decorative',serif; font-size:1.5rem; font-weight:700;
+    min-width:44px; text-align:center; transition:color 0.3s; }
+  .hp-display.full { color:#90e8a0; } .hp-display.mid { color:#ffd080; }
+  .hp-display.low { color:#ff8080; } .hp-display.zero { color:rgba(255,80,80,0.5); }
+  .hp-max-label { font-family:'Cinzel',serif; font-size:0.7rem; color:var(--silver); opacity:0.42; }
+  .hp-bar-wrap { flex:1; height:6px; background:rgba(0,0,0,0.5); border-radius:3px;
+    overflow:hidden; border:1px solid rgba(255,255,255,0.04); position:relative; }
+  .hp-bar { height:100%; border-radius:3px; transition:width 0.4s ease, background 0.4s ease; }
+  .hp-btn { width:28px;height:28px;border-radius:50%;border:1px solid rgba(120,50,170,0.38);
+    background:rgba(120,50,170,0.1);color:var(--necro-light);font-size:1.1rem;cursor:pointer;
+    transition:all 0.15s;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+  .hp-btn:hover { background:rgba(120,50,170,0.28); border-color:rgba(160,80,220,0.7); }
+  .hp-input { width:44px;text-align:center;background:rgba(0,0,0,0.35);
+    border:1px solid rgba(120,50,170,0.22);border-radius:2px;color:var(--parchment);
+    font-family:'Cinzel',serif;font-size:0.78rem;padding:3px 4px; }
+  .hp-input:focus { outline:none; border-color:rgba(160,80,220,0.55); }
+  .hp-apply-btn { font-family:'Cinzel',serif;font-size:0.57rem;letter-spacing:0.1em;
+    text-transform:uppercase;padding:4px 10px;border-radius:2px;
+    border:1px solid rgba(200,60,90,0.38);color:rgba(232,120,140,0.85);
+    background:rgba(200,60,90,0.07);cursor:pointer;transition:all 0.2s; }
+  .hp-apply-btn:hover { background:rgba(200,60,90,0.18); border-color:rgba(220,70,100,0.7); }
+
+  /* ZOMBIE TRACKER */
+  .zombies-row { display:flex; align-items:center; gap:10px; margin-bottom:10px;
+    padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.05); flex-wrap:wrap; }
+  .zombies-label { font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.07em;
+    color:rgba(160,90,220,0.85); flex:1; min-width:140px; }
+  .zombie-pips { display:flex; gap:4px; flex-wrap:wrap; }
+  .z-pip { width:16px;height:16px;border-radius:2px;
+    border:1.5px solid rgba(130,50,180,0.4);background:rgba(130,50,180,0.12);
+    cursor:pointer;transition:all 0.15s;position:relative;flex-shrink:0; }
+  .z-pip.active { background:rgba(150,50,200,0.45); border-color:rgba(180,80,240,0.8);
+    box-shadow:0 0 6px rgba(160,70,220,0.4); }
+  .z-pip.active::after { content:'🧟'; position:absolute;inset:0;display:flex;
+    align-items:center;justify-content:center;font-size:0.6rem;line-height:1; }
+  .z-pip:hover:not(.active) { background:rgba(130,50,180,0.28); border-color:rgba(160,80,220,0.7); transform:scale(1.15); }
+  .zombie-count { font-family:'Cinzel',serif; font-size:0.72rem; color:rgba(160,90,220,0.9); min-width:30px; }
+
+  /* SENSITIVITY TOGGLE */
+  .condition-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .condition-label { font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.07em;
+    color:rgba(220,180,80,0.85); flex:1; }
+  .toggle-btn { font-family:'Cinzel',serif; font-size:0.54rem; letter-spacing:0.1em;
+    text-transform:uppercase; padding:4px 12px; border-radius:2px; cursor:pointer; transition:all 0.2s; }
+  .toggle-btn.on { border:1px solid rgba(220,80,50,0.6); color:rgba(255,140,110,0.95);
+    background:rgba(200,60,30,0.15); }
+  .toggle-btn.off { border:1px solid rgba(80,140,60,0.4); color:rgba(100,200,70,0.7);
+    background:rgba(80,140,60,0.07); }
+
+  /* CARD FOOTER */
+  .card-footer { padding:10px 26px 20px; display:flex; justify-content:space-between;
+    align-items:center; opacity:0.42; border-top:1px solid rgba(120,50,170,0.1); margin-top:4px; }
+  .footer-fluff { font-family:'Cinzel',serif; font-size:0.51rem; letter-spacing:0.18em;
+    text-transform:uppercase; color:var(--silver); }
+  .xp-val { font-family:'Cinzel',serif; font-size:0.65rem; color:var(--gold); }
+</style>
+</head>
+<body>
+
+<div class="monster-card">
+  <div class="rune-corner tl"></div>
+  <div class="rune-corner tr"></div>
+  <div class="rune-corner bl"></div>
+  <div class="rune-corner br"></div>
+  <div class="color-bar"></div>
+
+  <div class="boss-label"><span>✦ &nbsp; Jefe Final — Frozen Sick · Salsvault &nbsp; ✦</span></div>
+
+  <div class="card-header">
+    <div class="monster-avatar">
+      <div class="avatar-ring"></div>
+      🧪
+    </div>
+    <div class="monster-identity">
+      <input class="npc-name-input" id="ferol-name-input" type="text" value="Ferol Sal">
+      <div class="monster-type">No-muerto Mediano · neutral maligno</div>
+      <div class="monster-meta">
+        <span class="meta-badge mb-red">CA 14</span>
+        <span class="meta-badge mb-gold">VD 3 · 700 XP</span>
+        <span class="meta-badge mb-necro">BC +2</span>
+        <span class="meta-badge mb-green">Multiataque ×2</span>
+        <span class="initiative-badge">Iniciativa +2 (12)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <span class="status-label">Estado / Condiciones:</span>
+    <input class="status-input" id="ferol-status" placeholder="Normal — sin condiciones activas" type="text">
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat"><span class="stat-label">FUE</span><span class="stat-value">15</span><span class="stat-mods">+2 / +2</span></div>
+    <div class="stat"><span class="stat-label">DES</span><span class="stat-value">14</span><span class="stat-mods">+2 / +2</span></div>
+    <div class="stat"><span class="stat-label">CON</span><span class="stat-value">16</span><span class="stat-mods">+3 / +3</span></div>
+    <div class="stat"><span class="stat-label">INT</span><span class="stat-value">16</span><span class="stat-mods">+3 / +3</span></div>
+    <div class="stat"><span class="stat-label">SAB</span><span class="stat-value">13</span><span class="stat-mods">+1 / +1</span></div>
+    <div class="stat"><span class="stat-label">CAR</span><span class="stat-value">15</span><span class="stat-mods">+2 / +2</span></div>
+  </div>
+
+  <div class="combat-row">
+    <div class="combat-stat"><span class="combat-label">PG</span><span class="combat-value">45 (6d8+18)</span></div>
+    <div class="combat-stat"><span class="combat-label">Velocidad</span><span class="combat-value">30 ft</span></div>
+    <div class="combat-stat"><span class="combat-label">CA</span><span class="combat-value">14 (cuero tachonado)</span></div>
+    <div class="combat-stat"><span class="combat-label">Perc. Pasiva</span><span class="combat-value">13</span></div>
+  </div>
+
+  <div class="card-body">
+
+    <!-- INTERACTIVE PANEL -->
+    <div class="interactive-panel">
+      <div class="interactive-title">
+        <span>⚙ Estado de sesión</span>
+        <button class="reset-btn" onclick="resetFerol()">↺ Resetear todo</button>
+      </div>
+
+      <!-- Editable Max HP -->
+      <div class="hp-edit-row">
+        <span class="hp-edit-label">PG Máximos:</span>
+        <input id="ferol-maxhp-input" class="hp-max-input" type="number" min="1" value="45">
+        <button class="hp-set-btn" onclick="setMaxHP()">Aplicar</button>
+        <span style="font-family:'Crimson Pro',serif;font-size:0.75rem;color:rgba(189,195,199,0.38);font-style:italic;">editable para cada campaña</span>
+      </div>
+
+      <!-- HP Tracker -->
+      <div class="hp-row">
+        <span class="hp-label">PG</span>
+        <div id="ferol-hp-display" class="hp-display full">45</div>
+        <span class="hp-max-label" id="ferol-max-label">/ 45</span>
+        <div class="hp-bar-wrap"><div id="ferol-hp-bar" class="hp-bar" style="width:100%;background:#90e8a0"></div></div>
+        <button class="hp-btn" onclick="changeHP(1)">+</button>
+        <input id="ferol-hp-input" class="hp-input" type="number" min="1" value="1">
+        <button class="hp-apply-btn" onclick="applyDmg()">Daño</button>
+        <button class="hp-btn" onclick="changeHP(-1)">−</button>
+      </div>
+
+      <!-- Zombie Control Tracker -->
+      <div class="zombies-row">
+        <span class="zombies-label">🧟 Zombis bajo control <span style="color:rgba(189,195,199,0.45)">(máx. 12)</span></span>
+        <div class="zombie-pips" id="ferol-zombies"></div>
+        <span class="zombie-count" id="ferol-zombie-count">0 / 12</span>
+      </div>
+
+      <!-- Sunlight Sensitivity Toggle -->
+      <div class="condition-row">
+        <span class="condition-label">☀️ Sensibilidad a la luz solar — Desventaja en ataques y Percepción visual:</span>
+        <button class="toggle-btn off" id="sunlight-btn" onclick="toggleSunlight()">Sin efecto</button>
+      </div>
+    </div>
+
+    <!-- RASGOS -->
+    <div class="section">
+      <div class="section-title">Rasgos</div>
+      <div class="trait-row">
+        <span class="trait-key">Habilidades:</span>
+        <span class="trait-val">Percepción +3, Sigilo +4</span>
+      </div>
+      <div class="trait-row">
+        <span class="trait-key">Resistencias al daño:</span>
+        <span class="trait-val">
+          <div class="badge-row">
+            <span class="badge badge-res">Necrótico</span>
+            <span class="badge badge-res">Contundente no mágico</span>
+            <span class="badge badge-res">Perforante no mágico</span>
+            <span class="badge badge-res">Cortante no mágico</span>
+          </div>
+          <div style="font-size:0.74rem;color:rgba(240,237,224,0.5);margin-top:3px;font-style:italic;">(resistencia solo contra armas no plateadas)</div>
+        </span>
+      </div>
+      <div class="trait-row">
+        <span class="trait-key">Inmunidades al daño:</span>
+        <span class="trait-val"><div class="badge-row"><span class="badge badge-imm">Veneno</span></div></span>
+      </div>
+      <div class="trait-row">
+        <span class="trait-key">Cond. inmune:</span>
+        <span class="trait-val"><div class="badge-row">
+          <span class="badge badge-cond">Cansancio</span>
+          <span class="badge badge-cond">Envenenado</span>
+        </div></span>
+      </div>
+      <div class="trait-row"><span class="trait-key">Sentidos:</span><span class="trait-val">Visión en la oscuridad 60 ft, Percepción pasiva 13</span></div>
+      <div class="trait-row"><span class="trait-key">Idiomas:</span><span class="trait-val">Dracónico, Élfico</span></div>
+    </div>
+
+    <!-- RASGOS ESPECIALES -->
+    <div class="section">
+      <div class="section-title">Rasgos Especiales</div>
+
+      <div class="ability-item" onclick="this.classList.toggle('open')">
+        <div class="ability-name">Sensibilidad a la luz solar <span class="expand-caret">▶</span></div>
+        <div class="ability-desc">Mientras esté a la luz del sol, tiene Desventaja en ataques y en pruebas de Percepción visual.</div>
+        <div class="ability-detail">
+          Mientras Ferol está en plena luz solar, tiene <strong>Desventaja</strong> en tiradas de ataque, y en pruebas de Sabiduría (Percepción) que dependan de la vista.<br><br>
+          <em>Usa el toggle "Luz solar" del panel de sesión para activar este estado.</em>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACCIONES -->
+    <div class="section">
+      <div class="section-title">Acciones</div>
+
+      <!-- Quick reference -->
+      <div class="attacks-list" style="margin-bottom:10px">
+        <div class="attack-item drain-attack">
+          <span class="attack-name">Absorber Vida</span>
+          <span class="attack-bonus">+4 al golpe</span>
+          <span class="attack-dmg necro">1d6+2 necrótico</span>
+          <span class="attack-type">Alcance 5 ft · CD 13 CON</span>
+        </div>
+        <div class="attack-item">
+          <span class="attack-name">Espadón (1 mano)</span>
+          <span class="attack-bonus">+4 al golpe</span>
+          <span class="attack-dmg">1d8+2 cortante</span>
+          <span class="attack-type">Alcance 5 ft</span>
+        </div>
+        <div class="attack-item">
+          <span class="attack-name">Espadón (2 manos)</span>
+          <span class="attack-bonus">+4 al golpe</span>
+          <span class="attack-dmg">1d10+2 cortante</span>
+          <span class="attack-type">Alcance 5 ft</span>
+        </div>
+        <div class="attack-item">
+          <span class="attack-name">Arco largo</span>
+          <span class="attack-bonus">+4 al golpe</span>
+          <span class="attack-dmg">1d8+2 perforante</span>
+          <span class="attack-type">150/600 ft</span>
+        </div>
+      </div>
+
+      <!-- Expandable actions -->
+      <div class="action-item" onclick="this.classList.toggle('open')">
+        <div class="action-name">Multiataque <span class="action-caret">▶</span></div>
+        <div>Realiza dos ataques de espadón o dos ataques de arco largo.</div>
+        <div class="action-detail">
+          Ferol realiza <strong>dos ataques de Espadón</strong> o <strong>dos ataques de Arco largo</strong>.<br><br>
+          Puede sustituir uno de los ataques de espadón por <strong>Absorber Vida</strong>.
+        </div>
+      </div>
+
+      <div class="action-item" onclick="this.classList.toggle('open')">
+        <div class="action-name">Absorber Vida <span style="font-size:0.56rem;padding:1px 5px;border:1px solid rgba(200,50,90,0.4);color:rgba(220,80,110,0.85);background:rgba(200,50,90,0.08);border-radius:2px;margin-left:4px">PELIGROSO</span> <span class="action-caret">▶</span></div>
+        <div>Ataque CaC +4 · 1d6+2 necrótico · CD 13 CON o reduce los PG máximos.</div>
+        <div class="action-detail">
+          <strong>Ataque de arma cuerpo a cuerpo:</strong> +4 al golpe, alcance 5 ft, una criatura.<br><br>
+          <strong>Acierto:</strong> 5 (1d6+2) puntos de daño necrótico. El objetivo debe superar una <strong>tirada de salvación de CON CD 13</strong> o sus <strong>puntos de golpe máximos se reducen</strong> en una cantidad igual al daño recibido. Esta reducción dura hasta que el objetivo completa un descanso largo. El objetivo muere si el efecto reduce sus PG máximos a 0.<br><br>
+          <span class="warn">⚠ Un humanoide muerto por este ataque se levanta 24 horas después como un zombi bajo el control de Ferol (máx. 12). Registra los zombis activos en el panel.</span>
+        </div>
+      </div>
+
+      <div class="action-item" onclick="this.classList.toggle('open')">
+        <div class="action-name">Espadón <span class="action-caret">▶</span></div>
+        <div>Ataque CaC +4 · 1d8+2 cortante (o 1d10+2 a dos manos).</div>
+        <div class="action-detail">
+          <strong>Ataque de arma cuerpo a cuerpo:</strong> +4 al golpe, alcance 5 ft, un objetivo.<br><br>
+          <strong>Acierto (una mano):</strong> 6 (1d8+2) puntos de daño cortante.<br>
+          <strong>Acierto (dos manos):</strong> 7 (1d10+2) puntos de daño cortante.
+        </div>
+      </div>
+
+      <div class="action-item" onclick="this.classList.toggle('open')">
+        <div class="action-name">Arco largo <span class="action-caret">▶</span></div>
+        <div>Ataque a distancia +4 · 1d8+2 perforante · alcance 150/600 ft.</div>
+        <div class="action-detail">
+          <strong>Ataque de arma a distancia:</strong> +4 al golpe, alcance 150/600 ft, un objetivo.<br><br>
+          <strong>Acierto:</strong> 6 (1d8+2) puntos de daño perforante.
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end card-body -->
+
+  <div class="card-footer">
+    <span class="footer-fluff">Explorer's Guide to Wildemount, p.249 · Frozen Sick</span>
+    <span class="xp-val">700 XP · VD 3</span>
+  </div>
+</div>
+
+<script>
+const KEY = 'ferol';
+let MAX_HP = 45;
+
+/* ── STORAGE ── */
+function save(k,v){try{localStorage.setItem(KEY+'_'+k,JSON.stringify(v));}catch(e){}}
+function load(k,d){try{const v=localStorage.getItem(KEY+'_'+k);return v!==null?JSON.parse(v):d;}catch(e){return d;}}
+
+/* ── HP ── */
+function getHP(){ const v=parseInt(load('hp',MAX_HP)); return isNaN(v)?MAX_HP:v; }
+
+function setHP(v){
+  v=Math.max(0,Math.min(MAX_HP,v)); save('hp',v);
+  const d=document.getElementById('ferol-hp-display'), b=document.getElementById('ferol-hp-bar');
+  d.textContent=v; const p=v/MAX_HP;
+  d.className='hp-display '+(v===0?'zero':p>0.5?'full':p>0.25?'mid':'low');
+  b.style.width=(p*100)+'%'; b.style.background=p>0.5?'#90e8a0':p>0.25?'#ffd080':'#ff8080';
+}
+function changeHP(d){ setHP(getHP()+d); }
+function applyDmg(){
+  const i=document.getElementById('ferol-hp-input'), n=parseInt(i.value)||0;
+  if(n>0) setHP(getHP()-n); i.value=1;
+}
+
+/* ── EDITABLE MAX HP ── */
+function setMaxHP(){
+  const inp=document.getElementById('ferol-maxhp-input');
+  const val=parseInt(inp.value);
+  if(!val||val<1)return;
+  MAX_HP=val; save('maxhp',val);
+  document.getElementById('ferol-max-label').textContent='/ '+val;
+  setHP(Math.min(getHP(),val));
+  inp.value=val;
+}
+
+/* ── ZOMBIES ── */
+function buildZombies(){
+  const used=load('zombies',0);
+  const c=document.getElementById('ferol-zombies'); c.innerHTML='';
+  for(let i=0;i<12;i++){
+    const p=document.createElement('div');
+    p.className='z-pip'+(i<used?' active':'');
+    const idx=i+1;
+    p.onclick=()=>{
+      const cur=load('zombies',0);
+      save('zombies', idx<=cur ? idx-1 : idx);
+      buildZombies();
+    };
+    c.appendChild(p);
+  }
+  document.getElementById('ferol-zombie-count').textContent=used+' / 12';
+}
+
+/* ── SUNLIGHT TOGGLE ── */
+function getSunlight(){ return load('sunlight',false); }
+function toggleSunlight(){
+  const cur=getSunlight(); save('sunlight',!cur); updateSunlightUI(!cur);
+}
+function updateSunlightUI(active){
+  const btn=document.getElementById('sunlight-btn');
+  if(active){ btn.textContent='⚠ Activo — Desventaja'; btn.className='toggle-btn on'; }
+  else { btn.textContent='Sin efecto'; btn.className='toggle-btn off'; }
+}
+
+/* ── RESET ── */
+function resetFerol(){
+  if(!confirm('¿Resetear completamente el estado de Ferol Sal?'))return;
+  ['hp','maxhp','zombies','sunlight','name','status'].forEach(k=>localStorage.removeItem(KEY+'_'+k));
+  MAX_HP=45;
+  document.getElementById('ferol-maxhp-input').value=45;
+  document.getElementById('ferol-max-label').textContent='/ 45';
+  setHP(45);
+  buildZombies();
+  updateSunlightUI(false);
+  document.getElementById('ferol-status').value='';
+  document.getElementById('ferol-name-input').value='Ferol Sal';
+}
+
+/* ── INIT ── */
+window.addEventListener('DOMContentLoaded',()=>{
+  MAX_HP=load('maxhp',45)||45;
+  document.getElementById('ferol-maxhp-input').value=MAX_HP;
+  document.getElementById('ferol-max-label').textContent='/ '+MAX_HP;
+  setHP(getHP());
+  buildZombies();
+  updateSunlightUI(getSunlight());
+
+  const ne=document.getElementById('ferol-name-input');
+  const sn=load('name',null); if(sn)ne.value=sn;
+  ne.addEventListener('input',()=>save('name',ne.value));
+
+  const se=document.getElementById('ferol-status');
+  const ss=load('status',null); if(ss)se.value=ss;
+  se.addEventListener('input',()=>save('status',se.value));
+});
+</script>
+</body>
+</html>

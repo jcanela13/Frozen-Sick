@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Las Curiosidades de Pelc — Recibo</title>
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=IM+Fell+English:ital@0;1&family=Satisfy&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #2a2015;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+
+  .page { width: 380px; position: relative; }
+
+  /* ── PARCHMENT ── */
+  .receipt {
+    background-color: #f0e8c8;
+    background-image:
+      radial-gradient(ellipse at 0% 0%,   rgba(120,80,20,0.28) 0%, transparent 38%),
+      radial-gradient(ellipse at 100% 0%,  rgba(120,80,20,0.22) 0%, transparent 36%),
+      radial-gradient(ellipse at 0% 100%,  rgba(100,65,15,0.32) 0%, transparent 38%),
+      radial-gradient(ellipse at 100% 100%,rgba(120,80,20,0.28) 0%, transparent 38%),
+      radial-gradient(ellipse at 50% 45%, rgba(255,245,190,0.4) 0%, transparent 60%),
+      linear-gradient(165deg, #f4ecce 0%, #eeddb8 40%, #ebd9aa 70%, #e2d09e 100%);
+    border-radius: 4px;
+    padding: 30px 32px 36px;
+    position: relative;
+    box-shadow:
+      0 2px 6px rgba(0,0,0,0.25),
+      0 10px 35px rgba(0,0,0,0.6),
+      inset 0 0 60px rgba(140,95,20,0.06);
+  }
+
+  /* ink stain */
+  .receipt::after {
+    content: '';
+    position: absolute;
+    top: 16%; right: 10%;
+    width: 50px; height: 35px;
+    border-radius: 50% 40% 60% 50%;
+    background: radial-gradient(ellipse, rgba(90,55,8,0.10) 0%, transparent 70%);
+    transform: rotate(-12deg);
+    pointer-events: none;
+  }
+
+  /* ── BORDERS ── */
+  .border-outer {
+    position: absolute;
+    inset: 9px;
+    border: 1.5px solid rgba(40,22,3,0.40);
+    border-radius: 2px;
+    pointer-events: none;
+  }
+  .border-inner {
+    position: absolute;
+    inset: 12.5px;
+    border: 0.5px solid rgba(40,22,3,0.22);
+    border-radius: 1px;
+    pointer-events: none;
+  }
+
+  /* ── DATE LINE ── */
+  .date-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 13px;
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 0.85rem;
+    color: #0e0600;
+    font-weight: bold;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── SHOP NAME ── */
+  .shop-name {
+    font-family: 'UnifrakturMaguntia', cursive;
+    font-size: 2.1rem;
+    color: #080300;
+    text-align: center;
+    line-height: 1.1;
+  }
+
+  .shop-sub {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 0.65rem;
+    color: #160900;
+    text-align: center;
+    letter-spacing: 0.05em;
+    margin-top: 5px;
+    line-height: 1.65;
+  }
+
+  /* ── RULES ── */
+  .rule-double {
+    border: none;
+    border-top: 2px double rgba(30,15,2,0.6);
+    margin: 12px 0 9px;
+  }
+  .rule-single {
+    border: none;
+    border-top: 1px solid rgba(30,15,2,0.45);
+    margin: 8px 0 6px;
+  }
+
+  /* ── ITEMS ── */
+  .items { list-style: none; margin: 2px 0; }
+
+  .items li {
+    display: flex;
+    align-items: baseline;
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 0.91rem;
+    color: #0a0400;
+    line-height: 1.9;
+  }
+
+  .i-name { flex-shrink: 0; }
+
+  .i-dots {
+    flex: 1;
+    margin: 0 4px;
+    background-image: repeating-linear-gradient(
+      to right,
+      rgba(15,8,1,0.55) 0px,
+      rgba(15,8,1,0.55) 1.5px,
+      transparent 1.5px,
+      transparent 5px
+    );
+    background-repeat: repeat-x;
+    background-position: 0 87%;
+    background-size: 5px 1px;
+  }
+
+  .i-price { flex-shrink: 0; }
+
+  /* ── FOOTER FIELDS ── */
+  .fields {
+    margin-top: 12px;
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: #0a0400;
+  }
+
+  .field-row {
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+    margin-bottom: 10px;
+  }
+
+  .f-label { white-space: nowrap; flex-shrink: 0; }
+
+  .f-value {
+    font-family: 'Satisfy', cursive;
+    font-size: 1.08rem;
+    color: #050200;
+    flex: 1;
+    border-bottom: 1px solid rgba(20,10,1,0.5);
+    padding-bottom: 1px;
+    line-height: 1.45;
+  }
+
+  .f-suffix { white-space: nowrap; flex-shrink: 0; }
+
+  /* ── SIGNATURE ROW ── */
+  .sig-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 20px;
+  }
+
+  .signature {
+    font-family: 'Satisfy', cursive;
+    font-size: 1.55rem;
+    color: #050200;
+    line-height: 1.2;
+  }
+
+  /* wavy underline SVG inline */
+  .sig-underline {
+    display: block;
+    margin-top: 2px;
+    width: 130px;
+    height: 6px;
+  }
+
+  .monogram {
+    font-family: 'UnifrakturMaguntia', cursive;
+    font-size: 4rem;
+    color: #8a0c08;
+    line-height: 1;
+  }
+
+  /* ── FOOTNOTE ── */
+  .footnote {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 0.62rem;
+    color: #1e1004;
+    text-align: center;
+    margin-top: 16px;
+    opacity: 0.75;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── PRINT ── */
+  @media print {
+    body { background: white; padding: 0; display: block; }
+    .page { width: 100%; }
+    .receipt { box-shadow: none; }
+    @page { margin: 8mm; size: A5 portrait; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="receipt">
+    <div class="border-outer"></div>
+    <div class="border-inner"></div>
+
+    <!-- DATE -->
+    <div class="date-line">
+      <span>10 de Dualahei</span>
+      <span>nº 24</span>
+    </div>
+
+    <!-- SHOP -->
+    <div class="shop-name">Las Curiosidades de Pelc</div>
+    <div class="shop-sub">
+      Coleccionista de curiosidades y objetos de manufactura aérea<br>
+      // Aldea de Palebank //
+    </div>
+
+    <hr class="rule-double">
+
+    <!-- ITEMS -->
+    <ul class="items">
+      <li><span class="i-name">1 daga</span><span class="i-dots"></span><span class="i-price">120 po</span></li>
+      <li><span class="i-name">1 estuche de pergaminos</span><span class="i-dots"></span><span class="i-price">45 po</span></li>
+      <li><span class="i-name">1 estatuilla de jade</span><span class="i-dots"></span><span class="i-price">250 po</span></li>
+      <li><span class="i-name">1 carcaj (20 flechas)</span><span class="i-dots"></span><span class="i-price">125 po</span></li>
+      <li><span class="i-name">1 anillo de plata (jaspe)</span><span class="i-dots"></span><span class="i-price">400 po</span></li>
+      <li><span class="i-name">2 viales de cristal azul</span><span class="i-dots"></span><span class="i-price">60 po</span></li>
+    </ul>
+
+    <hr class="rule-single">
+
+    <!-- FIELDS -->
+    <div class="fields">
+      <div class="field-row">
+        <span class="f-label">Recibido de</span>
+        <span class="f-value">Urgon Wenth</span>
+      </div>
+      <div class="field-row">
+        <span class="f-label">la suma de</span>
+        <span class="f-value">1000</span>
+        <span class="f-suffix">piezas de oro</span>
+      </div>
+    </div>
+
+    <!-- SIGNATURE -->
+    <div class="sig-row">
+      <div>
+        <div class="signature">Verla Pelc</div>
+        <svg class="sig-underline" viewBox="0 0 130 6" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0,3 C10,1 20,5 30,3 C40,1 50,5 60,3 C70,1 80,5 90,3 C100,1 110,5 120,3 L130,3"
+                stroke="#0a0400" stroke-width="0.8" fill="none" opacity="0.6"/>
+        </svg>
+      </div>
+      <div class="monogram">P</div>
+    </div>
+
+
+  </div>
+</div>
+</body>
+</html>

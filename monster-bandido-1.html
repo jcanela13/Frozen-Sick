@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bandido 3 — Frozen Sick</title>
+<title>Bandido 1 — Frozen Sick</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
 <style>
   :root { --ink:#0d1117; --gold:#c9a84c; --gold-light:#e8c97a; --parchment:#f0ede0; --silver:#b8bfc4; --red:#c84040; --green:#90e8a0; --accent:#b85050; }
@@ -85,7 +85,7 @@
   <div class="card-header">
     <div class="monster-avatar">🗡️</div>
     <div class="monster-identity">
-      <div class="monster-name">Bandido 3</div>
+      <div class="monster-name">Bandido 1</div>
       <div class="monster-type">Humanoide Mediano o Pequeño, neutral</div>
       <div class="monster-meta">
         <span class="meta-badge red">CA 12</span>
@@ -116,17 +116,17 @@
     <div class="interactive-panel">
       <div class="interactive-title">
         <span>⚙ Estado de sesión</span>
-        <button class="reset-btn" onclick="resetNPC('bandido-3')">↺ Resetear</button>
+        <button class="reset-btn" onclick="resetNPC('bandido-1')">↺ Resetear</button>
       </div>
       <div class="hp-row">
         <span class="hp-label">PG</span>
-        <div id="bandido-3-hp-display" class="hp-display full">15</div>
+        <div id="bandido-1-hp-display" class="hp-display full">15</div>
         <span class="hp-max">/ 15</span>
-        <div class="hp-bar-wrap"><div id="bandido-3-hp-bar" class="hp-bar" style="width:100%;background:#90e8a0"></div></div>
-        <button class="hp-btn" onclick="changeHP('bandido-3',15,1)">+</button>
-        <input id="bandido-3-hp-input" class="hp-input" type="number" min="1" value="1">
-        <button class="hp-apply-btn" onclick="applyDmg('bandido-3',15)">Daño</button>
-        <button class="hp-btn" onclick="changeHP('bandido-3',15,-1)">−</button>
+        <div class="hp-bar-wrap"><div id="bandido-1-hp-bar" class="hp-bar" style="width:100%;background:#90e8a0"></div></div>
+        <button class="hp-btn" onclick="changeHP('bandido-1',15,1)">+</button>
+        <input id="bandido-1-hp-input" class="hp-input" type="number" min="1" value="1">
+        <button class="hp-apply-btn" onclick="applyDmg('bandido-1',15)">Daño</button>
+        <button class="hp-btn" onclick="changeHP('bandido-1',15,-1)">−</button>
       </div>
     </div>
 
@@ -164,7 +164,7 @@
 </div>
 
 <script>
-const NPC_CONFIG = { 'bandido-3': { hp: 15 } };
+const NPC_CONFIG = { 'bandido-1': { hp: 15 } };
 function save(k,v){try{localStorage.setItem('syrinlya_'+k,JSON.stringify(v));}catch(e){}}
 function load(k,d){try{const v=localStorage.getItem('syrinlya_'+k);return v!==null?JSON.parse(v):d;}catch(e){return d;}}
 function updateHPDisplay(npc,max,cur){
@@ -191,7 +191,7 @@ function applyDmg(npc,max){
   save(npc+'_hp',cur);updateHPDisplay(npc,max,cur);inp.value=1;
 }
 function resetNPC(npc){save(npc+'_hp',NPC_CONFIG[npc].hp);updateHPDisplay(npc,NPC_CONFIG[npc].hp,NPC_CONFIG[npc].hp);}
-window.addEventListener('DOMContentLoaded',()=>updateHPDisplay('bandido-3',15,load('bandido-3_hp',15)));
+window.addEventListener('DOMContentLoaded',()=>updateHPDisplay('bandido-1',15,load('bandido-1_hp',15)));
 </script>
 </body>
 </html>

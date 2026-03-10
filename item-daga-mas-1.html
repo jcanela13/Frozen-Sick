@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daga +1 — Objeto Mágico</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body {
+    background: #0f0b06;
+    background-image:
+      radial-gradient(ellipse at 25% 20%, rgba(160,90,20,0.1) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 75%, rgba(120,60,10,0.07) 0%, transparent 55%);
+    font-family: 'Crimson Pro', Georgia, serif;
+    color: #f0ede0;
+    min-height: 100vh;
+    padding: 40px 16px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  @keyframes fadeSlide { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes shimmer { 0%,100%{opacity:0.55} 50%{opacity:1} }
+  @keyframes blade-glow { 0%,100%{filter:drop-shadow(0 0 4px rgba(200,150,50,0.3))} 50%{filter:drop-shadow(0 0 10px rgba(220,170,60,0.65))} }
+
+  .item-card {
+    width:100%; max-width:420px;
+    background: linear-gradient(155deg, #1a1208 0%, #110d04 55%, #0c0902 100%);
+    border: 1px solid rgba(180,120,30,0.3);
+    border-radius: 5px; overflow: hidden;
+    animation: fadeSlide 0.5s ease both;
+    box-shadow: 0 16px 50px rgba(0,0,0,0.9), 0 0 40px rgba(140,80,10,0.06);
+    position: relative;
+  }
+
+  .corner { position:absolute; width:22px; height:22px; }
+  .corner.tl { top:7px; left:7px; border-top:1px solid rgba(180,120,30,0.45); border-left:1px solid rgba(180,120,30,0.45); }
+  .corner.tr { top:7px; right:7px; border-top:1px solid rgba(180,120,30,0.45); border-right:1px solid rgba(180,120,30,0.45); }
+  .corner.bl { bottom:7px; left:7px; border-bottom:1px solid rgba(180,120,30,0.45); border-left:1px solid rgba(180,120,30,0.45); }
+  .corner.br { bottom:7px; right:7px; border-bottom:1px solid rgba(180,120,30,0.45); border-right:1px solid rgba(180,120,30,0.45); }
+
+  .top-bar {
+    height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(140,80,10,0.6), rgba(220,160,40,1), rgba(140,80,10,0.6), transparent);
+    animation: shimmer 5s ease-in-out infinite;
+  }
+
+  .card-header { padding:20px 22px 16px; display:flex; gap:16px; align-items:center;
+    border-bottom:1px solid rgba(180,120,30,0.13); }
+
+  /* Dagger SVG avatar */
+  .dagger-icon {
+    width:60px; height:60px; border-radius:4px; flex-shrink:0;
+    background: radial-gradient(135deg, rgba(30,18,4,0.97), rgba(18,10,2,0.99));
+    border:2px solid rgba(180,120,30,0.5);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 0 20px rgba(180,100,20,0.25), inset 0 0 14px rgba(0,0,0,0.5);
+    font-size: 1.8rem;
+    animation: blade-glow 3s ease-in-out infinite;
+  }
+
+  .item-identity { flex:1; }
+  .item-name { font-family:'Cinzel',serif; font-size:1.1rem; font-weight:700;
+    color:#e8c97a; letter-spacing:0.04em; line-height:1.2; }
+  .item-type { font-style:italic; font-size:0.84rem; color:rgba(200,140,50,0.65); margin-top:3px; }
+  .item-rarity {
+    display:inline-flex; align-items:center; gap:5px;
+    font-family:'Cinzel',serif; font-size:0.55rem; letter-spacing:0.12em; text-transform:uppercase;
+    padding:2px 9px; border-radius:10px; margin-top:7px;
+    border:1px solid rgba(180,140,60,0.45); color:#d8b870; background:rgba(160,100,20,0.1);
+  }
+
+  .card-body { padding:16px 22px 18px; }
+
+  .description {
+    font-size:0.9rem; line-height:1.72; color:rgba(240,237,224,0.82);
+    background:rgba(0,0,0,0.22); border-radius:3px; padding:12px 14px;
+    border-left:2px solid rgba(180,120,30,0.32);
+    display:flex; flex-direction:column; gap:9px;
+  }
+  .description p { margin:0; }
+
+  /* Property block */
+  .property-block {
+    margin-top:4px; padding:9px 12px;
+    background:rgba(0,0,0,0.28); border-radius:3px;
+    border:1px solid rgba(180,120,30,0.18);
+  }
+  .prop-title { font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:0.12em;
+    text-transform:uppercase; color:rgba(220,160,50,0.8); margin-bottom:5px;
+    display:flex; align-items:center; gap:6px; }
+  .prop-title::after { content:''; flex:1; height:1px;
+    background:linear-gradient(to right,rgba(180,120,30,0.2),transparent); }
+  .prop-text { font-size:0.85rem; line-height:1.6; color:rgba(240,237,224,0.72); }
+  .prop-text em { color:rgba(220,170,80,0.8); font-style:normal; font-weight:600; }
+
+  .tags-row { display:flex; gap:6px; flex-wrap:wrap; margin-top:11px; }
+  .tag { font-family:'Cinzel',serif; font-size:0.53rem; letter-spacing:0.1em;
+    text-transform:uppercase; padding:2px 8px; border-radius:10px;
+    border:1px solid rgba(180,120,30,0.3); color:rgba(200,150,60,0.8);
+    background:rgba(160,100,20,0.07); }
+
+  .item-meta { display:flex; justify-content:space-between; align-items:center;
+    margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.05); }
+  .meta-tag { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.14em;
+    text-transform:uppercase; color:rgba(189,195,199,0.38); }
+  .source { font-family:'Crimson Pro',serif; font-size:0.76rem; font-style:italic;
+    color:rgba(189,195,199,0.3); }
+</style>
+</head>
+<body>
+<div class="item-card">
+  <div class="corner tl"></div>
+  <div class="corner tr"></div>
+  <div class="corner bl"></div>
+  <div class="corner br"></div>
+  <div class="top-bar"></div>
+
+  <div class="card-header">
+    <div class="dagger-icon">🗡️</div>
+    <div class="item-identity">
+      <div class="item-name">Daga +1</div>
+      <div class="item-type">Arma (daga)</div>
+      <div class="item-rarity">✦ &nbsp; Poco común</div>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div class="description">
+      <p>Tienes un <strong>+1 a las tiradas de ataque y daño</strong> realizadas con esta arma mágica.</p>
+      <p>La competencia con la daga te permite añadir tu bonificador de competencia a la tirada de ataque en cualquier ataque que realices con ella.</p>
+
+      <div class="property-block">
+        <div class="prop-title">Maestría de arma — Nick</div>
+        <div class="prop-text">
+          Cuando realizas el ataque extra de la propiedad <em>Ligera</em>, puedes hacerlo como parte de la acción de <em>Atacar</em> en lugar de como Acción adicional. Solo puedes realizar este ataque extra una vez por turno.<br><br>
+          <span style="font-size:0.78rem;color:rgba(189,195,199,0.45);font-style:italic;">Requiere una característica de clase que permita usar propiedades de maestría.</span>
+        </div>
+      </div>
+
+      <div class="tags-row">
+        <span class="tag">Bonificador</span>
+        <span class="tag">Mágica</span>
+        <span class="tag">Daño</span>
+        <span class="tag">Combate</span>
+        <span class="tag">Finura</span>
+        <span class="tag">Ligera</span>
+        <span class="tag">Arrojadiza</span>
+        <span class="tag">Nick</span>
+      </div>
+    </div>
+
+    <div class="item-meta">
+      <span class="meta-tag">🏷 Daño · Combate</span>
+      <span class="source">Dungeon Master's Guide</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>

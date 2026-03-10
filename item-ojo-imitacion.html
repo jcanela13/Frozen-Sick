@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ojo de imitación — Objeto Mágico</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body {
+    background: #090b10;
+    background-image:
+      radial-gradient(ellipse at 30% 20%, rgba(40,80,140,0.1) 0%, transparent 55%),
+      radial-gradient(ellipse at 75% 80%, rgba(20,50,100,0.07) 0%, transparent 55%);
+    font-family: 'Crimson Pro', Georgia, serif;
+    color: #f0ede0;
+    min-height: 100vh;
+    padding: 40px 16px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  @keyframes fadeSlide { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes iris-pulse { 0%,100%{box-shadow:0 0 14px rgba(80,160,220,0.25),inset 0 0 12px rgba(0,0,0,0.6)} 50%{box-shadow:0 0 28px rgba(80,180,240,0.5),inset 0 0 12px rgba(0,0,0,0.6)} }
+  @keyframes shimmer { 0%,100%{opacity:0.55} 50%{opacity:1} }
+
+  .item-card {
+    width: 100%;
+    max-width: 420px;
+    background: linear-gradient(155deg, #0e1420 0%, #090e18 55%, #060a12 100%);
+    border: 1px solid rgba(80,140,200,0.28);
+    border-radius: 5px;
+    overflow: hidden;
+    animation: fadeSlide 0.5s ease both;
+    box-shadow: 0 16px 50px rgba(0,0,0,0.85), 0 0 40px rgba(40,100,180,0.06);
+    position: relative;
+  }
+
+  .corner { position:absolute; width:22px; height:22px; }
+  .corner.tl { top:7px; left:7px; border-top:1px solid rgba(80,140,200,0.4); border-left:1px solid rgba(80,140,200,0.4); }
+  .corner.tr { top:7px; right:7px; border-top:1px solid rgba(80,140,200,0.4); border-right:1px solid rgba(80,140,200,0.4); }
+  .corner.bl { bottom:7px; left:7px; border-bottom:1px solid rgba(80,140,200,0.4); border-left:1px solid rgba(80,140,200,0.4); }
+  .corner.br { bottom:7px; right:7px; border-bottom:1px solid rgba(80,140,200,0.4); border-right:1px solid rgba(80,140,200,0.4); }
+
+  .top-bar {
+    height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(50,110,190,0.6), rgba(100,180,255,1), rgba(50,110,190,0.6), transparent);
+    animation: shimmer 5s ease-in-out infinite;
+  }
+
+  .card-header { padding: 20px 22px 16px; display:flex; gap:16px; align-items:center;
+    border-bottom: 1px solid rgba(80,140,200,0.12); }
+
+  .eye-orb {
+    width: 60px; height: 60px; border-radius: 50%; flex-shrink:0;
+    background: radial-gradient(circle at 38% 38%,
+      rgba(120,200,255,0.9) 0%,
+      rgba(60,130,220,0.85) 25%,
+      rgba(20,60,140,0.9) 55%,
+      rgba(4,12,30,0.98) 100%);
+    border: 2px solid rgba(80,160,230,0.55);
+    position: relative; overflow: hidden;
+    animation: iris-pulse 3s ease-in-out infinite;
+  }
+  /* pupil */
+  .eye-orb::before {
+    content:''; position:absolute; top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    width:18px; height:22px; border-radius:50%;
+    background: rgba(0,0,0,0.95);
+    box-shadow: 0 0 6px rgba(0,0,0,0.8);
+  }
+  /* highlight */
+  .eye-orb::after {
+    content:''; position:absolute; top:22%; left:28%;
+    width:10px; height:7px; border-radius:50%;
+    background: rgba(255,255,255,0.6);
+    transform: rotate(-20deg);
+  }
+
+  .item-identity { flex:1; }
+  .item-name { font-family:'Cinzel',serif; font-size:1.1rem; font-weight:700;
+    color:#e8c97a; letter-spacing:0.04em; line-height:1.2; }
+  .item-type { font-style:italic; font-size:0.84rem; color:rgba(100,160,220,0.65); margin-top:3px; }
+  .item-rarity {
+    display:inline-flex; align-items:center; gap:5px;
+    font-family:'Cinzel',serif; font-size:0.55rem; letter-spacing:0.12em; text-transform:uppercase;
+    padding:2px 9px; border-radius:10px; margin-top:7px;
+    border:1px solid rgba(80,200,120,0.4); color:#80d898; background:rgba(60,160,80,0.08);
+  }
+
+  .card-body { padding: 16px 22px 18px; }
+
+  .description {
+    font-size: 0.9rem; line-height: 1.72; color: rgba(240,237,224,0.82);
+    background: rgba(0,0,0,0.22); border-radius: 3px; padding: 12px 14px;
+    border-left: 2px solid rgba(80,140,200,0.3);
+  }
+  .description em { color: rgba(140,200,255,0.75); font-style:italic; }
+
+  .item-meta { display:flex; justify-content:space-between; align-items:center;
+    margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.05); }
+  .meta-tag { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.14em;
+    text-transform:uppercase; color:rgba(189,195,199,0.38); }
+  .source { font-family:'Crimson Pro',serif; font-size:0.76rem; font-style:italic;
+    color:rgba(189,195,199,0.3); }
+</style>
+</head>
+<body>
+<div class="item-card">
+  <div class="corner tl"></div>
+  <div class="corner tr"></div>
+  <div class="corner bl"></div>
+  <div class="corner br"></div>
+  <div class="top-bar"></div>
+
+  <div class="card-header">
+    <div class="eye-orb"></div>
+    <div class="item-identity">
+      <div class="item-name">Ojo de imitación</div>
+      <div class="item-type">Objeto maravilloso</div>
+      <div class="item-rarity">✦ &nbsp; Común</div>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div class="description">
+      Este ojo artificial reemplaza uno real que se haya perdido o extraído. Mientras el ojo de imitación está incrustado en tu cuenca ocular, nadie puede extraértelo salvo tú mismo, y puedes ver a través del diminuto orbe como si fuera un ojo normal.
+    </div>
+    <div class="item-meta">
+      <span class="meta-tag">🏷 Social</span>
+      <span class="source">Xanathar's Guide to Everything, p. 137</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>

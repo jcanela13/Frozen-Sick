@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batidor — Monster Manual 2024</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#0d1117; --gold:#c9a84c; --gold-light:#e8c97a; --parchment:#f0ede0; --silver:#b8bfc4; --red:#c84040; --green:#90e8a0; --ice:#a8d8ea; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body {
+    background: var(--ink);
+    background-image: radial-gradient(ellipse at 25% 15%, rgba(120,160,80,0.05) 0%, transparent 55%), radial-gradient(ellipse at 75% 85%, rgba(60,100,40,0.04) 0%, transparent 55%);
+    font-family: 'Crimson Pro', Georgia, serif;
+    color: var(--parchment);
+    min-height: 100vh;
+    padding: 30px 16px 60px;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  @keyframes fadeSlide { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+  .monster-card {
+    background: linear-gradient(160deg,#111a0e 0%,#0c1309 60%,#080f06 100%);
+    border:1px solid rgba(120,160,80,0.22);
+    border-radius:4px; position:relative; overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,0,0,0.75), inset 0 1px 0 rgba(120,200,80,0.08);
+    animation: fadeSlide 0.5s ease both;
+  }
+  .monster-card::after { content:''; position:absolute; top:8px;right:8px; width:28px;height:28px; border-top:1px solid rgba(120,160,80,0.3); border-right:1px solid rgba(120,160,80,0.3); }
+  .card-corner-bl { position:absolute; bottom:8px;left:8px; width:28px;height:28px; border-bottom:1px solid rgba(120,160,80,0.3); border-left:1px solid rgba(120,160,80,0.3); }
+  .color-bar { height:3px; width:100%; background: linear-gradient(90deg,transparent,rgba(80,140,40,0.8),rgba(120,180,60,1.0),rgba(80,140,40,0.8),transparent); }
+  .card-header { padding:22px 26px 16px; display:flex; gap:18px; align-items:flex-start; border-bottom:1px solid rgba(120,160,80,0.22); }
+  .monster-avatar { width:68px;height:68px;border-radius:50%; border:2px solid rgba(80,140,40,0.6); background:radial-gradient(135deg,rgba(20,30,10,0.9),rgba(10,18,5,0.95)); display:flex;align-items:center;justify-content:center;font-size:1.9rem; flex-shrink:0;position:relative; box-shadow:0 0 20px rgba(80,140,40,0.3),inset 0 0 15px rgba(0,0,0,0.4); }
+  .monster-identity { flex:1; }
+  .npc-name-input { background:transparent; border:none; border-bottom:1px dashed rgba(201,168,76,0.0); color:var(--gold-light); font-family:'Cinzel',serif; font-size:1.3rem; font-weight:700; letter-spacing:0.04em; line-height:1.2; outline:none; width:100%; cursor:text; transition:border-color 0.25s,background 0.25s; padding:0; }
+  .npc-name-input:hover { border-bottom-color:rgba(201,168,76,0.25); }
+  .npc-name-input:focus { border-bottom-color:rgba(201,168,76,0.65); background:rgba(201,168,76,0.04); }
+  .monster-type { font-style:italic; font-size:0.9rem; color:rgba(140,200,80,0.7); margin-top:3px; }
+  .monster-meta { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+  .meta-badge { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; padding:2px 8px; border-radius:2px; border:1px solid rgba(201,168,76,0.3); color:var(--gold); background:rgba(201,168,76,0.07); }
+  .meta-badge.red { border-color:rgba(200,64,64,0.4); color:#e88080; background:rgba(200,64,64,0.07); }
+  .meta-badge.blue { border-color:rgba(80,140,200,0.4); color:#90b8e8; background:rgba(80,140,200,0.07); }
+  .initiative-badge { font-family:'Cinzel',serif; font-size:0.7rem; color:var(--gold-light); margin-left:auto; white-space:nowrap; align-self:flex-start; opacity:0.8; }
+  .status-bar { display:flex; align-items:center; gap:10px; padding:6px 28px; border-bottom:1px solid rgba(120,160,80,0.22); background:rgba(0,0,0,0.2); flex-wrap:wrap; }
+  .status-label { font-family:'Cinzel',serif; font-size:0.55rem; letter-spacing:0.14em; text-transform:uppercase; color:rgba(189,195,199,0.45); flex-shrink:0; }
+  .status-input { background:transparent; border:none; border-bottom:1px dashed rgba(200,100,100,0.0); color:rgba(232,128,128,0.8); font-family:'Cinzel',serif; font-size:0.68rem; letter-spacing:0.05em; min-width:200px; outline:none; padding:1px 4px; transition:border-color 0.25s,background 0.25s; }
+  .status-input::placeholder { color:rgba(189,195,199,0.25); font-style:italic; }
+  .status-input:hover { border-bottom-color:rgba(200,100,100,0.3); }
+  .status-input:focus { border-bottom-color:rgba(200,100,100,0.65); background:rgba(200,100,100,0.04); }
+  .stats-bar { display:grid; grid-template-columns:repeat(6,1fr); padding:10px 26px; border-bottom:1px solid rgba(120,160,80,0.22); background:rgba(0,0,0,0.18); gap:2px; }
+  .stat { text-align:center; }
+  .stat-label { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--silver); opacity:0.65; display:block; margin-bottom:1px; }
+  .stat-value { font-family:'Cinzel',serif; font-size:1rem; font-weight:700; color:var(--parchment); display:block; line-height:1; }
+  .stat-mods { font-size:0.62rem; color:rgba(201,168,76,0.7); display:block; margin-top:1px; }
+  .combat-row { display:flex; padding:9px 26px; border-bottom:1px solid rgba(120,160,80,0.22); background:rgba(0,0,0,0.1); flex-wrap:wrap; gap:2px; }
+  .combat-stat { flex:1; text-align:center; position:relative; min-width:80px; }
+  .combat-stat+.combat-stat::before { content:''; position:absolute; left:0; top:10%;bottom:10%; width:1px; background:rgba(120,160,80,0.22); }
+  .combat-label { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--silver); opacity:0.6; display:block; }
+  .combat-value { font-family:'Cinzel',serif; font-size:0.95rem; font-weight:600; color:var(--gold-light); display:block; margin-top:1px; }
+  .card-body { padding:0 26px; }
+  .section { padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+  .section:last-child { border-bottom:none; }
+  .section-title { font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold); opacity:0.75; margin-bottom:7px; display:flex; align-items:center; gap:8px; }
+  .section-title::after { content:''; flex:1; height:1px; background:linear-gradient(to right,rgba(201,168,76,0.18),transparent); }
+  .trait-row { display:flex; gap:6px; margin-bottom:4px; font-size:0.83rem; line-height:1.45; flex-wrap:wrap; }
+  .trait-key { font-family:'Cinzel',serif; font-size:0.72rem; font-weight:600; color:var(--gold-light); white-space:nowrap; }
+  .trait-val { color:rgba(240,237,224,0.78); }
+  .ability-item { margin-bottom:7px; padding-left:13px; position:relative; cursor:pointer; }
+  .ability-item::before { content:'✦'; position:absolute; left:0; top:2px; color:var(--gold); font-size:0.58rem; opacity:0.65; }
+  .ability-name { font-family:'Cinzel',serif; font-size:0.75rem; font-weight:600; color:rgba(168,216,234,0.9); margin-bottom:1px; display:flex; align-items:center; gap:5px; user-select:none; }
+  .expand-caret { font-size:0.55rem; color:rgba(168,216,234,0.35); transition:transform 0.2s,color 0.2s; }
+  .ability-item.open .expand-caret { transform:rotate(90deg); color:rgba(168,216,234,0.8); }
+  .ability-desc { font-size:0.82rem; color:rgba(240,237,224,0.7); line-height:1.5; }
+  .ability-detail { display:none; margin-top:5px; padding:8px 10px; background:rgba(0,0,0,0.25); border-left:2px solid rgba(168,216,234,0.2); font-size:0.82rem; color:rgba(240,237,224,0.68); line-height:1.6; border-radius:0 3px 3px 0; }
+  .ability-item.open .ability-detail { display:block; }
+  .action-item { margin-bottom:7px; padding-left:13px; position:relative; font-size:0.84rem; line-height:1.5; color:rgba(240,237,224,0.78); cursor:pointer; }
+  .action-item::before { content:'▸'; position:absolute; left:0; top:2px; color:var(--red); font-size:0.6rem; opacity:0.7; }
+  .action-name { font-family:'Cinzel',serif; font-size:0.75rem; font-weight:700; color:var(--parchment); display:flex; align-items:center; gap:5px; user-select:none; }
+  .action-caret { font-size:0.55rem; color:rgba(200,100,100,0.4); transition:transform 0.2s,color 0.2s; }
+  .action-item.open .action-caret { transform:rotate(90deg); color:rgba(200,100,100,0.85); }
+  .action-detail { display:none; margin-top:5px; padding:8px 10px; background:rgba(0,0,0,0.25); border-left:2px solid rgba(200,64,64,0.25); font-size:0.82rem; color:rgba(240,237,224,0.68); line-height:1.6; border-radius:0 3px 3px 0; }
+  .action-item.open .action-detail { display:block; }
+  .action-detail strong { font-family:'Cinzel',serif; font-size:0.72rem; color:rgba(201,168,76,0.9); }
+  .attacks-list { display:flex; flex-direction:column; gap:5px; }
+  .attack-item { display:flex; gap:8px; align-items:baseline; padding:5px 10px; background:rgba(0,0,0,0.2); border-radius:3px; border:1px solid rgba(200,64,64,0.1); font-size:0.82rem; flex-wrap:wrap; }
+  .attack-name { font-family:'Cinzel',serif; font-size:0.72rem; font-weight:600; color:var(--parchment); flex:1; min-width:120px; }
+  .attack-bonus { color:#90e8a0; font-weight:600; white-space:nowrap; }
+  .attack-dmg { color:#ffd080; white-space:nowrap; }
+  .attack-type { color:rgba(240,237,224,0.45); font-size:0.75rem; white-space:nowrap; }
+  .interactive-panel { background:rgba(0,0,0,0.3); border:1px solid rgba(120,160,80,0.22); border-radius:4px; padding:13px 15px; margin:13px 0 0; }
+  .interactive-title { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.18em; text-transform:uppercase; color:rgba(140,200,80,0.7); margin-bottom:11px; display:flex; align-items:center; justify-content:space-between; }
+  .reset-btn { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.1em; text-transform:uppercase; padding:3px 9px; border-radius:2px; border:1px solid rgba(255,100,100,0.28); color:rgba(255,150,150,0.55); background:rgba(255,100,100,0.04); cursor:pointer; transition:all 0.2s; }
+  .reset-btn:hover { border-color:rgba(255,100,100,0.6); color:rgba(255,180,180,0.9); background:rgba(255,100,100,0.1); }
+  .hp-row { display:flex; align-items:center; gap:9px; margin-bottom:4px; }
+  .hp-label { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--silver); opacity:0.65; min-width:24px; }
+  .hp-display { font-family:'Cinzel',serif; font-size:1.35rem; font-weight:700; color:var(--parchment); min-width:38px; text-align:center; transition:color 0.3s; }
+  .hp-display.full { color:#90e8a0; } .hp-display.mid { color:#ffd080; } .hp-display.low { color:#ff8080; }
+  .hp-max { font-family:'Cinzel',serif; font-size:0.72rem; color:var(--silver); opacity:0.45; }
+  .hp-bar-wrap { flex:1; height:5px; background:rgba(0,0,0,0.45); border-radius:3px; overflow:hidden; border:1px solid rgba(255,255,255,0.04); }
+  .hp-bar { height:100%; border-radius:3px; transition:width 0.4s ease,background 0.4s ease; }
+  .hp-btn { width:26px;height:26px;border-radius:50%;border:1px solid rgba(201,168,76,0.32);background:rgba(201,168,76,0.07);color:var(--gold-light);font-size:1rem;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+  .hp-btn:hover { background:rgba(201,168,76,0.22); border-color:rgba(201,168,76,0.6); }
+  .hp-input { width:42px;text-align:center;background:rgba(0,0,0,0.3);border:1px solid rgba(201,168,76,0.18);border-radius:2px;color:var(--parchment);font-family:'Cinzel',serif;font-size:0.78rem;padding:3px 4px; }
+  .hp-input:focus { outline:none; border-color:rgba(201,168,76,0.5); }
+  .hp-apply-btn { font-family:'Cinzel',serif;font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;padding:4px 9px;border-radius:2px;border:1px solid rgba(200,64,64,0.35);color:rgba(232,128,128,0.8);background:rgba(200,64,64,0.06);cursor:pointer;transition:all 0.2s; }
+  .hp-apply-btn:hover { background:rgba(200,64,64,0.15); border-color:rgba(200,64,64,0.65); }
+  .uses-section { margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.05); }
+  .uses-row { display:flex; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap; }
+  .uses-label { font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.07em; color:rgba(168,216,234,0.85); flex:1; min-width:100px; }
+  .uses-pips { display:flex; gap:5px; }
+  .use-pip { width:15px;height:15px;border-radius:2px;border:1.5px solid rgba(201,168,76,0.42);background:rgba(201,168,76,0.13);cursor:pointer;transition:all 0.15s;position:relative; }
+  .use-pip.used { background:rgba(0,0,0,0.4); border-color:rgba(201,168,76,0.13); }
+  .use-pip.used::after { content:'×';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:0.62rem;color:rgba(201,168,76,0.22);line-height:1; }
+  .use-pip:hover:not(.used) { background:rgba(201,168,76,0.32); border-color:rgba(201,168,76,0.9); transform:scale(1.1); }
+  .recharge-tag { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.08em; text-transform:uppercase; color:rgba(168,216,234,0.45); background:rgba(168,216,234,0.05); border:1px solid rgba(168,216,234,0.12); padding:1px 5px; border-radius:2px; }
+  .card-footer { padding:10px 26px 18px; display:flex; justify-content:space-between; align-items:center; opacity:0.45; }
+  .footer-fluff { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--silver); }
+  .xp-val { font-family:'Cinzel',serif; font-size:0.65rem; color:var(--gold); }
+  .rules-note { font-family:'Cinzel',serif; font-size:0.58rem; color:rgba(140,200,80,0.7); letter-spacing:0.06em; opacity:0.6; display:block; margin-bottom:6px; }
+  .badge-row { display:flex; gap:5px; flex-wrap:wrap; margin-top:3px; }
+  .badge { font-family:'Cinzel',serif; font-size:0.58rem; padding:2px 7px; border-radius:10px; }
+  .badge-imm { border:1px solid rgba(200,64,64,0.4); color:#e88080; background:rgba(200,64,64,0.07); }
+  .badge-res { border:1px solid rgba(80,140,200,0.4); color:#90b8e8; background:rgba(80,140,200,0.07); }
+  .badge-cond { border:1px solid rgba(150,100,200,0.4); color:#c8a0e8; background:rgba(150,100,200,0.07); }
+  .spells-grid { display:flex; flex-wrap:wrap; gap:5px; margin-top:4px; }
+  .spell-badge { font-family:'Cinzel',serif; font-size:0.6rem; padding:2px 8px; border-radius:2px; border:1px solid rgba(168,216,234,0.25); color:rgba(168,216,234,0.8); background:rgba(168,216,234,0.05); cursor:default; }
+  .spell-freq { font-size:0.55rem; color:rgba(201,168,76,0.55); margin-right:4px; }
+</style>
+</head>
+<body>
+
+<div class="monster-card">
+  <div class="card-corner-bl"></div>
+  <div class="color-bar"></div>
+
+  <div class="card-header">
+    <div class="monster-avatar">🏹</div>
+    <div class="monster-identity">
+      <input class="npc-name-input" id="batidor-name-input" type="text" value="Batidor">
+      <div class="monster-type">Humanoide (cualquier especie) Mediano o Pequeño · neutral</div>
+      <div class="monster-meta">
+        <span class="meta-badge red">CA 13</span>
+        <span class="meta-badge">VD 1/2 · 100 XP</span>
+        <span class="meta-badge blue">BC +2</span>
+        <span class="initiative-badge">Iniciativa +2 (12)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <span class="status-label">Estado / Condiciones:</span>
+    <input class="status-input" id="batidor-status" placeholder="Normal — sin condiciones activas" type="text">
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat"><span class="stat-label">FUE</span><span class="stat-value">11</span><span class="stat-mods">+0 / +0</span></div>
+    <div class="stat"><span class="stat-label">DES</span><span class="stat-value">14</span><span class="stat-mods">+2 / +2</span></div>
+    <div class="stat"><span class="stat-label">CON</span><span class="stat-value">12</span><span class="stat-mods">+1 / +1</span></div>
+    <div class="stat"><span class="stat-label">INT</span><span class="stat-value">11</span><span class="stat-mods">+0 / +0</span></div>
+    <div class="stat"><span class="stat-label">SAB</span><span class="stat-value">13</span><span class="stat-mods">+1 / +1</span></div>
+    <div class="stat"><span class="stat-label">CAR</span><span class="stat-value">11</span><span class="stat-mods">+0 / +0</span></div>
+
+  </div>
+
+  <div class="combat-row">
+    <div class="combat-stat"><span class="combat-label">PG</span><span class="combat-value">16 (3d8+3)</span></div>
+    <div class="combat-stat"><span class="combat-label">Velocidad</span><span class="combat-value">30 ft</span></div>
+    <div class="combat-stat"><span class="combat-label">CA</span><span class="combat-value">13 (cuero)</span></div>
+    <div class="combat-stat"><span class="combat-label">VD / XP</span><span class="combat-value">½ / 100</span></div>
+
+  </div>
+
+  <div class="card-body">
+    <div class="interactive-panel">
+      <div class="interactive-title">
+        <span>⚙ Estado de sesión</span>
+        <button class="reset-btn" onclick="resetM()">↺ Resetear</button>
+      </div>
+      <div class="hp-row">
+        <span class="hp-label">PG</span>
+        <div id="batidor-hp-display" class="hp-display full">16</div>
+        <span class="hp-max">/ 16</span>
+        <div class="hp-bar-wrap"><div id="batidor-hp-bar" class="hp-bar" style="width:100%;background:#90e8a0"></div></div>
+        <button class="hp-btn" onclick="changeHP(1)">+</button>
+        <input id="batidor-hp-input" class="hp-input" type="number" min="1" value="1" placeholder="n">
+        <button class="hp-apply-btn" onclick="applyDmg()">Daño</button>
+        <button class="hp-btn" onclick="changeHP(-1)">−</button>
+      </div>
+
+    </div>
+
+    <div class="section">
+      <div class="section-title">Rasgos</div>
+      <div class="trait-row"><span class="trait-key">Habilidades:</span><span class="trait-val">Naturaleza +4, Percepción +5, Sigilo +6, Supervivencia +5</span></div>
+      <div class="trait-row"><span class="trait-key">Sentidos:</span><span class="trait-val">Percepción pasiva 15</span></div>
+      <div class="trait-row"><span class="trait-key">Idiomas:</span><span class="trait-val">Común + un idioma adicional</span></div>
+      <div class="trait-row"><span class="trait-key">Equipamiento:</span><span class="trait-val">Armadura de cuero, espada corta, arco largo</span></div>
+    </div>
+    <div class="section">
+      <div class="section-title">Ataques</div>
+      <div class="attacks-list">
+        <div class="attack-item"><span class="attack-name">Espada corta</span><span class="attack-bonus">+4 al golpe</span><span class="attack-dmg">1d6+2 perforante</span><span class="attack-type">Alcance 5 ft</span></div>
+        <div class="attack-item"><span class="attack-name">Arco largo</span><span class="attack-bonus">+4 al golpe</span><span class="attack-dmg">1d8+2 perforante</span><span class="attack-type">45/600 ft</span></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Acciones</div>
+      <div class="action-item" onclick="this.classList.toggle('open')">
+        <div class="action-name">Ataque múltiple <span class="action-caret">▶</span></div>
+        <div>El batidor realiza dos ataques con su arco largo o su espada corta en cualquier combinación.</div>
+        <div class="action-detail"><strong>Ataque múltiple:</strong> El batidor realiza dos ataques con su arco largo o su espada corta en cualquier combinación.<br><br><strong>Espada corta — Ataque cuerpo a cuerpo:</strong> +4 al golpe, alcance 5 ft, un objetivo. <em>Impacto:</em> 5 (1d6+2) puntos de daño perforante.<br><br><strong>Arco largo — Ataque a distancia:</strong> +4 al golpe, alcance 45/600 ft, un objetivo. <em>Impacto:</em> 6 (1d8+2) puntos de daño perforante.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="card-footer">
+    <span class="footer-fluff">Monster Manual 2024</span>
+    <span class="xp-val">100 XP · VD 1/2</span>
+  </div>
+</div>
+
+<script>
+const KEY = 'batidor';
+const MAX_HP = 16;
+function getHP() { const v=parseInt(localStorage.getItem(KEY+'_hp')); return isNaN(v)?MAX_HP:v; }
+function setHP(v) {
+  v=Math.max(0,Math.min(MAX_HP,v)); localStorage.setItem(KEY+'_hp',v);
+  const d=document.getElementById(KEY+'-hp-display'), b=document.getElementById(KEY+'-hp-bar');
+  d.textContent=v; const p=v/MAX_HP;
+  d.className='hp-display '+(p>0.5?'full':p>0.25?'mid':'low');
+  b.style.width=(p*100)+'%'; b.style.background=p>0.5?'#90e8a0':p>0.25?'#ffd080':'#ff8080';
+}
+function changeHP(d) { setHP(getHP()+d); }
+function applyDmg() { const i=document.getElementById(KEY+'-hp-input'),n=parseInt(i.value)||0; if(n>0)setHP(getHP()-n); i.value=1; }
+function buildUses(abilityKey,total) {
+  const sk=KEY+'_use_'+abilityKey, used=parseInt(localStorage.getItem(sk))||0;
+  const c=document.getElementById(KEY+'-'+abilityKey); if(!c)return; c.innerHTML='';
+  for(let i=0;i<total;i++) {
+    const p=document.createElement('div'); p.className='use-pip'+(i<used?' used':'');
+    const idx=i; p.onclick=()=>{
+      const u=parseInt(localStorage.getItem(sk))||0;
+      localStorage.setItem(sk,idx<u?u-1:u+1); buildUses(abilityKey,total);
+    }; c.appendChild(p);
+  }
+}
+function resetM() {
+  if(!confirm('¿Resetear estado?'))return;
+  Object.keys(localStorage).filter(k=>k.startsWith(KEY+'_')).forEach(k=>localStorage.removeItem(k));
+  setHP(MAX_HP);
+  document.getElementById(KEY+'-status').value='';
+  document.getElementById(KEY+'-name-input').value=document.getElementById(KEY+'-name-input').defaultValue;
+  
+}
+window.addEventListener('DOMContentLoaded',()=>{
+  setHP(getHP());
+  const ne=document.getElementById(KEY+'-name-input');
+  const sn=localStorage.getItem(KEY+'_name'); if(sn)ne.value=sn;
+  ne.addEventListener('input',()=>localStorage.setItem(KEY+'_name',ne.value));
+  const se=document.getElementById(KEY+'-status');
+  const ss=localStorage.getItem(KEY+'_status'); if(ss)se.value=ss;
+  se.addEventListener('input',()=>localStorage.setItem(KEY+'_status',se.value));
+  
+});
+</script>
+</body>
+</html>
