@@ -135,6 +135,62 @@
   .monster-card { background: linear-gradient(160deg, #1e1a14 0%, #141008 60%, #0f0c06 100%); }
   .monster-avatar { background: radial-gradient(135deg, rgba(30,20,10,0.9), rgba(15,10,5,0.95)); border-color: rgba(60,40,100,0.8); box-shadow: 0 0 20px rgba(80,50,130,0.3), inset 0 0 15px rgba(0,0,0,0.4); }
   .color-bar { background: linear-gradient(90deg, transparent, rgba(60,40,100,0.8), rgba(60,40,100,1.0), rgba(60,40,100,0.8), transparent); }
+
+  /* ===== EDITABLE NAME ===== */
+  .npc-name-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed rgba(201,168,76,0.0);
+    color: var(--gold-light, #f0d080);
+    font-family: 'Cinzel', serif;
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    line-height: 1.2;
+    outline: none;
+    width: 100%;
+    cursor: text;
+    transition: border-color 0.25s, background 0.25s;
+    padding: 0;
+  }
+  .npc-name-input:hover { border-bottom-color: rgba(201,168,76,0.2); }
+  .npc-name-input:focus { border-bottom-color: rgba(201,168,76,0.6); background: rgba(201,168,76,0.04); }
+
+  /* ===== STATUS BAR ===== */
+  .status-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 28px;
+    border-bottom: 1px solid rgba(201,168,76,0.07);
+    background: rgba(0,0,0,0.18);
+    flex-wrap: wrap;
+  }
+  .status-label {
+    "font-family": 'Cinzel', serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(189,195,199,0.45);
+    flex-shrink: 0;
+  }
+  .status-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed rgba(200,100,100,0.0);
+    color: rgba(232,128,128,0.8);
+    font-family: 'Cinzel', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    min-width: 200px;
+    outline: none;
+    padding: 1px 4px;
+    transition: border-color 0.25s, background 0.25s;
+  }
+  .status-input::placeholder { color: rgba(189,195,199,0.25); font-style: italic; }
+  .status-input:hover { border-bottom-color: rgba(200,100,100,0.3); }
+  .status-input:focus { border-bottom-color: rgba(200,100,100,0.65); background: rgba(200,100,100,0.04); }
+
 </style>
 </head>
 <body>
@@ -150,6 +206,11 @@
     <div class="monster-identity">
       <div class="monster-name">Raeglin Mau</div>
       <div class="monster-type">Humanoide mediano (elfo), Neutral Evil</div>
+  <div class="status-bar">
+    <span class="status-label">Estado / Condiciones:</span>
+    <input class="status-input" id="raeglin-status" placeholder="Normal — sin condiciones activas" type="text">
+  </div>
+
       <div class="monster-meta">
         <span class="meta-badge red">CA 13</span>
         <span class="meta-badge">VD 1/2 · 100 XP</span>
@@ -227,7 +288,7 @@
 <script>
 
 const NPC_CONFIG = {
-  raeglin-mau: {
+  "raeglin-mau": {
     hp: 22,
     slots: {},
     uses: {}
@@ -303,6 +364,22 @@ function resetNPC(npc) {
   for (const level of Object.keys(cfg.slots)) save(npc + '_slots_' + level, []);
   for (const key of Object.keys(cfg.uses)) save(npc + '_use_' + key, []);
   initNPC(npc);
+
+  // Save/load status
+  const statusEl = document.getElementById('raeglin-status');
+  if(statusEl) {
+    const savedStatus = localStorage.getItem('raeglin_status');
+    if(savedStatus) statusEl.value = savedStatus;
+    statusEl.addEventListener('input', () => localStorage.setItem('raeglin_status', statusEl.value));
+  }
+  // Save/load name
+  const nameEl = document.getElementById('raeglin-name-input');
+  if(nameEl) {
+    const savedName = localStorage.getItem('raeglin_name');
+    if(savedName) nameEl.value = savedName;
+    nameEl.addEventListener('input', () => localStorage.setItem('raeglin_name', nameEl.value));
+  }
+
 }
 window.addEventListener('DOMContentLoaded', () => initNPC('raeglin-mau'));
 
