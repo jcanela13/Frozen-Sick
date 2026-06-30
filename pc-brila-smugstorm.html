@@ -12,7 +12,7 @@
     --parchment: #f0ede0; --silver: #b8bfc4;
     --storm: #7ab0d4; --storm-dark: #4a7a9e;
     --lightning: #d4c97a; --green: #90e8a0;
-    --red: #e08080;
+    --red: #e08080; --pink: #f0a0c8; --pink-dark: #c06090;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -127,13 +127,13 @@
 
   /* SPELLS TABLE */
   .spell-item { border-radius:2px; overflow:hidden; margin-bottom:4px; }
-  .spell-summary { display:flex; align-items:flex-start; gap:8px; padding:5px 6px 5px 0; border-bottom:1px solid rgba(255,255,255,0.03); font-size:0.82rem; cursor:pointer; transition:background 0.15s; border-radius:2px; }
+  .spell-summary { display:grid; grid-template-columns:16px 58px 130px 54px 68px 1fr; align-items:center; gap:6px; padding:5px 4px 5px 0; border-bottom:1px solid rgba(255,255,255,0.03); font-size:0.82rem; cursor:pointer; transition:background 0.15s; border-radius:2px; }
   .spell-summary:hover { background:rgba(122,176,212,0.05); }
   .spell-level-badge { font-family:'Cinzel',serif; font-size:0.56rem; letter-spacing:0.08em; text-transform:uppercase; padding:2px 6px; border-radius:2px; border:1px solid rgba(122,176,212,0.3); color:var(--storm); background:rgba(122,176,212,0.07); white-space:nowrap; flex-shrink:0; align-self:center; }
-  .spell-name { font-family:'Cinzel',serif; font-size:0.74rem; font-weight:600; color:var(--parchment); min-width:120px; }
-  .spell-cast { font-size:0.75rem; color:rgba(240,237,224,0.55); min-width:55px; }
-  .spell-range { font-size:0.75rem; color:rgba(122,176,212,0.6); min-width:65px; }
-  .spell-notes { font-size:0.75rem; color:rgba(240,237,224,0.65); flex:1; }
+  .spell-name { font-family:'Cinzel',serif; font-size:0.74rem; font-weight:600; color:var(--parchment); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .spell-cast { font-size:0.72rem; color:rgba(240,237,224,0.55); white-space:nowrap; overflow:hidden; }
+  .spell-range { font-size:0.72rem; color:rgba(122,176,212,0.6); white-space:nowrap; overflow:hidden; }
+  .spell-notes { font-size:0.72rem; color:rgba(240,237,224,0.65); }
   .spell-detail { display:none; padding:8px 10px 10px; background:rgba(0,0,0,0.2); border-bottom:1px solid rgba(122,176,212,0.07); }
   .spell-detail.open { display:block; }
   .spell-detail-editable { width:100%; background:transparent; border:none; color:rgba(240,237,224,0.75); font-family:'Crimson Pro',Georgia,serif; font-size:0.81rem; line-height:1.6; resize:vertical; min-height:60px; outline:none; }
@@ -223,6 +223,33 @@
   .use-pip.used::after { content:'×';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:0.62rem;color:rgba(201,168,76,0.22);line-height:1; }
   .use-pip:hover:not(.used) { background:rgba(201,168,76,0.32); border-color:rgba(201,168,76,0.9); transform:scale(1.1); }
   .recharge-tag { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.08em; text-transform:uppercase; color:rgba(122,176,212,0.45); background:rgba(122,176,212,0.05); border:1px solid rgba(122,176,212,0.12); padding:1px 5px; border-radius:2px; }
+  .short-rest-btn { font-family:'Cinzel',serif; font-size:0.55rem; letter-spacing:0.08em; text-transform:uppercase; padding:3px 8px; border-radius:2px; border:1px solid rgba(122,176,212,0.4); color:rgba(122,176,212,0.85); background:rgba(122,176,212,0.08); cursor:pointer; transition:all 0.2s; }
+  .short-rest-btn:hover { background:rgba(122,176,212,0.2); border-color:rgba(122,176,212,0.75); }
+
+  /* TEMPORARY HP */
+  .thp-row { display:flex; align-items:center; gap:9px; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.05); flex-wrap:wrap; }
+  .thp-display { font-family:'Cinzel',serif; font-size:1.4rem; font-weight:700; min-width:36px; text-align:center; color:var(--pink); text-shadow:0 0 10px rgba(240,160,200,0.4); transition:all 0.3s; }
+  .thp-display.zero { color:rgba(240,160,200,0.3); text-shadow:none; }
+  .thp-bar-wrap { flex:1; min-width:80px; height:5px; background:rgba(0,0,0,0.45); border-radius:3px; overflow:hidden; }
+  .thp-bar { height:100%; border-radius:3px; background:linear-gradient(90deg,var(--pink-dark),var(--pink)); transition:width 0.4s ease; }
+  .thp-btn { width:26px;height:26px;border-radius:50%;border:1px solid rgba(240,160,200,0.3);background:rgba(240,160,200,0.07);color:var(--pink);font-size:1rem;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+  .thp-btn:hover { background:rgba(240,160,200,0.22); border-color:rgba(240,160,200,0.6); }
+  .thp-input { width:42px;text-align:center;background:rgba(0,0,0,0.3);border:1px solid rgba(240,160,200,0.18);border-radius:2px;color:var(--pink);font-family:'Cinzel',serif;font-size:0.78rem;padding:3px 4px; }
+  .thp-input:focus { outline:none; border-color:rgba(240,160,200,0.5); }
+  .thp-set-btn { font-family:'Cinzel',serif;font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;padding:4px 9px;border-radius:2px;border:1px solid rgba(240,160,200,0.35);color:rgba(240,160,200,0.8);background:rgba(240,160,200,0.06);cursor:pointer;transition:all 0.2s; }
+  .thp-set-btn:hover { background:rgba(240,160,200,0.15); border-color:rgba(240,160,200,0.65); }
+  .thp-clear-btn { font-family:'Cinzel',serif;font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;padding:4px 9px;border-radius:2px;border:1px solid rgba(150,80,110,0.35);color:rgba(200,120,150,0.7);background:rgba(150,80,110,0.05);cursor:pointer;transition:all 0.2s; }
+  .thp-clear-btn:hover { background:rgba(150,80,110,0.15); border-color:rgba(200,120,150,0.6); }
+
+  /* EXHAUSTION */
+  .exhaustion-row { display:flex; align-items:center; gap:10px; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.05); flex-wrap:wrap; }
+  .exh-label { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--silver); opacity:0.65; min-width:75px; }
+  .exh-pips { display:flex; gap:5px; }
+  .exh-pip { width:22px; height:22px; border-radius:3px; border:1.5px solid rgba(220,160,60,0.35); background:rgba(220,160,60,0.07); cursor:pointer; transition:all 0.2s; position:relative; flex-shrink:0; }
+  .exh-pip.active { background:rgba(220,100,60,0.55); border-color:rgba(240,140,60,0.9); box-shadow:0 0 6px rgba(220,100,60,0.4); }
+  .exh-pip:hover { transform:scale(1.12); border-color:rgba(240,140,60,0.7); }
+  .exh-effect { font-size:0.72rem; color:rgba(240,200,120,0.75); font-style:italic; flex:1; min-width:120px; line-height:1.35; }
+  .exh-effect.danger { color:rgba(255,120,100,0.9); }
 
   /* SECTION EDIT BUTTONS */
   .section-edit-btn { font-family:'Cinzel',serif; font-size:0.5rem; letter-spacing:0.1em; text-transform:uppercase; padding:2px 7px; border-radius:2px; border:1px solid rgba(122,176,212,0.25); color:rgba(122,176,212,0.45); background:transparent; cursor:pointer; transition:all 0.2s; margin-left:auto; }
@@ -276,7 +303,7 @@
       <span class="stat-label">FUE</span>
       <span class="stat-value">14</span>
       <span class="stat-mod">+2</span>
-      <span class="stat-save" title="Tirada de Salvación — con competencia">TS +4 ✓</span>
+      <span class="stat-save">TS +2</span>
     </div>
     <div class="stat">
       <span class="stat-label">DES</span>
@@ -306,7 +333,7 @@
       <span class="stat-label">CAR</span>
       <span class="stat-value">12</span>
       <span class="stat-mod">+1</span>
-      <span class="stat-save">TS +3</span>
+      <span class="stat-save" title="Tirada de Salvación — con competencia">TS +3 ✓</span>
     </div>
   </div>
 
@@ -330,7 +357,7 @@
     <div class="interactive-panel">
       <div class="interactive-title">
         <span>⚙ Estado de sesión</span>
-        <button class="reset-btn" onclick="resetAll()">↺ Resetear todo</button>
+        <button class="reset-btn" id="reset-btn" onclick="resetAll()">🌙 Descanso largo</button>
       </div>
 
       <!-- HP TRACKER -->
@@ -346,7 +373,17 @@
         <button class="hp-btn" onclick="changeHP(-1)">−</button>
       </div>
 
-      <!-- HIT DICE -->
+      <!-- TEMPORARY HP TRACKER -->
+      <div class="thp-row">
+        <span class="hp-label" style="color:var(--pink);opacity:0.75;">PG Temp</span>
+        <div id="brila-thp-display" class="thp-display zero">0</div>
+        <div class="thp-bar-wrap"><div id="brila-thp-bar" class="thp-bar" style="width:0%"></div></div>
+        <button class="thp-btn" onclick="changeTHP(1)">+</button>
+        <input id="brila-thp-input" class="thp-input" type="number" min="0" value="0">
+        <button class="thp-set-btn" onclick="setTHP()">Fijar</button>
+        <button class="thp-clear-btn" onclick="clearTHP()">Limpiar</button>
+        <button class="thp-btn" onclick="changeTHP(-1)">−</button>
+      </div>
       <div class="hit-dice-row">
         <span class="hd-label">Dados de Golpe</span>
         <div class="hd-pips" id="hit-dice-pips"></div>
@@ -399,12 +436,24 @@
       <div class="uses-row">
         <span class="uses-label">Canalizar Divinidad</span>
         <div class="uses-pips" id="uses-channel"></div>
-        <span class="recharge-tag">desc. corto</span>
+        <button class="short-rest-btn" onclick="shortRestChannel()">Desc. Corto</button>
       </div>
       <div class="uses-row">
         <span class="uses-label">Afinidad con la Piedra</span>
         <div class="uses-pips" id="uses-stone"></div>
-        <span class="recharge-tag">desc. corto</span>
+        <span class="recharge-tag">desc. largo</span>
+      </div>
+      <div class="uses-row">
+        <span class="uses-label">Ira de la Tormenta</span>
+        <div class="uses-pips" id="uses-storm"></div>
+        <span class="recharge-tag">desc. largo</span>
+      </div>
+
+      <!-- EXHAUSTION TRACKER -->
+      <div class="exhaustion-row">
+        <span class="exh-label">Agotamiento</span>
+        <div class="exh-pips" id="exh-pips"></div>
+        <span class="exh-effect" id="exh-effect">— Sin agotamiento</span>
       </div>
     </div>
 
@@ -499,10 +548,6 @@ Si FALLA: la criatura queda Asustada e Incapacitada durante 1 minuto. El estado 
 Consume 1 uso de Canalizar Divinidad. Muy eficaz para controlar hordas de no-muertos.</textarea>
         </div>
       </div>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Dominio de la Tormenta</div>
 
       <div class="ability-item">
         <div class="ability-summary" onclick="toggleAbility(this)">
@@ -517,6 +562,10 @@ Ejemplo: si Ola Atronadora haría normalmente 2d8 eléctrico, con este rasgo act
 Combinado con Canalizar Divinidad es especialmente potente para maximizar el daño de tormenta.</textarea>
         </div>
       </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Dominio de la Tormenta</div>
 
       <div class="ability-item">
         <div class="ability-summary" onclick="toggleAbility(this)">
@@ -594,18 +643,24 @@ También otorga +5 a Iniciativa (ver PHB 2024) — en la ficha ya se refleja el 
     <div class="section">
       <div class="section-title">Habilidades y Competencias</div>
       <div class="skills-grid">
-        <div class="skill-row"><div class="skill-prof yes"></div><span class="skill-name">Atletismo</span><span class="skill-val">+4</span></div>
-        <div class="skill-row"><div class="skill-prof yes"></div><span class="skill-name">Perspicacia</span><span class="skill-val">+5</span></div>
-        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Manejo Animales</span><span class="skill-val">+3</span></div>
-        <div class="skill-row"><div class="skill-prof yes"></div><span class="skill-name">Medicina</span><span class="skill-val">+3</span></div>
-        <div class="skill-row"><div class="skill-prof yes"></div><span class="skill-name">Percepción</span><span class="skill-val">+5</span></div>
-        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Supervivencia</span><span class="skill-val">+3</span></div>
-        <div class="skill-row"><div class="skill-prof yes"></div><span class="skill-name">Historia</span><span class="skill-val">+2</span></div>
-        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Engaño</span><span class="skill-val">+1</span></div>
-        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Intimidación</span><span class="skill-val">+1</span></div>
-        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Persuasión</span><span class="skill-val">+1</span></div>
         <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Acrobacias</span><span class="skill-val">−1</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Arcana</span><span class="skill-val">+0</span></div>
+        <div class="skill-row"><div class="skill-prof yes"></div><span class="skill-name">Atletismo</span><span class="skill-val">+4</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Engaño</span><span class="skill-val">+1</span></div>
+        <div class="skill-row"><div class="skill-prof yes"></div><span class="skill-name">Historia</span><span class="skill-val">+2</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Intimidación</span><span class="skill-val">+1</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Interpretación</span><span class="skill-val">+1</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Investigación</span><span class="skill-val">+0</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Juego de Manos</span><span class="skill-val">−1</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Manejo Animales</span><span class="skill-val">+3</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Medicina</span><span class="skill-val">+3</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Naturaleza</span><span class="skill-val">+0</span></div>
+        <div class="skill-row"><div class="skill-prof yes"></div><span class="skill-name">Percepción</span><span class="skill-val">+5</span></div>
+        <div class="skill-row"><div class="skill-prof yes"></div><span class="skill-name">Perspicacia</span><span class="skill-val">+5</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Persuasión</span><span class="skill-val">+1</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Religión</span><span class="skill-val">+0</span></div>
         <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Sigilo</span><span class="skill-val">−1</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Supervivencia</span><span class="skill-val">+3</span></div>
       </div>
       <div style="margin-top:10px;">
         <div class="trait-row"><span class="trait-key">Armaduras:</span><span class="trait-val">Ligera, Media, Pesada, Escudos</span></div>
@@ -632,7 +687,7 @@ También otorga +5 a Iniciativa (ver PHB 2024) — en la ficha ya se refleja el 
           <span class="spell-name">Llama Sagrada</span>
           <span class="spell-cast">1 acc</span>
           <span class="spell-range">60 ft</span>
-          <span class="spell-notes">1d8 radiante · TS DES · sin cobertura</span>
+          <span class="spell-notes">V, S · 1d8 radiante · TS DES · sin cobertura</span>
         </div>
         <div class="spell-detail">
           <textarea class="spell-detail-editable">LLAMA SAGRADA (Sacred Flame) — Truco de Evocación
@@ -651,11 +706,11 @@ Daño aumenta a 2d8 en nivel 5, 3d8 en nivel 11, 4d8 en nivel 17.</textarea>
           <span class="spell-name">Taumaturgia</span>
           <span class="spell-cast">1 acc</span>
           <span class="spell-range">30 ft</span>
-          <span class="spell-notes">1 min · efectos ambientales</span>
+          <span class="spell-notes">V · 1 min · efectos ambientales</span>
         </div>
         <div class="spell-detail">
           <textarea class="spell-detail-editable">TAUMATURGIA (Thaumaturgy) — Truco de Transmutación
-Tiempo de lanzamiento: 1 acción. Alcance: 30 ft. Duración: 1 minuto.
+Tiempo de lanzamiento: 1 acción. Alcance: 30 ft. Componentes: V. Duración: 1 minuto.
 
 Manifiestas una pequeña maravilla, signo de poder sobrenatural. Efectos posibles (hasta 3 simultáneos):
 • Tu voz retumba hasta tres veces más fuerte durante 1 min
@@ -674,11 +729,11 @@ Cada manifestación dura hasta 1 minuto. Excelente para intimidar o crear ambien
           <span class="spell-name">Resistencia</span>
           <span class="spell-cast">1 acc</span>
           <span class="spell-range">toque</span>
-          <span class="spell-notes">Concentración · 1 min · +1d4 en 1 TS</span>
+          <span class="spell-notes">V, S · Concentración · 1 min · +1d4 en 1 TS</span>
         </div>
         <div class="spell-detail">
           <textarea class="spell-detail-editable">RESISTENCIA (Resistance) — Truco de Abjuración
-Tiempo de lanzamiento: 1 acción. Alcance: toque. Duración: Concentración, hasta 1 minuto.
+Tiempo de lanzamiento: 1 acción. Alcance: toque. Componentes: V, S. Duración: Concentración, hasta 1 minuto.
 
 Tocas a una criatura voluntaria. Hasta que el hechizo termine, el objetivo puede tirar 1d4 y añadir el resultado a UNA tirada de salvación de su elección. Puede elegir tirar después de ver el resultado original, pero antes de que el DM diga si tuvo éxito o fallo.
 
@@ -697,11 +752,11 @@ Muy útil como "seguro" antes de tiradas críticas de salvación.</textarea>
           <span class="spell-name">Nube de Oscurecimiento</span>
           <span class="spell-cast">1 acc</span>
           <span class="spell-range">120 ft/20 ft</span>
-          <span class="spell-notes">Concentración · 1h</span>
+          <span class="spell-notes">V, S · Concentración · 1h</span>
         </div>
         <div class="spell-detail">
           <textarea class="spell-detail-editable">NUBE DE OSCURECIMIENTO (Fog Cloud) — Nv.1 Conjuración
-Concentración hasta 1 hora. Alcance: 120 ft. Radio: 20 ft esfera.
+Tiempo de lanzamiento: 1 acción. Alcance: 120 ft. Componentes: V, S. Radio: 20 ft esfera. Concentración hasta 1 hora.
 
 Crea una esfera de niebla espesa. El área es fuertemente oscurecida (visión nula). Las criaturas dentro tienen desventaja en ataques y son atacadas con ventaja. El viento fuerte puede disiparla. Se puede lanzar con ranuras más altas para mayor radio (+20 ft por nivel extra).
 
@@ -716,11 +771,11 @@ Excelente para bloquear línea de visión enemiga o cubrir una retirada.</textar
           <span class="spell-name">Ola Atronadora</span>
           <span class="spell-cast">1 acc</span>
           <span class="spell-range">15 ft área</span>
-          <span class="spell-notes">TS CON · 2d8 eléctrico · mitad si éxito</span>
+          <span class="spell-notes">V, S · TS CON · 2d8 eléctrico · mitad si éxito</span>
         </div>
         <div class="spell-detail">
           <textarea class="spell-detail-editable">OLA ATRONADORA (Thunderwave) — Nv.1 Evocación
-Alcance: self (cubo de 15 ft). Sin concentración.
+Tiempo de lanzamiento: 1 acción. Alcance: self (cubo de 15 ft). Componentes: V, S. Sin concentración.
 
 Ola de energía de trueno se irradia de ti. Cada criatura en un cubo de 15 ft hace TS de Constitución CD 13:
 • FALLO: 2d8 de daño eléctrico + empujada 10 ft lejos de ti
@@ -739,11 +794,11 @@ Muy útil para crear espacio o hacer retroceder a enemigos en formación.</texta
           <span class="spell-name">Infligir Heridas</span>
           <span class="spell-cast">1 acc</span>
           <span class="spell-range">toque</span>
-          <span class="spell-notes">TS CON · 2d10 necrótico · mitad si éxito</span>
+          <span class="spell-notes">V, S · TS CON · 2d10 necrótico · mitad si éxito</span>
         </div>
         <div class="spell-detail">
           <textarea class="spell-detail-editable">INFLIGIR HERIDAS (Inflict Wounds) — Nv.1 Necromancia
-Alcance: toque. Sin concentración.
+Tiempo de lanzamiento: 1 acción. Alcance: toque. Componentes: V, S. Sin concentración.
 
 Realizas un ataque de hechizo cuerpo a cuerpo (+5). Si impactas, el objetivo recibe 2d10 de daño necrótico. Con ranuras más altas: +1d10 por nivel de ranura.
 
@@ -758,11 +813,11 @@ Muy alto daño bruto para nivel 1. La desventaja es requerir cuerpo a cuerpo, pe
           <span class="spell-name">Saeta Guiada</span>
           <span class="spell-cast">1 acc</span>
           <span class="spell-range">120 ft</span>
-          <span class="spell-notes">4d6 radiante · ventaja 1 ronda</span>
+          <span class="spell-notes">V, S · 4d6 radiante · ventaja 1 ronda</span>
         </div>
         <div class="spell-detail">
           <textarea class="spell-detail-editable">SAETA GUIADA (Guiding Bolt) — Nv.1 Evocación
-Alcance: 120 ft. Sin concentración.
+Tiempo de lanzamiento: 1 acción. Alcance: 120 ft. Componentes: V, S. Sin concentración.
 
 Ataque de hechizo a distancia (+5). Si impacta: 4d6 de daño radiante. Además, el siguiente ataque contra el objetivo antes del final de tu siguiente turno tiene VENTAJA (la criatura queda envuelta en luz mística).
 
@@ -777,11 +832,11 @@ Excelente daño de apertura + beneficio para el grupo. Con ranura Nv.2: +1d6 de 
           <span class="spell-name">Orden Imperiosa</span>
           <span class="spell-cast">1 acc</span>
           <span class="spell-range">60 ft</span>
-          <span class="spell-notes">TS CAR · 1 ronda</span>
+          <span class="spell-notes">V · TS CAR · 1 ronda</span>
         </div>
         <div class="spell-detail">
           <textarea class="spell-detail-editable">ORDEN IMPERIOSA (Command) — Nv.1 Encantamiento
-Alcance: 60 ft. Duración: 1 ronda. No funciona en no-muertos ni seres que no entiendan el idioma.
+Tiempo de lanzamiento: 1 acción. Alcance: 60 ft. Componentes: V. Duración: 1 ronda. No funciona en no-muertos ni seres que no entiendan el idioma.
 
 La criatura hace TS de Carisma CD 13. Si falla, ejecuta la orden de una palabra en su siguiente turno. Órdenes habituales:
 • "¡Acércate!" — se mueve hacia ti sin hacer nada más
@@ -801,11 +856,11 @@ Con ranura Nv.2+: afecta a 1 criatura adicional por nivel de ranura.</textarea>
           <span class="spell-name">Palabra de Curación</span>
           <span class="spell-cast">1 acc ad</span>
           <span class="spell-range">60 ft</span>
-          <span class="spell-notes">2d4+5 PG recuperados</span>
+          <span class="spell-notes">V · 2d4+5 PG recuperados</span>
         </div>
         <div class="spell-detail">
           <textarea class="spell-detail-editable">PALABRA DE CURACIÓN (Healing Word) — Nv.1 Evocación
-Acción Bonus. Alcance: 60 ft.
+Tiempo de lanzamiento: Acción Bonus. Alcance: 60 ft. Componentes: V.
 
 Una criatura a 60 ft recupera 2d4+5 PG (2d4 + modificador de SAB). Al ser Acción Bonus, puede combinarse con ataque o acción completa en el mismo turno.
 
@@ -824,11 +879,11 @@ Ideal para estabilizar aliados caídos sin gastar tu Acción principal. Con ranu
           <span class="spell-name">Ráfaga de Viento</span>
           <span class="spell-cast">1 acc</span>
           <span class="spell-range">personal</span>
-          <span class="spell-notes">Concentración · empujar 15 ft · 60×10 ft</span>
+          <span class="spell-notes">V, S · Concentración · empujar 15 ft · 60×10 ft</span>
         </div>
         <div class="spell-detail">
           <textarea class="spell-detail-editable">RÁFAGA DE VIENTO (Gust of Wind) — Nv.2 Evocación
-Concentración hasta 1 minuto. Alcance: personal (línea de 60 ft × 10 ft de ancho).
+Tiempo de lanzamiento: 1 acción. Alcance: personal (línea de 60 ft × 10 ft de ancho). Componentes: V, S. Concentración hasta 1 minuto.
 
 Una línea de viento fuerte emana de ti. Cada criatura que empiece en la línea o entre en ella debe TS de Fuerza CD 13 o ser empujada 15 ft lejos del origen.
 
@@ -843,11 +898,11 @@ También: dispersa niebla, gases y humo. Movimiento contra el viento cuesta el d
           <span class="spell-name">Hacer Añicos</span>
           <span class="spell-cast">1 acc</span>
           <span class="spell-range">60 ft</span>
-          <span class="spell-notes">Radio 10 ft · 3d8 sónico · TS CON</span>
+          <span class="spell-notes">V, S · Radio 10 ft · 3d8 sónico · TS CON</span>
         </div>
         <div class="spell-detail">
           <textarea class="spell-detail-editable">HACER AÑICOS (Shatter) — Nv.2 Evocación
-Sin concentración. Alcance: 60 ft. Radio: 10 ft.
+Tiempo de lanzamiento: 1 acción. Alcance: 60 ft. Componentes: V, S. Radio: 10 ft. Sin concentración.
 
 Explosión sónica intensa. Cada criatura en el radio hace TS de Constitución CD 13:
 • FALLO: 3d8 de daño sónico
@@ -866,11 +921,11 @@ Con ranuras más altas: +1d8 por nivel de ranura.</textarea>
           <span class="spell-name">Arma Espiritual</span>
           <span class="spell-cast">1 acc ad</span>
           <span class="spell-range">60 ft</span>
-          <span class="spell-notes">Concentración · 1 min · 1d8+5</span>
+          <span class="spell-notes">V, S · Concentración · 1 min · 1d8+5</span>
         </div>
         <div class="spell-detail">
           <textarea class="spell-detail-editable">ARMA ESPIRITUAL (Spiritual Weapon) — Nv.2 Evocación
-Acción Bonus para invocar. Concentración hasta 1 minuto. Alcance: 60 ft.
+Tiempo de lanzamiento: Acción Bonus. Alcance: 60 ft. Componentes: V, S. Concentración hasta 1 minuto.
 
 Creas un arma espectral flotante. Cada turno puedes usar Acción Bonus para moverla 20 ft y hacer un ataque de hechizo cuerpo a cuerpo (+5). Si impacta: 1d8+5 de daño de fuerza.
 
@@ -885,11 +940,11 @@ Ventaja: no bloquea concentración de otros hechizos (¡es su propio hechizo de 
           <span class="spell-name">Auxilio</span>
           <span class="spell-cast">1 acc</span>
           <span class="spell-range">30 ft</span>
-          <span class="spell-notes">8h · +5 PG temp y actual · 3 criaturas</span>
+          <span class="spell-notes">V, S · 8h · +5 PG temp y actual · 3 criaturas</span>
         </div>
         <div class="spell-detail">
           <textarea class="spell-detail-editable">AUXILIO (Aid) — Nv.2 Abjuración
-Sin concentración. Duración: 8 horas. Alcance: 30 ft.
+Tiempo de lanzamiento: 1 acción. Alcance: 30 ft. Componentes: V, S. Sin concentración. Duración: 8 horas.
 
 Hasta 3 criaturas a 30 ft ganan +5 PG máximos y +5 PG actuales durante 8 horas. Los PG adicionales no son temporales — se suman al máximo real.
 
@@ -943,6 +998,49 @@ function updateMaxHP(){
   cur = Math.min(cur, MAX_HP);
   save('hp', cur);
   updateHPDisplay(cur);
+}
+
+// ============================================================
+//  TEMPORARY HP
+// ============================================================
+let MAX_THP = 0;
+
+function updateTHPDisplay(cur){
+  const d=document.getElementById('brila-thp-display');
+  const b=document.getElementById('brila-thp-bar');
+  cur=Math.max(0,cur);
+  d.textContent=cur;
+  if(cur===0){
+    d.className='thp-display zero';
+    b.style.width='0%';
+  } else {
+    d.className='thp-display';
+    const ref=MAX_THP||cur;
+    b.style.width=Math.min(100,(cur/ref)*100)+'%';
+  }
+}
+
+function changeTHP(delta){
+  let cur=load('thp',0);
+  cur=Math.max(0,cur+delta);
+  if(cur>MAX_THP)MAX_THP=cur;
+  save('thp',cur);save('thp_max',MAX_THP);
+  updateTHPDisplay(cur);
+}
+
+function setTHP(){
+  const inp=document.getElementById('brila-thp-input');
+  const val=parseInt(inp.value)||0; if(val<0)return;
+  MAX_THP=val;
+  save('thp',val);save('thp_max',val);
+  updateTHPDisplay(val);
+  inp.value=0;
+}
+
+function clearTHP(){
+  MAX_THP=0;
+  save('thp',0);save('thp_max',0);
+  updateTHPDisplay(0);
 }
 
 // ============================================================
@@ -1101,17 +1199,90 @@ function saveInventory(){
 // ============================================================
 //  RESET
 // ============================================================
+// ============================================================
+//  EXHAUSTION (PHB 2024)
+// ============================================================
+const EXH_EFFECTS = [
+  '— Sin agotamiento',
+  'Nv.1 · −2 en pruebas con d20 · Veloc. −5 ft',
+  'Nv.2 · −4 en pruebas con d20 · Veloc. −10 ft',
+  'Nv.3 · −6 en pruebas con d20 · Veloc. −15 ft',
+  'Nv.4 · −8 en pruebas con d20 · Veloc. −20 ft',
+  'Nv.5 · −10 en pruebas con d20 · Veloc. −25 ft',
+  'Nv.6 · Muerte'
+];
+const EXH_DANGER = [false,false,false,false,true,true,true];
+
+function buildExhaustion(level){
+  const container = document.getElementById('exh-pips');
+  const effectEl  = document.getElementById('exh-effect');
+  container.innerHTML = '';
+  for(let i=1;i<=6;i++){
+    const pip = document.createElement('div');
+    pip.className = 'exh-pip' + (i<=level?' active':'');
+    pip.title = EXH_EFFECTS[i];
+    pip.onclick = ()=>{
+      const cur = load('exhaustion',0);
+      const next = (i===cur)?i-1:i;
+      save('exhaustion', Math.max(0,next));
+      buildExhaustion(Math.max(0,next));
+    };
+    container.appendChild(pip);
+  }
+  effectEl.textContent = EXH_EFFECTS[level]||EXH_EFFECTS[0];
+  effectEl.className   = 'exh-effect' + (EXH_DANGER[level]?' danger':'');
+}
+
+function shortRestChannel(){
+  const used = load('use_channel', []);
+  // recupera el último uso marcado (de derecha a izquierda)
+  for(let i=used.length-1;i>=0;i--){
+    if(used[i]){ used[i]=false; save('use_channel',used); buildUses('channel',2); return; }
+  }
+}
+
+let resetArmed = false;
+let resetTimer = null;
+
 function resetAll(){
-  if(!confirm('¿Reiniciar todo el estado de sesión de Brila?'))return;
+  const btn = document.getElementById('reset-btn');
+  if(!resetArmed){
+    resetArmed = true;
+    btn.textContent = '¿Confirmar descanso largo?';
+    btn.style.borderColor = 'rgba(255,100,100,0.8)';
+    btn.style.color = 'rgba(255,180,180,0.95)';
+    btn.style.background = 'rgba(255,100,100,0.15)';
+    resetTimer = setTimeout(()=>{
+      resetArmed = false;
+      btn.textContent = '🌙 Descanso largo';
+      btn.style.borderColor = '';
+      btn.style.color = '';
+      btn.style.background = '';
+    }, 3000);
+    return;
+  }
+  // confirmado
+  clearTimeout(resetTimer);
+  resetArmed = false;
+  btn.textContent = '🌙 Descanso largo';
+  btn.style.borderColor = '';
+  btn.style.color = '';
+  btn.style.background = '';
+
   save('hp',MAX_HP);
   save('inspiration',false);
   save('ds_success',[false,false,false]);
   save('ds_failure',[false,false,false]);
   save('slots_1',[]);
   save('slots_2',[]);
+  save('thp',0);
+  save('thp_max',0);
   save('use_channel',[]);
+  save('use_storm',[]);
   save('use_stone',[]);
   save('hd_used',[]);
+  const curExh = load('exhaustion', 0);
+  save('exhaustion', Math.max(0, curExh - 1));
   init();
 }
 
@@ -1120,6 +1291,8 @@ function resetAll(){
 // ============================================================
 function init(){
   MAX_HP = load('max_hp', 24);
+  MAX_THP = load('thp_max', 0);
+  updateTHPDisplay(load('thp',0));
   document.getElementById('max-hp-field').value = MAX_HP;
   document.getElementById('hp-max-label').textContent = MAX_HP;
   updateHPDisplay(load('hp',MAX_HP));
@@ -1129,8 +1302,10 @@ function init(){
   renderDS('failure',load('ds_failure',[false,false,false]));
   buildSlots(1,4);
   buildSlots(2,2);
-  buildUses('channel',1);
-  buildUses('stone',1);
+  buildUses('channel',2);
+  buildUses('stone',2);
+  buildUses('storm',3);
+  buildExhaustion(load('exhaustion', 0));
   // load saved inventory
   const savedInv = load('inventory', null);
   if(savedInv !== null){

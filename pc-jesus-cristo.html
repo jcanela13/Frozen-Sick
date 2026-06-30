@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jesús Cristo — Bardo Nv.3</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1520;
+    --gold: #c9a84c; --gold-light: #e8c97a;
+    --parchment: #f0ede0; --silver: #b8bfc4;
+    --bard: #c87ae0; --bard-dark: #9040b8;
+    --glamour: #f0a0d8; --green: #90e8a0;
+    --red: #e08080; --pink: #f0a0c8; --pink-dark: #c06090;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--ink);
+    background-image:
+      radial-gradient(ellipse at 15% 10%, rgba(200,122,224,0.07) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 90%, rgba(201,168,76,0.05) 0%, transparent 50%);
+    font-family: 'Crimson Pro', Georgia, serif;
+    color: var(--parchment);
+    min-height: 100vh;
+    padding: 30px 16px 60px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .back-link { display:inline-flex;align-items:center;gap:6px;font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(200,122,224,0.45);text-decoration:none;margin-bottom:24px;transition:color 0.2s; }
+  .back-link:hover { color:rgba(200,122,224,0.9); }
+  @keyframes fadeSlide { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+  /* CARD */
+  .char-card {
+    background: linear-gradient(160deg,#1a142c 0%,#130e20 65%,#0a0818 100%);
+    border: 1px solid rgba(200,122,224,0.25);
+    border-radius: 4px; position: relative; overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.75), inset 0 1px 0 rgba(200,122,224,0.1);
+    animation: fadeSlide 0.5s ease both;
+  }
+  .char-card::after { content:''; position:absolute; top:8px;right:8px; width:28px;height:28px; border-top:1px solid rgba(201,168,76,0.25); border-right:1px solid rgba(201,168,76,0.25); }
+  .card-corner-bl { position:absolute; bottom:8px;left:8px; width:28px;height:28px; border-bottom:1px solid rgba(201,168,76,0.25); border-left:1px solid rgba(201,168,76,0.25); }
+  .color-bar { height:3px; background:linear-gradient(90deg,transparent,var(--bard-dark),var(--bard),var(--glamour),var(--bard),var(--bard-dark),transparent); }
+
+  /* HEADER */
+  .card-header { padding:22px 26px 18px; display:flex; gap:20px; align-items:flex-start; border-bottom:1px solid rgba(200,122,224,0.1); }
+  .char-avatar { width:72px;height:72px;border-radius:50%;border:2px solid rgba(200,122,224,0.5);display:flex;align-items:center;justify-content:center;font-size:2.2rem;flex-shrink:0;background:radial-gradient(135deg,#251535,#140c20);box-shadow:0 0 24px rgba(200,80,220,0.3),inset 0 0 18px rgba(0,0,0,0.5); }
+  .char-identity { flex:1; }
+  .char-name { font-family:'Cinzel',serif; font-size:1.5rem; font-weight:700; color:var(--gold-light); letter-spacing:0.05em; line-height:1.2; }
+  .char-subtitle { font-style:italic; font-size:0.92rem; color:var(--bard); opacity:0.85; margin-top:3px; }
+  .char-tags { display:flex; gap:7px; flex-wrap:wrap; margin-top:9px; }
+  .tag { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; padding:2px 8px; border-radius:2px; border:1px solid; }
+  .tag-class { border-color:rgba(200,122,224,0.4); color:var(--bard); background:rgba(200,122,224,0.07); }
+  .tag-race  { border-color:rgba(201,168,76,0.35); color:var(--gold); background:rgba(201,168,76,0.07); }
+  .tag-bg    { border-color:rgba(189,195,199,0.3); color:var(--silver); background:rgba(189,195,199,0.05); }
+  .tag-new   { border-color:rgba(100,200,120,0.35); color:var(--green); background:rgba(100,200,120,0.06); }
+  .tag-glamour { border-color:rgba(240,160,216,0.4); color:var(--glamour); background:rgba(240,160,216,0.06); }
+  .personality-quote { font-style:italic; font-size:0.82rem; color:rgba(200,122,224,0.6); margin-top:8px; line-height:1.5; border-left:2px solid rgba(200,122,224,0.25); padding-left:10px; }
+
+  /* EDITABLE FIELDS */
+  .editable { background:transparent; border:none; border-bottom:1px dashed rgba(200,122,224,0.3); color:inherit; font-family:inherit; font-size:inherit; width:100%; outline:none; transition:border-color 0.2s; }
+  .editable:focus { border-bottom-color:rgba(200,122,224,0.7); background:rgba(200,122,224,0.05); }
+
+  /* STATS */
+  .stats-bar { display:grid; grid-template-columns:repeat(6,1fr); padding:10px 26px; border-bottom:1px solid rgba(200,122,224,0.08); background:rgba(0,0,0,0.2); gap:2px; }
+  .stat { text-align:center; }
+  .stat-label { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--silver); opacity:0.65; display:block; margin-bottom:1px; }
+  .stat-value { font-family:'Cinzel',serif; font-size:1.05rem; font-weight:700; color:var(--parchment); display:block; line-height:1; }
+  .stat-mod { font-size:0.68rem; color:var(--bard); display:block; margin-top:2px; }
+  .stat-save { font-size:0.6rem; color:rgba(201,168,76,0.8); display:block; font-family:'Cinzel',serif; }
+
+  /* COMBAT ROW */
+  .combat-row { display:flex; padding:9px 26px; border-bottom:1px solid rgba(200,122,224,0.07); background:rgba(0,0,0,0.12); flex-wrap:wrap; gap:4px; }
+  .combat-stat { flex:1; min-width:80px; text-align:center; position:relative; }
+  .combat-stat+.combat-stat::before { content:''; position:absolute; left:0; top:10%;bottom:10%; width:1px; background:rgba(200,122,224,0.1); }
+  .combat-label { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--silver); opacity:0.6; display:block; }
+  .combat-value { font-family:'Cinzel',serif; font-size:1rem; font-weight:600; color:var(--gold-light); display:block; margin-top:1px; }
+  .combat-value-editable { font-family:'Cinzel',serif; font-size:1rem; font-weight:600; color:var(--gold-light); background:transparent; border:none; border-bottom:1px dashed rgba(201,168,76,0.3); width:50px; text-align:center; outline:none; }
+  .combat-value-editable:focus { border-bottom-color:rgba(201,168,76,0.7); }
+
+  /* BODY */
+  .card-body { padding:0 26px; }
+  .section { padding:13px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+  .section:last-child { border-bottom:none; }
+  .section-title { font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); opacity:0.8; margin-bottom:9px; display:flex; align-items:center; gap:8px; }
+  .section-title::after { content:''; flex:1; height:1px; background:linear-gradient(to right,rgba(201,168,76,0.2),transparent); }
+
+  /* SKILLS GRID */
+  .skills-grid { display:grid; grid-template-columns:1fr 1fr; gap:3px 16px; }
+  .skill-row { display:flex; align-items:center; gap:6px; font-size:0.8rem; padding:2px 0; }
+  .skill-prof { width:10px;height:10px;border-radius:50%;border:1.5px solid rgba(200,122,224,0.4);flex-shrink:0; }
+  .skill-prof.yes { background:var(--bard); border-color:var(--bard); }
+  .skill-prof.exp { background:var(--glamour); border-color:var(--glamour); border-radius:2px; }
+  .skill-name { color:rgba(240,237,224,0.72); flex:1; }
+  .skill-val { font-family:'Cinzel',serif; font-size:0.72rem; font-weight:600; color:var(--bard); }
+
+  /* WEAPONS */
+  .attacks-list { display:flex; flex-direction:column; gap:6px; }
+  .attack-item { background:rgba(0,0,0,0.2); border-radius:2px; border-left:2px solid rgba(200,122,224,0.3); overflow:hidden; }
+  .attack-summary { display:flex; align-items:center; gap:10px; padding:8px 12px; cursor:pointer; transition:background 0.15s; }
+  .attack-summary:hover { background:rgba(200,122,224,0.05); }
+  .attack-name { font-family:'Cinzel',serif; font-size:0.76rem; font-weight:600; color:var(--parchment); flex:1; }
+  .attack-bonus { font-size:0.82rem; color:var(--gold-light); font-weight:600; white-space:nowrap; }
+  .attack-dmg { font-size:0.82rem; color:var(--bard); white-space:nowrap; }
+  .attack-note { font-size:0.7rem; color:var(--silver); opacity:0.6; white-space:nowrap; }
+  .expand-arrow { font-size:0.6rem; color:rgba(200,122,224,0.4); transition:transform 0.2s; flex-shrink:0; }
+  .expand-arrow.open { transform:rotate(90deg); color:rgba(200,122,224,0.8); }
+  .action-detail { display:none; padding:8px 12px 10px; border-top:1px solid rgba(200,122,224,0.1); background:rgba(0,0,0,0.15); font-size:0.8rem; color:rgba(240,237,224,0.7); line-height:1.6; }
+  .action-detail.open { display:block; }
+  .action-detail-editable { width:100%; background:transparent; border:none; color:rgba(240,237,224,0.8); font-family:'Crimson Pro',Georgia,serif; font-size:0.8rem; line-height:1.6; resize:vertical; min-height:60px; outline:none; }
+  .action-detail-editable:focus { background:rgba(200,122,224,0.04); }
+
+  /* ABILITIES */
+  .ability-item { margin-bottom:9px; border-radius:2px; overflow:hidden; }
+  .ability-summary { display:flex; align-items:flex-start; gap:8px; padding:4px 0 4px 14px; position:relative; cursor:pointer; }
+  .ability-summary::before { content:'✦'; position:absolute; left:0; top:5px; color:var(--bard); font-size:0.58rem; opacity:0.7; }
+  .ability-summary:hover .ability-name { color:#e8a8f4; }
+  .ability-name { font-family:'Cinzel',serif; font-size:0.76rem; font-weight:600; color:var(--bard); margin-bottom:0; flex:1; }
+  .ability-expand { display:none; padding:6px 14px 8px; background:rgba(0,0,0,0.15); border-top:1px solid rgba(200,122,224,0.07); border-radius:0 0 2px 2px; }
+  .ability-expand.open { display:block; }
+  .ability-expand-editable { width:100%; background:transparent; border:none; color:rgba(240,237,224,0.75); font-family:'Crimson Pro',Georgia,serif; font-size:0.82rem; line-height:1.55; resize:vertical; min-height:50px; outline:none; }
+  .ability-expand-editable:focus { background:rgba(200,122,224,0.04); }
+
+  /* SPELLS TABLE */
+  .spell-item { border-radius:2px; overflow:hidden; margin-bottom:4px; }
+  .spell-summary:hover { background:rgba(200,122,224,0.05); }
+  .spell-level-badge { font-family:'Cinzel',serif; font-size:0.56rem; letter-spacing:0.08em; text-transform:uppercase; padding:2px 6px; border-radius:2px; border:1px solid rgba(200,122,224,0.3); color:var(--bard); background:rgba(200,122,224,0.07); white-space:nowrap; flex-shrink:0; align-self:center; }
+  .spell-detail { display:none; padding:8px 10px 10px; background:rgba(0,0,0,0.2); border-bottom:1px solid rgba(200,122,224,0.07); }
+  .spell-detail.open { display:block; }
+  .spell-detail-editable { width:100%; background:transparent; border:none; color:rgba(240,237,224,0.75); font-family:'Crimson Pro',Georgia,serif; font-size:0.81rem; line-height:1.6; resize:vertical; min-height:60px; outline:none; }
+  .spell-detail-editable:focus { background:rgba(200,122,224,0.04); }
+
+  /* EQUIPMENT EDITABLE */
+  .equip-textarea { width:100%; background:rgba(0,0,0,0.2); border:1px solid rgba(201,168,76,0.2); border-radius:2px; color:rgba(240,237,224,0.8); font-family:'Crimson Pro',Georgia,serif; font-size:0.83rem; line-height:1.6; padding:8px 10px; resize:vertical; min-height:80px; outline:none; }
+  .equip-textarea:focus { border-color:rgba(201,168,76,0.5); }
+
+  /* TRAIT ROW */
+  .trait-row { display:flex; gap:6px; margin-bottom:4px; font-size:0.83rem; line-height:1.5; }
+  .trait-key { font-family:'Cinzel',serif; font-size:0.72rem; font-weight:600; color:var(--gold-light); white-space:nowrap; }
+  .trait-val { color:rgba(240,237,224,0.78); }
+
+  /* INTERACTIVE PANEL */
+  .interactive-panel { background:rgba(0,0,0,0.3); border:1px solid rgba(200,122,224,0.2); border-radius:4px; padding:14px 16px; margin:14px 0 0; }
+  .interactive-title { font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--bard); opacity:0.9; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; }
+  .reset-btn { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.1em; text-transform:uppercase; padding:3px 9px; border-radius:2px; border:1px solid rgba(255,100,100,0.28); color:rgba(255,150,150,0.55); background:rgba(255,100,100,0.04); cursor:pointer; transition:all 0.2s; }
+  .reset-btn:hover { border-color:rgba(255,100,100,0.6); color:rgba(255,180,180,0.9); background:rgba(255,100,100,0.1); }
+
+  /* HP */
+  .hp-row { display:flex; align-items:center; gap:9px; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.05); flex-wrap:wrap; }
+  .hp-label { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--silver); opacity:0.65; min-width:24px; }
+  .hp-display { font-family:'Cinzel',serif; font-size:1.4rem; font-weight:700; min-width:36px; text-align:center; transition:color 0.3s; }
+  .hp-display.full { color:#90e8a0; } .hp-display.mid { color:#ffd080; } .hp-display.low { color:#ff8080; }
+  .hp-max-display { font-family:'Cinzel',serif; font-size:0.72rem; color:var(--silver); opacity:0.4; }
+  .hp-max-input { width:38px; text-align:center; background:rgba(0,0,0,0.3); border:1px dashed rgba(201,168,76,0.3); border-radius:2px; color:var(--gold-light); font-family:'Cinzel',serif; font-size:0.78rem; padding:2px 4px; }
+  .hp-max-input:focus { outline:none; border-color:rgba(201,168,76,0.6); }
+  .hp-bar-wrap { flex:1; min-width:80px; height:5px; background:rgba(0,0,0,0.45); border-radius:3px; overflow:hidden; }
+  .hp-bar { height:100%; border-radius:3px; transition:width 0.4s ease,background 0.4s ease; }
+  .hp-btn { width:26px;height:26px;border-radius:50%;border:1px solid rgba(200,122,224,0.3);background:rgba(200,122,224,0.07);color:var(--bard);font-size:1rem;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+  .hp-btn:hover { background:rgba(200,122,224,0.22); border-color:rgba(200,122,224,0.6); }
+  .hp-input { width:42px;text-align:center;background:rgba(0,0,0,0.3);border:1px solid rgba(200,122,224,0.18);border-radius:2px;color:var(--parchment);font-family:'Cinzel',serif;font-size:0.78rem;padding:3px 4px; }
+  .hp-input:focus { outline:none; border-color:rgba(200,122,224,0.5); }
+  .hp-apply-btn { font-family:'Cinzel',serif;font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;padding:4px 9px;border-radius:2px;border:1px solid rgba(200,64,64,0.35);color:rgba(232,128,128,0.8);background:rgba(200,64,64,0.06);cursor:pointer;transition:all 0.2s; }
+  .hp-apply-btn:hover { background:rgba(200,64,64,0.15); border-color:rgba(200,64,64,0.65); }
+  .hp-heal-btn { font-family:'Cinzel',serif;font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;padding:4px 9px;border-radius:2px;border:1px solid rgba(100,200,120,0.35);color:rgba(144,232,160,0.8);background:rgba(100,200,120,0.06);cursor:pointer;transition:all 0.2s; }
+  .hp-heal-btn:hover { background:rgba(100,200,120,0.15); border-color:rgba(100,200,120,0.65); }
+
+  /* HIT DICE */
+  .hit-dice-row { display:flex; align-items:center; gap:10px; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.05); flex-wrap:wrap; }
+  .hd-label { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--silver); opacity:0.65; min-width:70px; }
+  .hd-pips { display:flex; gap:5px; flex-wrap:wrap; }
+  .hd-pip { width:26px; height:26px; border-radius:4px; border:1.5px solid rgba(200,122,224,0.45); background:rgba(200,122,224,0.12); cursor:pointer; transition:all 0.15s; position:relative; display:flex; align-items:center; justify-content:center; font-family:'Cinzel',serif; font-size:0.6rem; color:var(--bard); }
+  .hd-pip.used { background:rgba(0,0,0,0.4); border-color:rgba(200,122,224,0.15); color:rgba(200,122,224,0.25); }
+  .hd-pip:hover:not(.used) { background:rgba(200,122,224,0.3); border-color:rgba(200,122,224,0.9); transform:scale(1.1); }
+  .hd-info { font-size:0.72rem; color:rgba(240,237,224,0.45); font-style:italic; }
+
+  /* DEATH SAVES */
+  .death-saves-row { display:flex; align-items:center; gap:14px; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.05); flex-wrap:wrap; }
+  .ds-label { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--silver); opacity:0.6; min-width:80px; }
+  .ds-group { display:flex; align-items:center; gap:6px; }
+  .ds-sublabel { font-family:'Cinzel',serif; font-size:0.58rem; color:var(--silver); opacity:0.55; }
+  .ds-pips { display:flex; gap:5px; }
+  .ds-pip { width:18px;height:18px;border-radius:50%;border:1.5px solid;cursor:pointer;transition:all 0.15s;position:relative;flex-shrink:0; }
+  .ds-pip.success { border-color:rgba(100,200,120,0.5); background:rgba(100,200,120,0.1); }
+  .ds-pip.success.marked { background:var(--green); border-color:var(--green); }
+  .ds-pip.failure { border-color:rgba(200,80,80,0.5); background:rgba(200,80,80,0.1); }
+  .ds-pip.failure.marked { background:var(--red); border-color:var(--red); }
+  .ds-pip:hover { transform:scale(1.15); }
+
+  /* INSPIRATION */
+  .inspiration-row { display:flex; align-items:center; gap:10px; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.05); }
+  .insp-label { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--silver); opacity:0.6; }
+  .insp-pip { width:22px;height:22px;border-radius:50%;border:1.5px solid rgba(201,168,76,0.45);background:rgba(201,168,76,0.08);cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;font-size:0.9rem; }
+  .insp-pip.active { background:rgba(201,168,76,0.3); border-color:var(--gold-light); box-shadow:0 0 8px rgba(201,168,76,0.4); }
+
+  /* SPELL SLOTS */
+  .slots-section { margin-bottom:10px; }
+  .slots-row { display:flex; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap; }
+  .slots-label { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--silver); opacity:0.65; min-width:52px; }
+  .pip-group { display:flex; gap:5px; flex-wrap:wrap; }
+  .pip { width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(200,122,224,0.5);background:rgba(200,122,224,0.14);cursor:pointer;transition:all 0.15s;position:relative; }
+  .pip.used { background:rgba(0,0,0,0.4); border-color:rgba(200,122,224,0.15); }
+  .pip.used::after { content:'×';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:rgba(200,122,224,0.3);line-height:1; }
+  .pip:hover:not(.used) { background:rgba(200,122,224,0.35); border-color:rgba(200,122,224,0.9); transform:scale(1.12); }
+
+  /* USES */
+  .uses-row { display:flex; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap; }
+  .uses-label { font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.07em; color:rgba(200,122,224,0.85); flex:1; min-width:130px; }
+  .uses-pips { display:flex; gap:5px; }
+  .use-pip { width:16px;height:16px;border-radius:2px;border:1.5px solid rgba(201,168,76,0.42);background:rgba(201,168,76,0.13);cursor:pointer;transition:all 0.15s;position:relative; }
+  .use-pip.used { background:rgba(0,0,0,0.4); border-color:rgba(201,168,76,0.13); }
+  .use-pip.used::after { content:'×';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:0.62rem;color:rgba(201,168,76,0.22);line-height:1; }
+  .use-pip:hover:not(.used) { background:rgba(201,168,76,0.32); border-color:rgba(201,168,76,0.9); transform:scale(1.1); }
+  .recharge-tag { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.08em; text-transform:uppercase; color:rgba(200,122,224,0.45); background:rgba(200,122,224,0.05); border:1px solid rgba(200,122,224,0.12); padding:1px 5px; border-radius:2px; }
+
+  /* SPELL SECTION HEADER */
+  .spell-section-header { display:flex; align-items:center; gap:8px; margin:10px 0 6px; }
+  .spell-level-label { font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase; color:rgba(200,122,224,0.6); }
+
+  /* SCHOOL BADGES */
+  .school-tag { font-family:'Cinzel',serif; font-size:0.5rem; letter-spacing:0.08em; text-transform:uppercase; padding:1px 5px; border-radius:2px; border:1px solid; flex-shrink:0; align-self:center; }
+  .school-enc { border-color:rgba(255,160,80,0.5); color:rgba(255,180,100,0.9); background:rgba(255,160,80,0.08); }
+  .school-ilu { border-color:rgba(100,200,255,0.45); color:rgba(140,220,255,0.9); background:rgba(100,200,255,0.07); }
+  .school-legend { display:flex; gap:10px; margin-bottom:8px; flex-wrap:wrap; }
+  .school-legend-item { display:flex; align-items:center; gap:5px; font-size:0.72rem; color:rgba(240,237,224,0.5); font-style:italic; }
+
+  /* TEMPORARY HP */
+  .thp-row { display:flex; align-items:center; gap:9px; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.05); flex-wrap:wrap; }
+  .thp-display { font-family:'Cinzel',serif; font-size:1.4rem; font-weight:700; min-width:36px; text-align:center; color:var(--pink); text-shadow:0 0 10px rgba(240,160,200,0.4); transition:all 0.3s; }
+  .thp-display.zero { color:rgba(240,160,200,0.3); text-shadow:none; }
+  .thp-bar-wrap { flex:1; min-width:80px; height:5px; background:rgba(0,0,0,0.45); border-radius:3px; overflow:hidden; }
+  .thp-bar { height:100%; border-radius:3px; background:linear-gradient(90deg,var(--pink-dark),var(--pink)); transition:width 0.4s ease; }
+  .thp-btn { width:26px;height:26px;border-radius:50%;border:1px solid rgba(240,160,200,0.3);background:rgba(240,160,200,0.07);color:var(--pink);font-size:1rem;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+  .thp-btn:hover { background:rgba(240,160,200,0.22); border-color:rgba(240,160,200,0.6); }
+  .thp-input { width:42px;text-align:center;background:rgba(0,0,0,0.3);border:1px solid rgba(240,160,200,0.18);border-radius:2px;color:var(--pink);font-family:'Cinzel',serif;font-size:0.78rem;padding:3px 4px; }
+  .thp-input:focus { outline:none; border-color:rgba(240,160,200,0.5); }
+  .thp-set-btn { font-family:'Cinzel',serif;font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;padding:4px 9px;border-radius:2px;border:1px solid rgba(240,160,200,0.35);color:rgba(240,160,200,0.8);background:rgba(240,160,200,0.06);cursor:pointer;transition:all 0.2s; }
+  .thp-set-btn:hover { background:rgba(240,160,200,0.15); border-color:rgba(240,160,200,0.65); }
+  .thp-clear-btn { font-family:'Cinzel',serif;font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;padding:4px 9px;border-radius:2px;border:1px solid rgba(150,80,110,0.35);color:rgba(200,120,150,0.7);background:rgba(150,80,110,0.05);cursor:pointer;transition:all 0.2s; }
+  .thp-clear-btn:hover { background:rgba(150,80,110,0.15); border-color:rgba(200,120,150,0.6); }
+
+  /* EXHAUSTION */
+  .exhaustion-row { display:flex; align-items:center; gap:10px; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.05); flex-wrap:wrap; }
+  .exh-label { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--silver); opacity:0.65; min-width:75px; }
+  .exh-pips { display:flex; gap:5px; }
+  .exh-pip { width:22px; height:22px; border-radius:3px; border:1.5px solid rgba(220,160,60,0.35); background:rgba(220,160,60,0.07); cursor:pointer; transition:all 0.2s; position:relative; flex-shrink:0; }
+  .exh-pip.active { background:rgba(220,100,60,0.55); border-color:rgba(240,140,60,0.9); box-shadow:0 0 6px rgba(220,100,60,0.4); }
+  .exh-pip:hover { transform:scale(1.12); border-color:rgba(240,140,60,0.7); }
+  .exh-effect { font-size:0.72rem; color:rgba(240,200,120,0.75); font-style:italic; flex:1; min-width:120px; line-height:1.35; }
+  .exh-effect.danger { color:rgba(255,120,100,0.9); }
+
+  /* SPELLS GRID ALIGNMENT */
+  .spell-summary { display:grid; grid-template-columns:16px 58px 28px 130px 54px 68px 1fr; align-items:center; gap:6px; padding:5px 4px 5px 0; border-bottom:1px solid rgba(255,255,255,0.03); font-size:0.82rem; cursor:pointer; transition:background 0.15s; border-radius:2px; }
+  .spell-summary.no-school { grid-template-columns:16px 58px 130px 54px 68px 1fr; }
+  .spell-name { font-family:'Cinzel',serif; font-size:0.74rem; font-weight:600; color:var(--parchment); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .spell-cast { font-size:0.72rem; color:rgba(240,237,224,0.55); white-space:nowrap; overflow:hidden; }
+  .spell-range { font-size:0.72rem; color:rgba(200,122,224,0.6); white-space:nowrap; overflow:hidden; }
+  .spell-notes { font-size:0.72rem; color:rgba(240,237,224,0.65); }
+
+  /* FOOTER */
+  .card-footer { padding:10px 26px 18px; display:flex; justify-content:space-between; align-items:center; opacity:0.45; }
+  .footer-fluff { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--silver); }
+  .xp-val { font-family:'Cinzel',serif; font-size:0.65rem; color:var(--gold); }
+
+  @media(max-width:520px){ .skills-grid{grid-template-columns:1fr} .spell-cast,.spell-range{display:none} }
+</style>
+</head>
+<body>
+
+<div class="char-card">
+  <div class="card-corner-bl"></div>
+  <div class="color-bar"></div>
+
+  <!-- HEADER -->
+  <div class="card-header">
+    <div class="char-avatar">🎶</div>
+    <div class="char-identity">
+      <div class="char-name" contenteditable="true" title="Editable">Jesús Cristo</div>
+      <div class="char-subtitle" contenteditable="true" title="Editable">Bardo del Glamour · Nivel 3 · Alto Elfo</div>
+      <div class="char-tags">
+        <span class="tag tag-class">Bardo Nv.3</span>
+        <span class="tag tag-glamour">Glamour</span>
+        <span class="tag tag-race">Alto Elfo</span>
+        <span class="tag tag-bg">Trasfondo: Animador</span>
+        <span class="tag tag-new">PHB 2024</span>
+      </div>
+      <div class="personality-quote" contenteditable="true" title="Editable: personalidad">
+        "Impecable. Aún hoy te creces con los aplausos y anhelas<br>ese eco de admiración que nunca se apaga."
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat">
+      <span class="stat-label">FUE</span>
+      <span class="stat-value">9</span>
+      <span class="stat-mod">−1</span>
+      <span class="stat-save">TS −1</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">DES</span>
+      <span class="stat-value">14</span>
+      <span class="stat-mod">+2</span>
+      <span class="stat-save" title="Con competencia">TS +4 ✓</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">CON</span>
+      <span class="stat-value">12</span>
+      <span class="stat-mod">+1</span>
+      <span class="stat-save">TS +1</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">INT</span>
+      <span class="stat-value">9</span>
+      <span class="stat-mod">−1</span>
+      <span class="stat-save">TS −1</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">SAB</span>
+      <span class="stat-value">11</span>
+      <span class="stat-mod">+0</span>
+      <span class="stat-save">TS +0</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">CAR</span>
+      <span class="stat-value">14</span>
+      <span class="stat-mod">+2</span>
+      <span class="stat-save" title="Con competencia">TS +4 ✓</span>
+    </div>
+  </div>
+
+  <!-- COMBAT ROW -->
+  <div class="combat-row">
+    <div class="combat-stat"><span class="combat-label">CA</span><span class="combat-value">13</span></div>
+    <div class="combat-stat">
+      <span class="combat-label">PG Máx. <span style="font-size:0.45rem;color:rgba(201,168,76,0.4);">✎</span></span>
+      <input type="number" class="combat-value-editable" id="max-hp-field" value="23" min="1" max="999" onchange="updateMaxHP()" title="Edita los PG máximos">
+    </div>
+    <div class="combat-stat"><span class="combat-label">Velocidad</span><span class="combat-value">30 ft</span></div>
+    <div class="combat-stat"><span class="combat-label">Iniciativa</span><span class="combat-value">+2</span></div>
+    <div class="combat-stat"><span class="combat-label">Perc. Pasiva</span><span class="combat-value">11</span></div>
+    <div class="combat-stat"><span class="combat-label">CD Conjuros</span><span class="combat-value">12</span></div>
+    <div class="combat-stat"><span class="combat-label">Atq. Conjuro</span><span class="combat-value">+4</span></div>
+  </div>
+
+  <div class="card-body">
+
+    <!-- INTERACTIVE PANEL -->
+    <div class="interactive-panel">
+      <div class="interactive-title">
+        <span>⚙ Estado de sesión</span>
+        <button class="reset-btn" id="reset-btn" onclick="resetAll()">🌙 Descanso largo</button>
+      </div>
+
+      <!-- HP TRACKER -->
+      <div class="hp-row">
+        <span class="hp-label">PG</span>
+        <div id="jesus-hp-display" class="hp-display full">23</div>
+        <span class="hp-max-display">/ <span id="hp-max-label">23</span></span>
+        <div class="hp-bar-wrap"><div id="jesus-hp-bar" class="hp-bar" style="width:100%;background:#90e8a0"></div></div>
+        <button class="hp-btn" onclick="changeHP(1)">+</button>
+        <input id="jesus-hp-input" class="hp-input" type="number" min="1" value="1">
+        <button class="hp-heal-btn" onclick="applyHeal()">Curar</button>
+        <button class="hp-apply-btn" onclick="applyDmg()">Daño</button>
+        <button class="hp-btn" onclick="changeHP(-1)">−</button>
+      </div>
+
+      <!-- TEMPORARY HP TRACKER -->
+      <div class="thp-row">
+        <span class="hp-label" style="color:var(--pink);opacity:0.75;">PG Temp</span>
+        <div id="jesus-thp-display" class="thp-display zero">0</div>
+        <div class="thp-bar-wrap"><div id="jesus-thp-bar" class="thp-bar" style="width:0%"></div></div>
+        <button class="thp-btn" onclick="changeTHP(1)">+</button>
+        <input id="jesus-thp-input" class="thp-input" type="number" min="0" value="0">
+        <button class="thp-set-btn" onclick="setTHP()">Fijar</button>
+        <button class="thp-clear-btn" onclick="clearTHP()">Limpiar</button>
+        <button class="thp-btn" onclick="changeTHP(-1)">−</button>
+      </div>
+
+      <!-- HIT DICE -->
+      <div class="hit-dice-row">
+        <span class="hd-label">Dados de Golpe</span>
+        <div class="hd-pips" id="hit-dice-pips"></div>
+        <span class="hd-info">3d8 · clic para gastar · desc. corto para recuperar</span>
+      </div>
+
+      <!-- INSPIRATION -->
+      <div class="inspiration-row">
+        <span class="insp-label">Inspiración Heroica</span>
+        <div id="jesus-inspiration" class="insp-pip" onclick="toggleInspiration()">☆</div>
+        <span style="font-size:0.75rem;color:rgba(240,237,224,0.35);font-style:italic;">clic para activar/desactivar</span>
+      </div>
+
+      <!-- DEATH SAVES -->
+      <div class="death-saves-row">
+        <span class="ds-label">Tiradas de Muerte</span>
+        <div class="ds-group">
+          <span class="ds-sublabel">Éxitos</span>
+          <div class="ds-pips">
+            <div class="ds-pip success" id="ds-s0" onclick="toggleDS('success',0)"></div>
+            <div class="ds-pip success" id="ds-s1" onclick="toggleDS('success',1)"></div>
+            <div class="ds-pip success" id="ds-s2" onclick="toggleDS('success',2)"></div>
+          </div>
+        </div>
+        <div class="ds-group">
+          <span class="ds-sublabel">Fallos</span>
+          <div class="ds-pips">
+            <div class="ds-pip failure" id="ds-f0" onclick="toggleDS('failure',0)"></div>
+            <div class="ds-pip failure" id="ds-f1" onclick="toggleDS('failure',1)"></div>
+            <div class="ds-pip failure" id="ds-f2" onclick="toggleDS('failure',2)"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SPELL SLOTS -->
+      <div class="slots-section">
+        <div class="slots-row">
+          <span class="slots-label">Nv. 1</span>
+          <div class="pip-group" id="slots-1"></div>
+          <span style="font-size:0.65rem;color:rgba(240,237,224,0.3);font-style:italic;">4 ranuras</span>
+        </div>
+        <div class="slots-row">
+          <span class="slots-label">Nv. 2</span>
+          <div class="pip-group" id="slots-2"></div>
+          <span style="font-size:0.65rem;color:rgba(240,237,224,0.3);font-style:italic;">2 ranuras</span>
+        </div>
+      </div>
+
+      <!-- BARDIC INSPIRATION & MANTLE -->
+      <div class="uses-row">
+        <span class="uses-label">Inspiración Bárdica (d6)</span>
+        <div class="uses-pips" id="uses-bardic"></div>
+        <span class="recharge-tag">desc. largo · CAR=2 usos</span>
+      </div>
+
+      <!-- EXHAUSTION TRACKER -->
+      <div class="exhaustion-row">
+        <span class="exh-label">Agotamiento</span>
+        <div class="exh-pips" id="exh-pips"></div>
+        <span class="exh-effect" id="exh-effect">— Sin agotamiento</span>
+      </div>
+    </div>
+
+    <!-- ATTACKS -->
+    <div class="section">
+      <div class="section-title">
+        Armas y Ataques
+        <span style="font-size:0.48rem;color:rgba(200,122,224,0.35);font-style:italic;">▸ clic en cada ataque para detalles</span>
+      </div>
+      <div class="attacks-list">
+
+        <div class="attack-item">
+          <div class="attack-summary" onclick="toggleDetail(this)">
+            <span class="expand-arrow">▸</span>
+            <span class="attack-name">Daga (cuerpo a cuerpo)</span>
+            <span class="attack-bonus">+4</span>
+            <span class="attack-dmg">1d4+2 perf.</span>
+            <span class="attack-note">arrojadiza · sutil</span>
+          </div>
+          <div class="action-detail">
+            <textarea class="action-detail-editable">Ataque de arma cuerpo a cuerpo o a distancia. Bono de ataque +4 (DES +2 + prof. +2). Daño: 1d4+2 perforante. Alcance 5 ft (c/c) o 20/60 ft (arrojadiza). Propiedad Sutil: puede usarse para ataques furtivos en combinación con Sigilosa si procede. Llevas 2 dagas.</textarea>
+          </div>
+        </div>
+
+        <div class="attack-item">
+          <div class="attack-summary" onclick="toggleDetail(this)">
+            <span class="expand-arrow">▸</span>
+            <span class="attack-name">Daga (arrojadiza)</span>
+            <span class="attack-bonus">+4</span>
+            <span class="attack-dmg">1d4+2 perf.</span>
+            <span class="attack-note">20/60 ft</span>
+          </div>
+          <div class="action-detail">
+            <textarea class="action-detail-editable">La misma daga lanzada como proyectil. Rango normal 20 ft, rango largo 60 ft (desventaja más allá de 20 ft). Bono de ataque +4 (DES). Daño: 1d4+2 perforante. Pueden recuperarse tras el combate.</textarea>
+          </div>
+        </div>
+
+        <div class="attack-item">
+          <div class="attack-summary" onclick="toggleDetail(this)">
+            <span class="expand-arrow">▸</span>
+            <span class="attack-name">Ataque de Conjuro (mano)</span>
+            <span class="attack-bonus">+4</span>
+            <span class="attack-dmg">varía</span>
+            <span class="attack-note">lanzamiento: CAR</span>
+          </div>
+          <div class="action-detail">
+            <textarea class="action-detail-editable">Bono de ataque de conjuro: +4 (CAR +2 + prof. +2). CD de salvación: 12. Se usa con hechizos que requieren tirada de ataque (como Risa Histérica de Tasha o conjuros futuros que lo requieran).</textarea>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CLASS FEATURES -->
+    <div class="section">
+      <div class="section-title">
+        Rasgos de Clase · Bardo
+        <span style="font-size:0.48rem;color:rgba(200,122,224,0.35);font-style:italic;">▸ clic para expandir</span>
+      </div>
+
+      <div class="ability-item">
+        <div class="ability-summary" onclick="toggleAbility(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="ability-name">Inspiración Bárdica ★ Acción Bonus · d6</span>
+        </div>
+        <div class="ability-expand">
+          <textarea class="ability-expand-editable">Acción Bonus. Alcance: 60 ft. Una criatura que puedas ver y que te oiga gana un d6 de Inspiración Bárdica.
+
+El recipiente puede usar el dado durante la siguiente hora para añadir el resultado a:
+- Una tirada de ataque
+- Una tirada de habilidad
+- Una tirada de salvación
+
+Se puede usar DESPUÉS de ver el resultado original pero ANTES de que el DM diga si tuvo éxito o fallo. Se consume al usarlo.
+
+Usos = modificador de Carisma = 2 (se recuperan con descanso largo).</textarea>
+        </div>
+      </div>
+
+      <div class="ability-item">
+        <div class="ability-summary" onclick="toggleAbility(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="ability-name">Conjuros de Bardo · Lanzamiento Ritual</span>
+        </div>
+        <div class="ability-expand">
+          <textarea class="ability-expand-editable">El Bardo puede lanzar hechizos con la etiqueta (R) como rituales, sin gastar ranura de conjuros, añadiendo 10 minutos al tiempo de lanzamiento.
+
+Capacidad de lanzamiento: Carisma (CAR +2). CD 12. Bono ataque +4.
+
+Ranuras: 4 de nivel 1, 2 de nivel 2.
+
+Conoce un número fijo de hechizos (no prepara como el clérigo) — ver lista de conjuros.</textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- GLAMOUR SUBCLASS -->
+    <div class="section">
+      <div class="section-title">Colegio del Glamour · Subclase</div>
+
+      <div class="ability-item">
+        <div class="ability-summary" onclick="toggleAbility(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="ability-name">Manto de Inspiración ★ Acción Bonus · Canalizar Glamour</span>
+        </div>
+        <div class="ability-expand">
+          <textarea class="ability-expand-editable">Acción Bonus. Gasta 1 uso de Inspiración Bárdica para envolver a aliados en magia feérica.
+
+Hasta 5 criaturas de tu elección que puedas ver a 60 ft:
+• Ganan PG TEMPORALES iguales a 1d6 + CAR (+2 → promedio 5-6 PG temp.)
+• Si un objetivo que recibió PG temp. es golpeado, puede usar su REACCIÓN para moverse hasta su velocidad sin provocar ataques de oportunidad
+
+Los PG temporales duran hasta el siguiente descanso corto o largo.
+
+Usa 1 uso de Inspiración Bárdica.</textarea>
+        </div>
+      </div>
+
+      <div class="ability-item">
+        <div class="ability-summary" onclick="toggleAbility(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="ability-name">Manto del Glamour ★ Reacción (pasivo)</span>
+        </div>
+        <div class="ability-expand">
+          <textarea class="ability-expand-editable">Cuando lanzas un hechizo del Colegio del Glamour que tiene como objetivo a criaturas, puedes usar tu REACCIÓN para que hasta CAR (+2 = 2) criaturas adicionales que no sean objetivo del hechizo ganen los beneficios como si lo fueran.
+
+Esto permite extender hechizos como Encantar Personas o similares a criaturas adicionales fuera del objetivo original. 
+
+Uso: se activa 1 vez por descanso corto.</textarea>
+        </div>
+      </div>
+
+      <div class="ability-item">
+        <div class="ability-summary" onclick="toggleAbility(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="ability-name">Hechizos del Colegio del Glamour (siempre preparados)</span>
+        </div>
+        <div class="ability-expand">
+          <textarea class="ability-expand-editable">El Colegio del Glamour otorga hechizos adicionales que siempre están disponibles (no cuentan contra el número de hechizos conocidos):
+
+Nivel 3: Encantar Personas (Charm Person) — Nv.1
+           Mirada Hipnótica (Hypnotic Pattern) — Nv.3 (disponible con ranuras apropiadas)
+
+Estos hechizos refuerzan el tema de control mental y presencia carismática del subclase.</textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- SPECIES TRAITS -->
+    <div class="section">
+      <div class="section-title">Rasgos de Especie · Alto Elfo</div>
+
+      <div class="ability-item">
+        <div class="ability-summary" onclick="toggleAbility(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="ability-name">Darkvision 60 ft</span>
+        </div>
+        <div class="ability-expand">
+          <textarea class="ability-expand-editable">Visión en la oscuridad hasta 60 ft. En oscuridad total ves como si hubiera luz tenue (sin distinción de colores). En luz tenue ves como si fuera luz brillante. Pasivo y permanente.</textarea>
+        </div>
+      </div>
+
+      <div class="ability-item">
+        <div class="ability-summary" onclick="toggleAbility(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="ability-name">Sentidos Agudizados (Keen Senses)</span>
+        </div>
+        <div class="ability-expand">
+          <textarea class="ability-expand-editable">Competencia en la habilidad de Percepción. Jesús tiene Percepción +4 (con competencia completa: +0 SAB + +2 prof. = +2… pero la ficha muestra +4, lo que implica posiblemente competencia doble o trasfondo — revisar con el DM).</textarea>
+        </div>
+      </div>
+
+      <div class="ability-item">
+        <div class="ability-summary" onclick="toggleAbility(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="ability-name">Trance Feérico (Fey Ancestry)</span>
+        </div>
+        <div class="ability-expand">
+          <textarea class="ability-expand-editable">Ventaja en las tiradas de salvación contra el efecto Encantado. No puede dormirse mediante magia.
+
+También: en lugar de dormir, los elfos meditan en trance 4 horas (cuenta como 8h de sueño).</textarea>
+        </div>
+      </div>
+
+      <div class="ability-item">
+        <div class="ability-summary" onclick="toggleAbility(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="ability-name">Truco de Alto Elfo · Religión</span>
+        </div>
+        <div class="ability-expand">
+          <textarea class="ability-expand-editable">Los Altos Elfos conocen un truco de mago adicional. Jesús tiene Religión +1 marcado como competente, lo que sugiere que el trasfondo Animador le otorga esta competencia más que el rasgo racial en sí.</textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- SKILLS -->
+    <div class="section">
+      <div class="section-title">Habilidades y Competencias</div>
+      <div class="skills-grid">
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Atletismo</span><span class="skill-val">−1</span></div>
+        <div class="skill-row"><div class="skill-prof yes"></div><span class="skill-name">Perspicacia</span><span class="skill-val">+2</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Manejo Animales</span><span class="skill-val">+0</span></div>
+        <div class="skill-row"><div class="skill-prof yes"></div><span class="skill-name">Percepción</span><span class="skill-val">+4</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Medicina</span><span class="skill-val">+0</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Supervivencia</span><span class="skill-val">+0</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Engaño</span><span class="skill-val">+2</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Intimidación</span><span class="skill-val">+2</span></div>
+        <div class="skill-row"><div class="skill-prof exp"></div><span class="skill-name">Interpretación ✦</span><span class="skill-val">+6</span></div>
+        <div class="skill-row"><div class="skill-prof exp"></div><span class="skill-name">Persuasión ✦</span><span class="skill-val">+4</span></div>
+        <div class="skill-row"><div class="skill-prof yes"></div><span class="skill-name">Acrobacias</span><span class="skill-val">+4</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Juego de Manos</span><span class="skill-val">+2</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Sigilo</span><span class="skill-val">+2</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Arcanos</span><span class="skill-val">−1</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Historia</span><span class="skill-val">−1</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Investigación</span><span class="skill-val">−1</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Naturaleza</span><span class="skill-val">−1</span></div>
+        <div class="skill-row"><div class="skill-prof yes"></div><span class="skill-name">Religión</span><span class="skill-val">+1</span></div>
+      </div>
+      <div style="margin-top:10px;">
+        <div class="trait-row"><span class="trait-key">Armaduras:</span><span class="trait-val">Ligera</span></div>
+        <div class="trait-row"><span class="trait-key">Armas:</span><span class="trait-val">Armas sencillas</span></div>
+        <div class="trait-row"><span class="trait-key">Herramientas:</span><span class="trait-val">Laud, Lira, Cuerno, Flauta</span></div>
+        <div class="trait-row"><span class="trait-key">Idiomas:</span><span class="trait-val">Común, Élfico (+ los del Trasfondo Animador)</span></div>
+      </div>
+    </div>
+
+    <!-- SPELLS -->
+    <div class="section">
+      <div class="section-title">
+        Conjuros Conocidos · Lanzamiento: Carisma
+        <span style="font-size:0.48rem;color:rgba(200,122,224,0.35);font-style:italic;">▸ clic en cada conjuro para detalles</span>
+      </div>
+
+      <div class="school-legend">
+        <div class="school-legend-item"><span class="school-tag school-enc">ENC</span> Encantamiento</div>
+        <div class="school-legend-item"><span class="school-tag school-ilu">ILU</span> Ilusionismo</div>
+        <div class="school-legend-item" style="color:rgba(240,160,216,0.6);">✦ Glamour · siempre preparado</div>
+      </div>
+
+      <div class="spell-section-header">
+        <span class="spell-level-label">Trucos (a voluntad)</span>
+      </div>
+
+      <!-- PRESTIDIGITACIÓN -->
+      <div class="spell-item">
+        <div class="spell-summary no-school" onclick="toggleSpell(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="spell-level-badge">Truco</span>
+          <span class="spell-name">Prestidigitación</span>
+          <span class="spell-cast">1 acc</span>
+          <span class="spell-range">10 ft</span>
+          <span class="spell-notes">V, S · Efectos menores a voluntad</span>
+        </div>
+        <div class="spell-detail">
+          <textarea class="spell-detail-editable">PRESTIDIGITACIÓN (Prestidigitation) — Truco de Transmutación
+Efectos menores de magia que duran hasta 1 hora:
+• Crear un efecto sensorial inofensivo (musiquilla, olor a rosas, chispa)
+• Encender o apagar una vela, antorcha o pequeña hoguera
+• Limpiar o ensuciar un objeto de hasta 30 cm
+• Calentar, enfriar o sazonar hasta 500ml de materia no viva
+• Hacer aparecer un color, marca o símbolo en un objeto 1h
+• Crear un juguete de nada
+
+Hasta 3 efectos simultáneos. Esencial para la actuación y el roleplay.</textarea>
+        </div>
+      </div>
+
+      <!-- BURLA DAÑINA -->
+      <div class="spell-item">
+        <div class="spell-summary" onclick="toggleSpell(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="spell-level-badge">Truco</span>
+          <span class="school-tag school-enc">ENC</span>
+          <span class="spell-name">Burla Dañina</span>
+          <span class="spell-cast">1 acc</span>
+          <span class="spell-range">60 ft</span>
+          <span class="spell-notes">V · 1d6 psíquico · TS SAB · desventaja</span>
+        </div>
+        <div class="spell-detail">
+          <textarea class="spell-detail-editable">BURLA DAÑINA (Vicious Mockery) — Truco de Encantamiento
+Alcance: 60 ft. Sin concentración.
+
+Lanzas un aluvión de insultos con poder mágico hacia una criatura que puedas ver a 60 ft. Si puede oírte (sin necesidad de entenderte), hace TS de SAB CD 12:
+• FALLO: recibe 1d6 de daño psíquico y tiene DESVENTAJA en la próxima tirada de ataque antes del final de su siguiente turno.
+• ÉXITO: sin efecto.
+
+Daño aumenta a 2d6 en nivel 5, 3d6 en nivel 11, 4d6 en nivel 17.
+
+Truco de bardo por excelencia: daño + debilitamiento de ataque enemigo, todo a voluntad.</textarea>
+        </div>
+      </div>
+
+      <!-- LUCES DANZANTES -->
+      <div class="spell-item">
+        <div class="spell-summary" onclick="toggleSpell(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="spell-level-badge">Truco</span>
+          <span class="school-tag school-ilu">ILU</span>
+          <span class="spell-name">Luces Danzantes</span>
+          <span class="spell-cast">1 acc</span>
+          <span class="spell-range">120 ft</span>
+          <span class="spell-notes">V, S · Conc. 1 min · 4 luces o figura humanoide</span>
+        </div>
+        <div class="spell-detail">
+          <textarea class="spell-detail-editable">LUCES DANZANTES (Dancing Lights) — Truco de Ilusionismo
+Concentración hasta 1 minuto. Alcance: 120 ft.
+
+Creas hasta 4 luces del tamaño de una antorcha en un radio de 20 ft. Cada luz ilumina 10 ft de luz brillante y 10 ft adicionales de luz tenue. Como Acción Bonus puedes moverlas hasta 60 ft dentro del alcance del hechizo. Alternativamente, puedes combinarlas en una figura humanoide vaga de tamaño mediano.
+
+Útil para iluminar, distraer enemigos, o crear señuelos visuales en encuentros sociales o exploración.</textarea>
+        </div>
+      </div>
+
+      <div class="spell-section-header" style="margin-top:10px;">
+        <span class="spell-level-label">Nivel 1</span>
+      </div>
+
+      <!-- CURAR HERIDAS -->
+      <div class="spell-item">
+        <div class="spell-summary no-school" onclick="toggleSpell(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="spell-level-badge">Nv. 1</span>
+          <span class="spell-name">Curar Heridas</span>
+          <span class="spell-cast">1 acc</span>
+          <span class="spell-range">toque</span>
+          <span class="spell-notes">V, S · 1d8+2 PG recuperados</span>
+        </div>
+        <div class="spell-detail">
+          <textarea class="spell-detail-editable">CURAR HERIDAS (Cure Wounds) — Nv.1 Evocación
+Sin concentración. Alcance: toque.
+
+Una criatura que toques recupera 1d8 + CAR (1d8+2) puntos de golpe. No funciona en constructos ni muertos vivientes.
+
+Con ranuras más altas: +1d8 por nivel de ranura.
+
+Curación por toque. Más potente de media que Palabra de Curación pero requiere cuerpo a cuerpo y gasta la Acción principal.</textarea>
+        </div>
+      </div>
+
+      <!-- RISA HORRIBLE DE TASHA -->
+      <div class="spell-item">
+        <div class="spell-summary" onclick="toggleSpell(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="spell-level-badge">Nv. 1</span>
+          <span class="school-tag school-enc">ENC</span>
+          <span class="spell-name">Risa Horrible de Tasha</span>
+          <span class="spell-cast">1 acc</span>
+          <span class="spell-range">30 ft</span>
+          <span class="spell-notes">V, S · Conc. 1 min · TS SAB CD 12 · Incapacitado</span>
+        </div>
+        <div class="spell-detail">
+          <textarea class="spell-detail-editable">RISA HORRIBLE DE TASHA (Tasha's Hideous Laughter) — Nv.1 Encantamiento
+Concentración hasta 1 minuto. Alcance: 30 ft.
+
+Una criatura que puedas ver hace TS de SAB CD 12. Si falla, queda Incapacitada y Tumbada de risa durante 1 minuto. Al final de cada uno de sus turnos puede repetir la TS con la misma CD. Si tiene INT de 4 o menos, tiene inmunidad.
+
+Mientras dure: no puede realizar acciones ni reacciones, sus ataques tienen desventaja, los ataques contra ella tienen ventaja.
+
+Excelente control de un objetivo clave en combate.</textarea>
+        </div>
+      </div>
+
+      <!-- ORDEN IMPERIOSA -->
+      <div class="spell-item">
+        <div class="spell-summary" onclick="toggleSpell(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="spell-level-badge">Nv. 1</span>
+          <span class="school-tag school-enc">ENC</span>
+          <span class="spell-name">Orden Imperiosa</span>
+          <span class="spell-cast">1 acc</span>
+          <span class="spell-range">60 ft</span>
+          <span class="spell-notes">V · 1 ronda · TS SAB CD 12 · 1 palabra</span>
+        </div>
+        <div class="spell-detail">
+          <textarea class="spell-detail-editable">ORDEN IMPERIOSA (Command) — Nv.1 Encantamiento
+Alcance: 60 ft. Duración: 1 ronda. No funciona en no-muertos ni seres que no entiendan el idioma.
+
+La criatura hace TS de CAR CD 12. Si falla, ejecuta la orden de una palabra en su siguiente turno. Órdenes habituales:
+• "¡Acércate!" — se mueve hacia ti sin hacer nada más
+• "¡Huye!" — usa toda su acción y movimiento para alejarse
+• "¡Al suelo!" — queda tumbada, usando toda su acción
+• "¡Suelta!" — suelta lo que tenga en mano
+• "¡Detente!" — no se mueve, solo puede hacer acción libre
+
+Con ranura Nv.2+: afecta a 1 criatura adicional por nivel de ranura.</textarea>
+        </div>
+      </div>
+
+      <!-- OLA ATRONADORA -->
+      <div class="spell-item">
+        <div class="spell-summary no-school" onclick="toggleSpell(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="spell-level-badge">Nv. 1</span>
+          <span class="spell-name">Ola Atronadora</span>
+          <span class="spell-cast">1 acc</span>
+          <span class="spell-range">15 ft área</span>
+          <span class="spell-notes">V, S · TS CON CD 12 · 2d8 sónico · empuja 10 ft</span>
+        </div>
+        <div class="spell-detail">
+          <textarea class="spell-detail-editable">OLA ATRONADORA (Thunderwave) — Nv.1 Evocación
+Alcance: self (cubo de 15 ft). Sin concentración.
+
+Ola de energía sónica que se irradia desde ti. Cada criatura en el cubo de 15 ft hace TS de Constitución CD 12:
+• FALLO: 2d8 de daño sónico + empujada 10 ft lejos de ti
+• ÉXITO: mitad del daño, no empujada
+
+Objetos no portados son empujados automáticamente. El sonido es audible a 300 ft.
+
+Con ranuras más altas: +1d8 de daño por nivel adicional. Muy útil para crear espacio o desbaratar formaciones.</textarea>
+        </div>
+      </div>
+
+      <!-- HECHIZAR PERSONA (GLAMOUR) -->
+      <div class="spell-item">
+        <div class="spell-summary" onclick="toggleSpell(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="spell-level-badge">Nv. 1 ✦</span>
+          <span class="school-tag school-enc">ENC</span>
+          <span class="spell-name">Hechizar Persona</span>
+          <span class="spell-cast">1 acc</span>
+          <span class="spell-range">30 ft</span>
+          <span class="spell-notes">V, S · 1h · TS SAB CD 12 · Glamour</span>
+        </div>
+        <div class="spell-detail">
+          <textarea class="spell-detail-editable">HECHIZAR PERSONA (Charm Person) — Nv.1 Encantamiento · ✦ Glamour
+Duración: 1 hora. Sin concentración. Siempre preparado (Glamour).
+
+Un humanoide que puedas ver hace TS de SAB CD 12. Ventaja en la TS si estás en combate con él. Si falla, te considera un amigo querido durante 1 hora. El efecto termina si le haces daño o lanzas un conjuro perjudicial contra él.
+
+Cuando el hechizo termina, la criatura sabe que usaste magia para influirla.
+
+Con ranura Nv.2+: 1 objetivo adicional por nivel de ranura por encima de Nv.1.</textarea>
+        </div>
+      </div>
+
+      <div class="spell-section-header" style="margin-top:10px;">
+        <span class="spell-level-label">Nivel 2</span>
+      </div>
+
+      <!-- HACER AÑICOS -->
+      <div class="spell-item">
+        <div class="spell-summary no-school" onclick="toggleSpell(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="spell-level-badge">Nv. 2</span>
+          <span class="spell-name">Hacer Añicos</span>
+          <span class="spell-cast">1 acc</span>
+          <span class="spell-range">60 ft · radio 10 ft</span>
+          <span class="spell-notes">V, S · TS CON CD 12 · 3d8 sónico</span>
+        </div>
+        <div class="spell-detail">
+          <textarea class="spell-detail-editable">HACER AÑICOS (Shatter) — Nv.2 Evocación
+Sin concentración. Alcance: 60 ft. Radio: 10 ft esfera.
+
+Explosión sónica intensa. Cada criatura en el radio hace TS de Constitución CD 12:
+• FALLO: 3d8 de daño sónico
+• ÉXITO: mitad del daño
+
+Las criaturas compuestas de material inorgánico (constructos, armaduras animadas) tienen desventaja en la TS. Los objetos no mágicos en el área reciben daño automáticamente.
+
+Con ranuras más altas: +1d8 por nivel de ranura. Potente AoE sin concentración.</textarea>
+        </div>
+      </div>
+
+      <!-- NUBE DE DAGAS -->
+      <div class="spell-item">
+        <div class="spell-summary no-school" onclick="toggleSpell(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="spell-level-badge">Nv. 2</span>
+          <span class="spell-name">Nube de Dagas</span>
+          <span class="spell-cast">1 acc</span>
+          <span class="spell-range">60 ft · cubo 5 ft</span>
+          <span class="spell-notes">V, S · Conc. 1 min · 4d4 cortante · cada turno</span>
+        </div>
+        <div class="spell-detail">
+          <textarea class="spell-detail-editable">NUBE DE DAGAS (Cloud of Daggers) — Nv.2 Conjuración
+Concentración hasta 1 minuto. Alcance: 60 ft. Área: cubo de 5 ft.
+
+Llenas el área con dagas mágicas giratorias. Cualquier criatura que entre en el área o empiece su turno en ella recibe 4d4 de daño cortante (sin TS — daño automático).
+
+El área no se mueve. Es fija en el espacio hasta que el hechizo termine.
+
+Con ranuras más altas: +2d4 por nivel de ranura. Ideal para controlar pasillos, puertas o pasos estrechos.</textarea>
+        </div>
+      </div>
+
+      <!-- IMAGEN MÚLTIPLE (GLAMOUR) -->
+      <div class="spell-item">
+        <div class="spell-summary" onclick="toggleSpell(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="spell-level-badge">Nv. 2 ✦</span>
+          <span class="school-tag school-ilu">ILU</span>
+          <span class="spell-name">Imagen Múltiple</span>
+          <span class="spell-cast">1 acc</span>
+          <span class="spell-range">self</span>
+          <span class="spell-notes">V, S · 1 min · 3 duplicados · sin conc.</span>
+        </div>
+        <div class="spell-detail">
+          <textarea class="spell-detail-editable">IMAGEN MÚLTIPLE (Mirror Image) — Nv.2 Ilusionismo · ✦ Glamour
+Sin concentración. Duración: 1 minuto. Siempre preparado (Glamour).
+
+Creas 3 duplicados ilusorios de ti mismo. Cuando una criatura te ataca, se tira 1d20 para determinar si golpea a un duplicado en lugar de a ti:
+• 3 duplicados: falla con 6 o menos
+• 2 duplicados: falla con 8 o menos
+• 1 duplicado: falla con 11 o menos
+
+Si golpea a un duplicado, este se destruye. Los duplicados tienen tu CA de base (sin contar escudo ni armadura en algunos DMs). No requiere concentración — compatible con otros hechizos de concentración.</textarea>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- EQUIPMENT -->
+    <div class="section">
+      <div class="section-title">
+        Equipo e Inventario
+        <span style="font-size:0.48rem;color:rgba(200,122,224,0.35);font-style:italic;">✎ editable</span>
+      </div>
+      <textarea class="equip-textarea" id="inventory-text" placeholder="Escribe tu inventario aquí...">Armadura de cuero — CA 11+DES = CA 13
+2 Dagas
+Cuerno (instrumento musical)
+Paquete de artista
+Instrumento musical adicional (impecable)
+30 PO</textarea>
+    </div>
+
+  </div><!-- end card-body -->
+
+  <div class="card-footer">
+    <span class="footer-fluff">PHB 2024 · Bardo del Glamour · Alto Elfo</span>
+    <span class="xp-val">Bardo Nv.3 · Dados: 3d8</span>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  STORAGE HELPERS
+// ============================================================
+function save(k,v){try{localStorage.setItem('jesus_'+k,JSON.stringify(v));}catch(e){}}
+function load(k,d){try{const v=localStorage.getItem('jesus_'+k);return v!==null?JSON.parse(v):d;}catch(e){return d;}}
+
+// ============================================================
+//  MAX HP (editable)
+// ============================================================
+let MAX_HP = load('max_hp', 23);
+
+function updateMaxHP(){
+  const field = document.getElementById('max-hp-field');
+  const newMax = parseInt(field.value) || 23;
+  MAX_HP = Math.max(1, newMax);
+  save('max_hp', MAX_HP);
+  document.getElementById('hp-max-label').textContent = MAX_HP;
+  let cur = load('hp', MAX_HP);
+  cur = Math.min(cur, MAX_HP);
+  save('hp', cur);
+  updateHPDisplay(cur);
+}
+
+// ============================================================
+//  TEMPORARY HP
+// ============================================================
+let MAX_THP = 0;
+
+function updateTHPDisplay(cur){
+  const d=document.getElementById('jesus-thp-display');
+  const b=document.getElementById('jesus-thp-bar');
+  cur=Math.max(0,cur);
+  d.textContent=cur;
+  if(cur===0){
+    d.className='thp-display zero';
+    b.style.width='0%';
+  } else {
+    d.className='thp-display';
+    const ref=MAX_THP||cur;
+    b.style.width=Math.min(100,(cur/ref)*100)+'%';
+  }
+}
+function changeTHP(delta){
+  let cur=load('thp',0);
+  cur=Math.max(0,cur+delta);
+  if(cur>MAX_THP)MAX_THP=cur;
+  save('thp',cur);save('thp_max',MAX_THP);
+  updateTHPDisplay(cur);
+}
+function setTHP(){
+  const inp=document.getElementById('jesus-thp-input');
+  const val=parseInt(inp.value)||0; if(val<0)return;
+  MAX_THP=val;
+  save('thp',val);save('thp_max',val);
+  updateTHPDisplay(val);
+  inp.value=0;
+}
+function clearTHP(){
+  MAX_THP=0;
+  save('thp',0);save('thp_max',0);
+  updateTHPDisplay(0);
+}
+
+// ============================================================
+//  HP
+// ============================================================
+function updateHPDisplay(cur){
+  const d=document.getElementById('jesus-hp-display'),b=document.getElementById('jesus-hp-bar');
+  cur=Math.max(0,Math.min(MAX_HP,cur));
+  d.textContent=cur;
+  const p=(cur/MAX_HP)*100;
+  b.style.width=p+'%';
+  if(p>60){b.style.background='#90e8a0';d.className='hp-display full';}
+  else if(p>25){b.style.background='#ffd080';d.className='hp-display mid';}
+  else{b.style.background='#ff8080';d.className='hp-display low';}
+}
+function changeHP(delta){
+  let cur=load('hp',MAX_HP);
+  cur=Math.max(0,Math.min(MAX_HP,cur+delta));
+  save('hp',cur); updateHPDisplay(cur);
+}
+function applyDmg(){
+  const inp=document.getElementById('jesus-hp-input');
+  const dmg=parseInt(inp.value)||0; if(dmg<=0)return;
+  let cur=load('hp',MAX_HP);
+  cur=Math.max(0,cur-dmg);
+  save('hp',cur); updateHPDisplay(cur); inp.value=1;
+}
+function applyHeal(){
+  const inp=document.getElementById('jesus-hp-input');
+  const heal=parseInt(inp.value)||0; if(heal<=0)return;
+  let cur=load('hp',MAX_HP);
+  cur=Math.min(MAX_HP,cur+heal);
+  save('hp',cur); updateHPDisplay(cur); inp.value=1;
+}
+
+// ============================================================
+//  HIT DICE
+// ============================================================
+function buildHitDice(){
+  const used=load('hd_used',[]);
+  const container=document.getElementById('hit-dice-pips');
+  container.innerHTML='';
+  for(let i=0;i<3;i++){
+    const pip=document.createElement('div');
+    pip.className='hd-pip'+(used[i]?' used':'');
+    pip.title='d8 #'+(i+1)+(used[i]?' (gastado)':'');
+    pip.textContent='d8';
+    pip.onclick=()=>{
+      const u=load('hd_used',[]);
+      u[i]=!u[i];
+      save('hd_used',u);
+      buildHitDice();
+    };
+    container.appendChild(pip);
+  }
+}
+
+// ============================================================
+//  INSPIRATION
+// ============================================================
+function toggleInspiration(){
+  const active=!load('inspiration',false);
+  save('inspiration',active);
+  renderInspiration(active);
+}
+function renderInspiration(active){
+  const el=document.getElementById('jesus-inspiration');
+  el.textContent=active?'★':'☆';
+  el.className='insp-pip'+(active?' active':'');
+}
+
+// ============================================================
+//  DEATH SAVES
+// ============================================================
+function toggleDS(type,idx){
+  const key='ds_'+type;
+  const arr=load(key,[false,false,false]);
+  arr[idx]=!arr[idx];
+  save(key,arr); renderDS(type,arr);
+}
+function renderDS(type,arr){
+  arr.forEach((marked,i)=>{
+    const el=document.getElementById('ds-'+type[0]+i);
+    if(marked) el.classList.add('marked'); else el.classList.remove('marked');
+  });
+}
+
+// ============================================================
+//  SPELL SLOTS
+// ============================================================
+function buildSlots(level,total){
+  const key='slots_'+level;
+  const used=load(key,[]);
+  const container=document.getElementById('slots-'+level);
+  if(!container)return;
+  container.innerHTML='';
+  for(let i=0;i<total;i++){
+    const pip=document.createElement('div');
+    pip.className='pip'+(used[i]?' used':'');
+    pip.title='Ranura Nv.'+level+' #'+(i+1);
+    pip.onclick=()=>{used[i]=!used[i];save(key,used);buildSlots(level,total);};
+    container.appendChild(pip);
+  }
+}
+
+// ============================================================
+//  USES (Bardic Inspiration & Mantle)
+// ============================================================
+function buildUses(id,total){
+  const key='use_'+id;
+  const used=load(key,[]);
+  const container=document.getElementById('uses-'+id);
+  if(!container)return;
+  container.innerHTML='';
+  for(let i=0;i<total;i++){
+    const pip=document.createElement('div');
+    pip.className='use-pip'+(used[i]?' used':'');
+    pip.onclick=()=>{used[i]=!used[i];save(key,used);buildUses(id,total);};
+    container.appendChild(pip);
+  }
+}
+
+// ============================================================
+//  EXPAND / COLLAPSE
+// ============================================================
+function toggleDetail(summaryEl){
+  const detail=summaryEl.nextElementSibling;
+  const arrow=summaryEl.querySelector('.expand-arrow');
+  const isOpen=detail.classList.contains('open');
+  detail.classList.toggle('open',!isOpen);
+  if(arrow) arrow.classList.toggle('open',!isOpen);
+}
+function toggleAbility(summaryEl){
+  const expand=summaryEl.nextElementSibling;
+  const arrow=summaryEl.querySelector('.expand-arrow');
+  const isOpen=expand.classList.contains('open');
+  expand.classList.toggle('open',!isOpen);
+  if(arrow) arrow.classList.toggle('open',!isOpen);
+}
+function toggleSpell(summaryEl){
+  const detail=summaryEl.nextElementSibling;
+  const arrow=summaryEl.querySelector('.expand-arrow');
+  const isOpen=detail.classList.contains('open');
+  detail.classList.toggle('open',!isOpen);
+  if(arrow) arrow.classList.toggle('open',!isOpen);
+}
+
+// ============================================================
+//  EXHAUSTION (PHB 2024)
+// ============================================================
+const EXH_EFFECTS = [
+  '— Sin agotamiento',
+  'Nv.1 · −2 en pruebas con d20 · Veloc. −5 ft',
+  'Nv.2 · −4 en pruebas con d20 · Veloc. −10 ft',
+  'Nv.3 · −6 en pruebas con d20 · Veloc. −15 ft',
+  'Nv.4 · −8 en pruebas con d20 · Veloc. −20 ft',
+  'Nv.5 · −10 en pruebas con d20 · Veloc. −25 ft',
+  'Nv.6 · Muerte'
+];
+const EXH_DANGER = [false,false,false,false,true,true,true];
+
+function buildExhaustion(level){
+  const container = document.getElementById('exh-pips');
+  const effectEl  = document.getElementById('exh-effect');
+  container.innerHTML = '';
+  for(let i=1;i<=6;i++){
+    const pip = document.createElement('div');
+    pip.className = 'exh-pip' + (i<=level?' active':'');
+    pip.title = EXH_EFFECTS[i];
+    pip.onclick = ()=>{
+      const cur = load('exhaustion',0);
+      const next = (i===cur)?i-1:i;   // clic en activo = quitar uno
+      save('exhaustion', Math.max(0,next));
+      buildExhaustion(Math.max(0,next));
+    };
+    container.appendChild(pip);
+  }
+  effectEl.textContent = EXH_EFFECTS[level]||EXH_EFFECTS[0];
+  effectEl.className   = 'exh-effect' + (EXH_DANGER[level]?' danger':'');
+}
+
+
+function saveInventory(){
+  const txt=document.getElementById('inventory-text').value;
+  save('inventory',txt);
+}
+
+// ============================================================
+//  RESET (two-click: first click arms it, second click fires)
+// ============================================================
+let resetArmed = false;
+let resetTimer = null;
+
+function resetAll(){
+  const btn = document.getElementById('reset-btn');
+  if(!resetArmed){
+    resetArmed = true;
+    btn.textContent = '¿Confirmar descanso largo?';
+    btn.style.borderColor = 'rgba(255,100,100,0.8)';
+    btn.style.color = 'rgba(255,180,180,0.95)';
+    btn.style.background = 'rgba(255,100,100,0.15)';
+    resetTimer = setTimeout(()=>{
+      resetArmed = false;
+      btn.textContent = '🌙 Descanso largo';
+      btn.style.borderColor = '';
+      btn.style.color = '';
+      btn.style.background = '';
+    }, 3000);
+    return;
+  }
+  // confirmed
+  clearTimeout(resetTimer);
+  resetArmed = false;
+  btn.textContent = '🌙 Descanso largo';
+  btn.style.borderColor = '';
+  btn.style.color = '';
+  btn.style.background = '';
+
+  save('hp', MAX_HP);
+  save('thp', 0);
+  save('thp_max', 0);
+  // Descanso largo: agotamiento baja 1 nivel
+  const curExh = load('exhaustion', 0);
+  save('exhaustion', Math.max(0, curExh - 1));
+  save('inspiration', false);
+  save('ds_success', [false,false,false]);
+  save('ds_failure', [false,false,false]);
+  save('slots_1', []);
+  save('slots_2', []);
+  save('use_bardic', []);
+  save('hd_used', []);
+  MAX_THP = 0;
+  renderState();
+}
+
+// ============================================================
+//  INIT
+// ============================================================
+function renderState(){
+  MAX_HP = load('max_hp', 23);
+  MAX_THP = load('thp_max', 0);
+  document.getElementById('max-hp-field').value = MAX_HP;
+  document.getElementById('hp-max-label').textContent = MAX_HP;
+  updateHPDisplay(load('hp', MAX_HP));
+  updateTHPDisplay(load('thp', 0));
+  buildHitDice();
+  renderInspiration(load('inspiration', false));
+  renderDS('success', load('ds_success', [false,false,false]));
+  renderDS('failure', load('ds_failure', [false,false,false]));
+  buildSlots(1, 4);
+  buildSlots(2, 2);
+  buildUses('bardic', 2);
+  buildExhaustion(load('exhaustion', 0));
+}
+
+function init(){
+  renderState();
+  const inv = document.getElementById('inventory-text');
+  const savedInv = load('inventory', null);
+  if(savedInv !== null) inv.value = savedInv;
+  inv.addEventListener('input', saveInventory);
+}
+
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

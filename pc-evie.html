@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evie — Brujo Nv.3</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1520;
+    --gold: #c9a84c; --gold-light: #e8c97a;
+    --parchment: #f0ede0; --silver: #b8bfc4;
+    --storm: #7ac4a0; --storm-dark: #3e7a5e;
+    --lightning: #8ac98a; --green: #90e8a0;
+    --red: #e08080; --pink: #f0a0c8; --pink-dark: #c06090;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--ink);
+    background-image:
+      radial-gradient(ellipse at 15% 10%, rgba(80,160,120,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 90%, rgba(140,80,200,0.06) 0%, transparent 50%);
+    font-family: 'Crimson Pro', Georgia, serif;
+    color: var(--parchment);
+    min-height: 100vh;
+    padding: 30px 16px 60px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .back-link { display:inline-flex;align-items:center;gap:6px;font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(122,196,160,0.45);text-decoration:none;margin-bottom:24px;transition:color 0.2s; }
+  .back-link:hover { color:rgba(122,196,160,0.9); }
+  @keyframes fadeSlide { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+  /* CARD */
+  .char-card {
+    background: linear-gradient(160deg,#141e2c 0%,#0e1620 65%,#091018 100%);
+    border: 1px solid rgba(122,196,160,0.25);
+    border-radius: 4px; position: relative; overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.75), inset 0 1px 0 rgba(122,196,160,0.1);
+    animation: fadeSlide 0.5s ease both;
+  }
+  .char-card::after { content:''; position:absolute; top:8px;right:8px; width:28px;height:28px; border-top:1px solid rgba(201,168,76,0.25); border-right:1px solid rgba(201,168,76,0.25); }
+  .card-corner-bl { position:absolute; bottom:8px;left:8px; width:28px;height:28px; border-bottom:1px solid rgba(201,168,76,0.25); border-left:1px solid rgba(201,168,76,0.25); }
+  .color-bar { height:3px; background:linear-gradient(90deg,transparent,var(--storm-dark),var(--storm),var(--lightning),var(--storm),var(--storm-dark),transparent); }
+
+  /* HEADER */
+  .card-header { padding:22px 26px 18px; display:flex; gap:20px; align-items:flex-start; border-bottom:1px solid rgba(122,196,160,0.1); }
+  .char-avatar { width:72px;height:72px;border-radius:50%;border:2px solid rgba(122,196,160,0.5);display:flex;align-items:center;justify-content:center;font-size:2.2rem;flex-shrink:0;background:radial-gradient(135deg,#1a2535,#0c1520);box-shadow:0 0 24px rgba(80,160,120,0.3),inset 0 0 18px rgba(0,0,0,0.5);position:relative; }
+  .char-avatar::after { content:'🐙'; position:absolute; bottom:-2px; right:-2px; font-size:0.9rem; }
+  .char-identity { flex:1; }
+  .char-name { font-family:'Cinzel',serif; font-size:1.5rem; font-weight:700; color:var(--gold-light); letter-spacing:0.05em; line-height:1.2; }
+  .char-subtitle { font-style:italic; font-size:0.92rem; color:var(--storm); opacity:0.85; margin-top:3px; }
+  .char-tags { display:flex; gap:7px; flex-wrap:wrap; margin-top:9px; }
+  .tag { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; padding:2px 8px; border-radius:2px; border:1px solid; }
+  .tag-class { border-color:rgba(122,196,160,0.4); color:var(--storm); background:rgba(122,196,160,0.07); }
+  .tag-race  { border-color:rgba(201,168,76,0.35); color:var(--gold); background:rgba(201,168,76,0.07); }
+  .tag-bg    { border-color:rgba(189,195,199,0.3); color:var(--silver); background:rgba(189,195,199,0.05); }
+  .tag-new   { border-color:rgba(100,200,120,0.35); color:var(--green); background:rgba(100,200,120,0.06); }
+  .personality-quote { font-style:italic; font-size:0.82rem; color:rgba(122,196,160,0.6); margin-top:8px; line-height:1.5; border-left:2px solid rgba(122,196,160,0.25); padding-left:10px; }
+
+  /* EDITABLE FIELDS */
+  .editable { background:transparent; border:none; border-bottom:1px dashed rgba(122,196,160,0.3); color:inherit; font-family:inherit; font-size:inherit; width:100%; outline:none; transition:border-color 0.2s; }
+  .editable:focus { border-bottom-color:rgba(122,196,160,0.7); background:rgba(122,196,160,0.05); }
+  .editable-inline { background:transparent; border:none; border-bottom:1px dashed rgba(122,196,160,0.3); color:inherit; font-family:inherit; font-size:inherit; outline:none; width:auto; min-width:40px; max-width:100%; }
+  .editable-inline:focus { border-bottom-color:rgba(122,196,160,0.7); }
+  .edit-badge { font-family:'Cinzel',serif; font-size:0.48rem; letter-spacing:0.1em; color:rgba(122,196,160,0.35); text-transform:uppercase; margin-left:4px; vertical-align:middle; }
+
+  /* STATS */
+  .stats-bar { display:grid; grid-template-columns:repeat(6,1fr); padding:10px 26px; border-bottom:1px solid rgba(122,196,160,0.08); background:rgba(0,0,0,0.2); gap:2px; }
+  .stat { text-align:center; }
+  .stat-label { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--silver); opacity:0.65; display:block; margin-bottom:1px; }
+  .stat-value { font-family:'Cinzel',serif; font-size:1.05rem; font-weight:700; color:var(--parchment); display:block; line-height:1; }
+  .stat-mod { font-size:0.68rem; color:var(--storm); display:block; margin-top:2px; }
+  .stat-save { font-size:0.6rem; color:rgba(201,168,76,0.8); display:block; font-family:'Cinzel',serif; }
+
+  /* COMBAT ROW */
+  .combat-row { display:flex; padding:9px 26px; border-bottom:1px solid rgba(122,196,160,0.07); background:rgba(0,0,0,0.12); flex-wrap:wrap; gap:4px; }
+  .combat-stat { flex:1; min-width:80px; text-align:center; position:relative; }
+  .combat-stat+.combat-stat::before { content:''; position:absolute; left:0; top:10%;bottom:10%; width:1px; background:rgba(122,196,160,0.1); }
+  .combat-label { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--silver); opacity:0.6; display:block; }
+  .combat-value { font-family:'Cinzel',serif; font-size:1rem; font-weight:600; color:var(--gold-light); display:block; margin-top:1px; }
+  .combat-value-editable { font-family:'Cinzel',serif; font-size:1rem; font-weight:600; color:var(--gold-light); background:transparent; border:none; border-bottom:1px dashed rgba(201,168,76,0.3); width:50px; text-align:center; outline:none; }
+  .combat-value-editable:focus { border-bottom-color:rgba(201,168,76,0.7); }
+
+  /* BODY */
+  .card-body { padding:0 26px; }
+  .section { padding:13px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+  .section:last-child { border-bottom:none; }
+  .section-title { font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); opacity:0.8; margin-bottom:9px; display:flex; align-items:center; gap:8px; }
+  .section-title::after { content:''; flex:1; height:1px; background:linear-gradient(to right,rgba(201,168,76,0.2),transparent); }
+
+  /* SKILLS GRID */
+  .skills-grid { display:grid; grid-template-columns:1fr 1fr; gap:3px 16px; }
+  .skill-row { display:flex; align-items:center; gap:6px; font-size:0.8rem; padding:2px 0; }
+  .skill-prof { width:10px;height:10px;border-radius:50%;border:1.5px solid rgba(122,196,160,0.4);flex-shrink:0; }
+  .skill-prof.yes { background:var(--storm); border-color:var(--storm); }
+  .skill-name { color:rgba(240,237,224,0.72); flex:1; }
+  .skill-val { font-family:'Cinzel',serif; font-size:0.72rem; font-weight:600; color:var(--storm); }
+
+  /* WEAPONS */
+  .attacks-list { display:flex; flex-direction:column; gap:6px; }
+  .attack-item { background:rgba(0,0,0,0.2); border-radius:2px; border-left:2px solid rgba(122,196,160,0.3); overflow:hidden; }
+  .attack-summary { display:flex; align-items:center; gap:10px; padding:8px 12px; cursor:pointer; transition:background 0.15s; }
+  .attack-summary:hover { background:rgba(122,196,160,0.05); }
+  .attack-name { font-family:'Cinzel',serif; font-size:0.76rem; font-weight:600; color:var(--parchment); flex:1; }
+  .attack-bonus { font-size:0.82rem; color:var(--gold-light); font-weight:600; white-space:nowrap; }
+  .attack-dmg { font-size:0.82rem; color:var(--storm); white-space:nowrap; }
+  .attack-note { font-size:0.7rem; color:var(--silver); opacity:0.6; white-space:nowrap; }
+  .expand-arrow { font-size:0.6rem; color:rgba(122,196,160,0.4); transition:transform 0.2s; flex-shrink:0; }
+  .expand-arrow.open { transform:rotate(90deg); color:rgba(122,196,160,0.8); }
+  .action-detail { display:none; padding:8px 12px 10px; border-top:1px solid rgba(122,196,160,0.1); background:rgba(0,0,0,0.15); font-size:0.8rem; color:rgba(240,237,224,0.7); line-height:1.6; }
+  .action-detail.open { display:block; }
+  .action-detail-editable { width:100%; background:transparent; border:none; color:rgba(240,237,224,0.8); font-family:'Crimson Pro',Georgia,serif; font-size:0.8rem; line-height:1.6; resize:vertical; min-height:60px; outline:none; }
+  .action-detail-editable:focus { background:rgba(122,196,160,0.04); }
+
+  /* ABILITIES */
+  .ability-item { margin-bottom:9px; border-radius:2px; overflow:hidden; }
+  .ability-summary { display:flex; align-items:flex-start; gap:8px; padding:4px 0 4px 14px; position:relative; cursor:pointer; }
+  .ability-summary::before { content:'✦'; position:absolute; left:0; top:5px; color:var(--storm); font-size:0.58rem; opacity:0.7; }
+  .ability-summary:hover .ability-name { color:#a8f0c8; }
+  .ability-name { font-family:'Cinzel',serif; font-size:0.76rem; font-weight:600; color:var(--storm); margin-bottom:0; flex:1; }
+  .ability-desc { font-size:0.83rem; color:rgba(240,237,224,0.72); line-height:1.55; }
+  .ability-expand { display:none; padding:6px 14px 8px; background:rgba(0,0,0,0.15); border-top:1px solid rgba(122,196,160,0.07); border-radius:0 0 2px 2px; }
+  .ability-expand.open { display:block; }
+  .ability-expand-editable { width:100%; background:transparent; border:none; color:rgba(240,237,224,0.75); font-family:'Crimson Pro',Georgia,serif; font-size:0.82rem; line-height:1.55; resize:vertical; min-height:50px; outline:none; }
+  .ability-expand-editable:focus { background:rgba(122,196,160,0.04); }
+
+  /* SPELLS TABLE */
+  .spell-item { border-radius:2px; overflow:hidden; margin-bottom:4px; }
+  .spell-summary { display:grid; grid-template-columns:16px 58px 148px 54px 68px 1fr; align-items:center; gap:6px; padding:5px 4px 5px 0; border-bottom:1px solid rgba(255,255,255,0.03); font-size:0.82rem; cursor:pointer; transition:background 0.15s; border-radius:2px; }
+  .spell-summary:hover { background:rgba(122,196,160,0.05); }
+  .spell-level-badge { font-family:'Cinzel',serif; font-size:0.56rem; letter-spacing:0.08em; text-transform:uppercase; padding:2px 6px; border-radius:2px; border:1px solid rgba(122,196,160,0.3); color:var(--storm); background:rgba(122,196,160,0.07); white-space:nowrap; flex-shrink:0; align-self:center; }
+  .spell-name { font-family:'Cinzel',serif; font-size:0.74rem; font-weight:600; color:var(--parchment); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .spell-cast { font-size:0.72rem; color:rgba(240,237,224,0.55); white-space:nowrap; overflow:hidden; }
+  .spell-range { font-size:0.72rem; color:rgba(122,196,160,0.6); white-space:nowrap; overflow:hidden; }
+  .spell-notes { font-size:0.72rem; color:rgba(240,237,224,0.65); }
+  .spell-school-tag { font-family:'Cinzel',serif; font-size:0.46rem; font-weight:700; letter-spacing:0; padding:1px 3px; border-radius:2px; margin-right:3px; white-space:nowrap; flex-shrink:0; vertical-align:middle; }
+  .spell-school-tag.ench { color:#f0a0c8; background:rgba(240,160,200,0.12); border:1px solid rgba(240,160,200,0.4); }
+  .spell-school-tag.illu { color:#a0c8f0; background:rgba(160,200,240,0.12); border:1px solid rgba(160,200,240,0.4); }
+  .spell-detail { display:none; padding:8px 10px 10px; background:rgba(0,0,0,0.2); border-bottom:1px solid rgba(122,196,160,0.07); }
+  .spell-detail.open { display:block; }
+  .spell-detail-editable { width:100%; background:transparent; border:none; color:rgba(240,237,224,0.75); font-family:'Crimson Pro',Georgia,serif; font-size:0.81rem; line-height:1.6; resize:vertical; min-height:60px; outline:none; }
+  .spell-detail-editable:focus { background:rgba(122,196,160,0.04); }
+
+  /* EQUIPMENT EDITABLE */
+  .equip-list { display:flex; flex-direction:column; gap:4px; }
+  .equip-item { font-size:0.83rem; color:rgba(240,237,224,0.75); padding-left:12px; position:relative; line-height:1.4; }
+  .equip-item::before { content:'◆'; position:absolute; left:0; color:var(--gold); font-size:0.45rem; top:4px; opacity:0.55; }
+  .equip-textarea { width:100%; background:rgba(0,0,0,0.2); border:1px solid rgba(201,168,76,0.2); border-radius:2px; color:rgba(240,237,224,0.8); font-family:'Crimson Pro',Georgia,serif; font-size:0.83rem; line-height:1.6; padding:8px 10px; resize:vertical; min-height:80px; outline:none; }
+  .equip-textarea:focus { border-color:rgba(201,168,76,0.5); }
+
+  /* TRAIT ROW */
+  .trait-row { display:flex; gap:6px; margin-bottom:4px; font-size:0.83rem; line-height:1.5; }
+  .trait-key { font-family:'Cinzel',serif; font-size:0.72rem; font-weight:600; color:var(--gold-light); white-space:nowrap; }
+  .trait-val { color:rgba(240,237,224,0.78); }
+
+  /* INTERACTIVE PANEL */
+  .interactive-panel { background:rgba(0,0,0,0.3); border:1px solid rgba(122,196,160,0.2); border-radius:4px; padding:14px 16px; margin:14px 0 0; }
+  .interactive-title { font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--storm); opacity:0.9; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; }
+  .reset-btn { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.1em; text-transform:uppercase; padding:3px 9px; border-radius:2px; border:1px solid rgba(255,100,100,0.28); color:rgba(255,150,150,0.55); background:rgba(255,100,100,0.04); cursor:pointer; transition:all 0.2s; }
+  .reset-btn:hover { border-color:rgba(255,100,100,0.6); color:rgba(255,180,180,0.9); background:rgba(255,100,100,0.1); }
+
+  /* HP */
+  .hp-row { display:flex; align-items:center; gap:9px; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.05); flex-wrap:wrap; }
+  .hp-label { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--silver); opacity:0.65; min-width:24px; }
+  .hp-display { font-family:'Cinzel',serif; font-size:1.4rem; font-weight:700; min-width:36px; text-align:center; transition:color 0.3s; }
+  .hp-display.full { color:#90e8a0; } .hp-display.mid { color:#ffd080; } .hp-display.low { color:#ff8080; }
+  .hp-max-display { font-family:'Cinzel',serif; font-size:0.72rem; color:var(--silver); opacity:0.4; }
+  .hp-max-input { width:38px; text-align:center; background:rgba(0,0,0,0.3); border:1px dashed rgba(201,168,76,0.3); border-radius:2px; color:var(--gold-light); font-family:'Cinzel',serif; font-size:0.78rem; padding:2px 4px; }
+  .hp-max-input:focus { outline:none; border-color:rgba(201,168,76,0.6); }
+  .hp-bar-wrap { flex:1; min-width:80px; height:5px; background:rgba(0,0,0,0.45); border-radius:3px; overflow:hidden; }
+  .hp-bar { height:100%; border-radius:3px; transition:width 0.4s ease,background 0.4s ease; }
+  .hp-btn { width:26px;height:26px;border-radius:50%;border:1px solid rgba(122,196,160,0.3);background:rgba(122,196,160,0.07);color:var(--storm);font-size:1rem;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+  .hp-btn:hover { background:rgba(122,196,160,0.22); border-color:rgba(122,196,160,0.6); }
+  .hp-input { width:42px;text-align:center;background:rgba(0,0,0,0.3);border:1px solid rgba(122,196,160,0.18);border-radius:2px;color:var(--parchment);font-family:'Cinzel',serif;font-size:0.78rem;padding:3px 4px; }
+  .hp-input:focus { outline:none; border-color:rgba(122,196,160,0.5); }
+  .hp-apply-btn { font-family:'Cinzel',serif;font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;padding:4px 9px;border-radius:2px;border:1px solid rgba(200,64,64,0.35);color:rgba(232,128,128,0.8);background:rgba(200,64,64,0.06);cursor:pointer;transition:all 0.2s; }
+  .hp-apply-btn:hover { background:rgba(200,64,64,0.15); border-color:rgba(200,64,64,0.65); }
+  .hp-heal-btn { font-family:'Cinzel',serif;font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;padding:4px 9px;border-radius:2px;border:1px solid rgba(100,200,120,0.35);color:rgba(144,232,160,0.8);background:rgba(100,200,120,0.06);cursor:pointer;transition:all 0.2s; }
+  .hp-heal-btn:hover { background:rgba(100,200,120,0.15); border-color:rgba(100,200,120,0.65); }
+
+  /* HIT DICE */
+  .hit-dice-row { display:flex; align-items:center; gap:10px; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.05); flex-wrap:wrap; }
+  .hd-label { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--silver); opacity:0.65; min-width:70px; }
+  .hd-pips { display:flex; gap:5px; flex-wrap:wrap; }
+  .hd-pip { width:26px; height:26px; border-radius:4px; border:1.5px solid rgba(122,196,160,0.45); background:rgba(122,196,160,0.12); cursor:pointer; transition:all 0.15s; position:relative; display:flex; align-items:center; justify-content:center; font-family:'Cinzel',serif; font-size:0.6rem; color:var(--storm); }
+  .hd-pip.used { background:rgba(0,0,0,0.4); border-color:rgba(122,196,160,0.15); color:rgba(122,196,160,0.25); }
+  .hd-pip:hover:not(.used) { background:rgba(122,196,160,0.3); border-color:rgba(122,196,160,0.9); transform:scale(1.1); }
+  .hd-info { font-size:0.72rem; color:rgba(240,237,224,0.45); font-style:italic; }
+
+  /* DEATH SAVES */
+  .death-saves-row { display:flex; align-items:center; gap:14px; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.05); flex-wrap:wrap; }
+  .ds-label { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--silver); opacity:0.6; min-width:80px; }
+  .ds-group { display:flex; align-items:center; gap:6px; }
+  .ds-sublabel { font-family:'Cinzel',serif; font-size:0.58rem; color:var(--silver); opacity:0.55; }
+  .ds-pips { display:flex; gap:5px; }
+  .ds-pip { width:18px;height:18px;border-radius:50%;border:1.5px solid;cursor:pointer;transition:all 0.15s;position:relative;flex-shrink:0; }
+  .ds-pip.success { border-color:rgba(100,200,120,0.5); background:rgba(100,200,120,0.1); }
+  .ds-pip.success.marked { background:var(--green); border-color:var(--green); }
+  .ds-pip.failure { border-color:rgba(200,80,80,0.5); background:rgba(200,80,80,0.1); }
+  .ds-pip.failure.marked { background:var(--red); border-color:var(--red); }
+  .ds-pip:hover { transform:scale(1.15); }
+
+  /* INSPIRATION */
+  .inspiration-row { display:flex; align-items:center; gap:10px; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.05); }
+  .insp-label { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--silver); opacity:0.6; }
+  .insp-pip { width:22px;height:22px;border-radius:50%;border:1.5px solid rgba(201,168,76,0.45);background:rgba(201,168,76,0.08);cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;font-size:0.9rem; }
+  .insp-pip.active { background:rgba(201,168,76,0.3); border-color:var(--gold-light); box-shadow:0 0 8px rgba(201,168,76,0.4); }
+
+  /* SPELL SLOTS */
+  .slots-section { margin-bottom:10px; }
+  .slots-row { display:flex; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap; }
+  .slots-label { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--silver); opacity:0.65; min-width:52px; }
+  .pip-group { display:flex; gap:5px; flex-wrap:wrap; }
+  .pip { width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(122,196,160,0.5);background:rgba(122,196,160,0.14);cursor:pointer;transition:all 0.15s;position:relative; }
+  .pip.used { background:rgba(0,0,0,0.4); border-color:rgba(122,196,160,0.15); }
+  .pip.used::after { content:'×';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:rgba(122,196,160,0.3);line-height:1; }
+  .pip:hover:not(.used) { background:rgba(122,196,160,0.35); border-color:rgba(122,196,160,0.9); transform:scale(1.12); }
+
+  /* USES */
+  .uses-row { display:flex; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap; }
+  .uses-label { font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.07em; color:rgba(122,196,160,0.85); flex:1; min-width:130px; }
+  .uses-pips { display:flex; gap:5px; }
+  .use-pip { width:16px;height:16px;border-radius:2px;border:1.5px solid rgba(201,168,76,0.42);background:rgba(201,168,76,0.13);cursor:pointer;transition:all 0.15s;position:relative; }
+  .use-pip.used { background:rgba(0,0,0,0.4); border-color:rgba(201,168,76,0.13); }
+  .use-pip.used::after { content:'×';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:0.62rem;color:rgba(201,168,76,0.22);line-height:1; }
+  .use-pip:hover:not(.used) { background:rgba(201,168,76,0.32); border-color:rgba(201,168,76,0.9); transform:scale(1.1); }
+  .recharge-tag { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.08em; text-transform:uppercase; color:rgba(122,196,160,0.45); background:rgba(122,196,160,0.05); border:1px solid rgba(122,196,160,0.12); padding:1px 5px; border-radius:2px; }
+  .short-rest-btn { font-family:'Cinzel',serif; font-size:0.55rem; letter-spacing:0.08em; text-transform:uppercase; padding:3px 8px; border-radius:2px; border:1px solid rgba(122,196,160,0.4); color:rgba(122,196,160,0.85); background:rgba(122,196,160,0.08); cursor:pointer; transition:all 0.2s; }
+  .short-rest-btn:hover { background:rgba(122,196,160,0.2); border-color:rgba(122,196,160,0.75); }
+
+  /* TEMPORARY HP */
+  .thp-row { display:flex; align-items:center; gap:9px; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.05); flex-wrap:wrap; }
+  .thp-display { font-family:'Cinzel',serif; font-size:1.4rem; font-weight:700; min-width:36px; text-align:center; color:var(--pink); text-shadow:0 0 10px rgba(240,160,200,0.4); transition:all 0.3s; }
+  .thp-display.zero { color:rgba(240,160,200,0.3); text-shadow:none; }
+  .thp-bar-wrap { flex:1; min-width:80px; height:5px; background:rgba(0,0,0,0.45); border-radius:3px; overflow:hidden; }
+  .thp-bar { height:100%; border-radius:3px; background:linear-gradient(90deg,var(--pink-dark),var(--pink)); transition:width 0.4s ease; }
+  .thp-btn { width:26px;height:26px;border-radius:50%;border:1px solid rgba(240,160,200,0.3);background:rgba(240,160,200,0.07);color:var(--pink);font-size:1rem;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+  .thp-btn:hover { background:rgba(240,160,200,0.22); border-color:rgba(240,160,200,0.6); }
+  .thp-input { width:42px;text-align:center;background:rgba(0,0,0,0.3);border:1px solid rgba(240,160,200,0.18);border-radius:2px;color:var(--pink);font-family:'Cinzel',serif;font-size:0.78rem;padding:3px 4px; }
+  .thp-input:focus { outline:none; border-color:rgba(240,160,200,0.5); }
+  .thp-set-btn { font-family:'Cinzel',serif;font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;padding:4px 9px;border-radius:2px;border:1px solid rgba(240,160,200,0.35);color:rgba(240,160,200,0.8);background:rgba(240,160,200,0.06);cursor:pointer;transition:all 0.2s; }
+  .thp-set-btn:hover { background:rgba(240,160,200,0.15); border-color:rgba(240,160,200,0.65); }
+  .thp-clear-btn { font-family:'Cinzel',serif;font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;padding:4px 9px;border-radius:2px;border:1px solid rgba(150,80,110,0.35);color:rgba(200,120,150,0.7);background:rgba(150,80,110,0.05);cursor:pointer;transition:all 0.2s; }
+  .thp-clear-btn:hover { background:rgba(150,80,110,0.15); border-color:rgba(200,120,150,0.6); }
+
+  /* EXHAUSTION */
+  .exhaustion-row { display:flex; align-items:center; gap:10px; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.05); flex-wrap:wrap; }
+  .exh-label { font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--silver); opacity:0.65; min-width:75px; }
+  .exh-pips { display:flex; gap:5px; }
+  .exh-pip { width:22px; height:22px; border-radius:3px; border:1.5px solid rgba(220,160,60,0.35); background:rgba(220,160,60,0.07); cursor:pointer; transition:all 0.2s; position:relative; flex-shrink:0; }
+  .exh-pip.active { background:rgba(220,100,60,0.55); border-color:rgba(240,140,60,0.9); box-shadow:0 0 6px rgba(220,100,60,0.4); }
+  .exh-pip:hover { transform:scale(1.12); border-color:rgba(240,140,60,0.7); }
+  .exh-effect { font-size:0.72rem; color:rgba(240,200,120,0.75); font-style:italic; flex:1; min-width:120px; line-height:1.35; }
+  .exh-effect.danger { color:rgba(255,120,100,0.9); }
+
+  /* FAMILIAR MINI-CARD */
+  .familiar-card { background:rgba(0,0,0,0.32); border:1px solid rgba(122,196,160,0.25); border-radius:4px; padding:14px 16px; margin-bottom:12px; }
+  .familiar-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .familiar-icon { font-size:1.4rem; flex-shrink:0; }
+  .familiar-title { font-family:'Cinzel',serif; font-size:0.92rem; font-weight:700; color:var(--gold-light); }
+  .familiar-subtitle { font-size:0.74rem; font-style:italic; color:var(--storm); opacity:0.8; }
+  .familiar-statline { display:flex; gap:14px; flex-wrap:wrap; padding:7px 0; margin-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.05); }
+  .familiar-stat { text-align:center; }
+  .familiar-stat-label { font-family:'Cinzel',serif; font-size:0.5rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--silver); opacity:0.6; display:block; }
+  .familiar-stat-value { font-family:'Cinzel',serif; font-size:0.86rem; font-weight:600; color:var(--gold-light); display:block; margin-top:1px; }
+  .familiar-hp-row { display:flex; align-items:center; gap:9px; margin-bottom:10px; flex-wrap:wrap; }
+  .familiar-hp-display { font-family:'Cinzel',serif; font-size:1.2rem; font-weight:700; min-width:32px; text-align:center; transition:color 0.3s; }
+  .familiar-hp-max { font-family:'Cinzel',serif; font-size:0.68rem; color:var(--silver); opacity:0.4; }
+  .familiar-hp-bar-wrap { flex:1; min-width:70px; height:5px; background:rgba(0,0,0,0.45); border-radius:3px; overflow:hidden; }
+  .familiar-hp-bar { height:100%; border-radius:3px; transition:width 0.4s ease,background 0.4s ease; }
+  .familiar-btn { width:24px;height:24px;border-radius:50%;border:1px solid rgba(122,196,160,0.3);background:rgba(122,196,160,0.07);color:var(--storm);font-size:0.92rem;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+  .familiar-btn:hover { background:rgba(122,196,160,0.22); border-color:rgba(122,196,160,0.6); }
+  .familiar-hp-input { width:36px;text-align:center;background:rgba(0,0,0,0.3);border:1px solid rgba(122,196,160,0.18);border-radius:2px;color:var(--parchment);font-family:'Cinzel',serif;font-size:0.72rem;padding:2px 3px; }
+  .familiar-hp-input:focus { outline:none; border-color:rgba(122,196,160,0.5); }
+  .familiar-mini-btn { font-family:'Cinzel',serif;font-size:0.52rem;letter-spacing:0.08em;text-transform:uppercase;padding:3px 7px;border-radius:2px;border:1px solid;cursor:pointer;transition:all 0.2s; }
+  .familiar-heal-btn { border-color:rgba(100,200,120,0.35); color:rgba(144,232,160,0.8); background:rgba(100,200,120,0.06); }
+  .familiar-heal-btn:hover { background:rgba(100,200,120,0.15); border-color:rgba(100,200,120,0.65); }
+  .familiar-dmg-btn { border-color:rgba(200,64,64,0.35); color:rgba(232,128,128,0.8); background:rgba(200,64,64,0.06); }
+  .familiar-dmg-btn:hover { background:rgba(200,64,64,0.15); border-color:rgba(200,64,64,0.65); }
+  .familiar-state-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .familiar-state-toggle { font-family:'Cinzel',serif; font-size:0.55rem; letter-spacing:0.08em; text-transform:uppercase; padding:4px 9px; border-radius:2px; border:1px solid rgba(122,196,160,0.3); color:rgba(122,196,160,0.6); background:rgba(122,196,160,0.05); cursor:pointer; transition:all 0.2s; }
+  .familiar-state-toggle.active { border-color:rgba(255,140,60,0.7); color:rgba(255,180,120,0.95); background:rgba(255,140,60,0.18); box-shadow:0 0 6px rgba(255,140,60,0.3); }
+  .familiar-state-toggle:hover { border-color:rgba(122,196,160,0.6); }
+
+  /* SECTION EDIT BUTTONS */
+  .section-edit-btn { font-family:'Cinzel',serif; font-size:0.5rem; letter-spacing:0.1em; text-transform:uppercase; padding:2px 7px; border-radius:2px; border:1px solid rgba(122,196,160,0.25); color:rgba(122,196,160,0.45); background:transparent; cursor:pointer; transition:all 0.2s; margin-left:auto; }
+  .section-edit-btn:hover { border-color:rgba(122,196,160,0.6); color:rgba(122,196,160,0.9); background:rgba(122,196,160,0.07); }
+  .section-edit-btn.active { border-color:rgba(201,168,76,0.5); color:rgba(201,168,76,0.85); background:rgba(201,168,76,0.07); }
+
+  /* SPELL SECTION HEADER */
+  .spell-section-header { display:flex; align-items:center; gap:8px; margin:10px 0 6px; }
+  .spell-level-label { font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase; color:rgba(122,196,160,0.6); }
+
+  /* INFO HINT */
+  .click-hint { font-family:'Cinzel',serif; font-size:0.5rem; letter-spacing:0.08em; color:rgba(122,196,160,0.3); text-transform:uppercase; margin-bottom:6px; display:block; }
+
+  /* FOOTER */
+  .card-footer { padding:10px 26px 18px; display:flex; justify-content:space-between; align-items:center; opacity:0.45; }
+  .footer-fluff { font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--silver); }
+  .xp-val { font-family:'Cinzel',serif; font-size:0.65rem; color:var(--gold); }
+
+  @media(max-width:520px){ .skills-grid{grid-template-columns:1fr} .spell-cast,.spell-range{display:none} }
+</style>
+</head>
+<body>
+
+<a class="back-link" href="syrinlya-npcs.html">← Volver al índice</a>
+
+<div class="char-card">
+  <div class="card-corner-bl"></div>
+  <div class="color-bar"></div>
+
+  <!-- HEADER -->
+  <div class="card-header">
+    <div class="char-avatar">🌌</div>
+    <div class="char-identity">
+      <div class="char-name" contenteditable="true" title="Editable">Evie</div>
+      <div class="char-subtitle" contenteditable="true" title="Editable">Brujo Primigenio · Nivel 3 · Aasimar</div>
+      <div class="char-tags">
+        <span class="tag tag-class">Brujo Nv.3</span>
+        <span class="tag tag-race">Aasimar</span>
+        <span class="tag tag-bg">Trasfondo: Noble</span>
+        <span class="tag tag-new">PHB 2024</span>
+      </div>
+      <div class="personality-quote" contenteditable="true" title="Editable: personalidad">
+        "Cálida con los extraños, sentido del humor seco, voluntad de hierro y gran curiosidad.<br>No habla mucho de su pacto."
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS (all saving throws visible) -->
+  <div class="stats-bar">
+    <div class="stat">
+      <span class="stat-label">FUE</span>
+      <span class="stat-value">9</span>
+      <span class="stat-mod">−1</span>
+      <span class="stat-save">TS −1</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">DES</span>
+      <span class="stat-value">12</span>
+      <span class="stat-mod">+1</span>
+      <span class="stat-save">TS +1</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">CON</span>
+      <span class="stat-value">13</span>
+      <span class="stat-mod">+1</span>
+      <span class="stat-save">TS +1</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">INT</span>
+      <span class="stat-value">12</span>
+      <span class="stat-mod">+1</span>
+      <span class="stat-save">TS +1</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">SAB</span>
+      <span class="stat-value">11</span>
+      <span class="stat-mod">+0</span>
+      <span class="stat-save" title="Tirada de Salvación — con competencia">TS +2 ✓</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">CAR</span>
+      <span class="stat-value">14</span>
+      <span class="stat-mod">+2</span>
+      <span class="stat-save" title="Tirada de Salvación — con competencia">TS +4 ✓</span>
+    </div>
+  </div>
+
+  <!-- COMBAT ROW -->
+  <div class="combat-row">
+    <div class="combat-stat"><span class="combat-label">CA</span><span class="combat-value">12</span></div>
+    <div class="combat-stat">
+      <span class="combat-label">PG Máx. <span style="font-size:0.45rem;color:rgba(201,168,76,0.4);">✎ editable</span></span>
+      <input type="number" class="combat-value-editable" id="max-hp-field" value="23" min="1" max="999" onchange="updateMaxHP()" title="Edita los PG máximos">
+    </div>
+    <div class="combat-stat"><span class="combat-label">Velocidad</span><span class="combat-value">30 ft</span></div>
+    <div class="combat-stat"><span class="combat-label">Iniciativa</span><span class="combat-value">+1</span></div>
+    <div class="combat-stat"><span class="combat-label">Perc. Pasiva</span><span class="combat-value">11</span></div>
+    <div class="combat-stat"><span class="combat-label">CD Conjuros</span><span class="combat-value">12</span></div>
+    <div class="combat-stat"><span class="combat-label">Atq. Conjuro</span><span class="combat-value">+4</span></div>
+  </div>
+
+  <div class="card-body">
+
+    <!-- INTERACTIVE PANEL -->
+    <div class="interactive-panel">
+      <div class="interactive-title">
+        <span>⚙ Estado de sesión</span>
+        <button class="reset-btn" id="reset-btn" onclick="resetAll()">🌙 Descanso largo</button>
+      </div>
+
+      <!-- HP TRACKER -->
+      <div class="hp-row">
+        <span class="hp-label">PG</span>
+        <div id="evie-hp-display" class="hp-display full">23</div>
+        <span class="hp-max-display">/ <span id="hp-max-label">23</span></span>
+        <div class="hp-bar-wrap"><div id="evie-hp-bar" class="hp-bar" style="width:100%;background:#90e8a0"></div></div>
+        <button class="hp-btn" onclick="changeHP(1)">+</button>
+        <input id="evie-hp-input" class="hp-input" type="number" min="1" value="1">
+        <button class="hp-heal-btn" onclick="applyHeal()">Curar</button>
+        <button class="hp-apply-btn" onclick="applyDmg()">Daño</button>
+        <button class="hp-btn" onclick="changeHP(-1)">−</button>
+      </div>
+
+      <!-- TEMPORARY HP TRACKER -->
+      <div class="thp-row">
+        <span class="hp-label" style="color:var(--pink);opacity:0.75;">PG Temp</span>
+        <div id="evie-thp-display" class="thp-display zero">0</div>
+        <div class="thp-bar-wrap"><div id="evie-thp-bar" class="thp-bar" style="width:0%"></div></div>
+        <button class="thp-btn" onclick="changeTHP(1)">+</button>
+        <input id="evie-thp-input" class="thp-input" type="number" min="0" value="0">
+        <button class="thp-set-btn" onclick="setTHP()">Fijar</button>
+        <button class="thp-clear-btn" onclick="clearTHP()">Limpiar</button>
+        <button class="thp-btn" onclick="changeTHP(-1)">−</button>
+      </div>
+      <div class="hit-dice-row">
+        <span class="hd-label">Dados de Golpe</span>
+        <div class="hd-pips" id="hit-dice-pips"></div>
+        <span class="hd-info">3d8 · clic para gastar · desc. corto para recuperar</span>
+      </div>
+
+      <!-- INSPIRATION -->
+      <div class="inspiration-row">
+        <span class="insp-label">Inspiración Heroica</span>
+        <div id="evie-inspiration" class="insp-pip" onclick="toggleInspiration()">☆</div>
+        <span style="font-size:0.75rem;color:rgba(240,237,224,0.35);font-style:italic;">clic para activar/desactivar</span>
+      </div>
+
+      <!-- DEATH SAVES -->
+      <div class="death-saves-row">
+        <span class="ds-label">Tiradas de Muerte</span>
+        <div class="ds-group">
+          <span class="ds-sublabel">Éxitos</span>
+          <div class="ds-pips">
+            <div class="ds-pip success" id="ds-s0" onclick="toggleDS('success',0)"></div>
+            <div class="ds-pip success" id="ds-s1" onclick="toggleDS('success',1)"></div>
+            <div class="ds-pip success" id="ds-s2" onclick="toggleDS('success',2)"></div>
+          </div>
+        </div>
+        <div class="ds-group">
+          <span class="ds-sublabel">Fallos</span>
+          <div class="ds-pips">
+            <div class="ds-pip failure" id="ds-f0" onclick="toggleDS('failure',0)"></div>
+            <div class="ds-pip failure" id="ds-f1" onclick="toggleDS('failure',1)"></div>
+            <div class="ds-pip failure" id="ds-f2" onclick="toggleDS('failure',2)"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SPELL SLOTS (Pact Magic — single shared level) -->
+      <div class="slots-section">
+        <div class="slots-row">
+          <span class="slots-label">Nv. 2</span>
+          <div class="pip-group" id="slots-2"></div>
+          <button class="short-rest-btn" onclick="shortRestSlots()">Desc. Corto</button>
+        </div>
+        <span style="font-size:0.65rem;color:rgba(240,237,224,0.3);font-style:italic;">2 ranuras · Magia de Pacto · recarga desc. corto o largo</span>
+      </div>
+
+      <!-- WARLOCK INVOCATIONS / FEATURES -->
+      <div class="uses-row">
+        <span class="uses-label">Astucia Mágica (½ espacios)</span>
+        <div class="uses-pips" id="uses-arcanum"></div>
+        <span class="recharge-tag">desc. largo · 1 min ritual</span>
+      </div>
+      <div class="uses-row">
+        <span class="uses-label">Vigor Infernal (falsa vida 12)</span>
+        <div class="uses-pips" id="uses-vigor"></div>
+        <span class="recharge-tag">desc. largo</span>
+      </div>
+      <div class="uses-row">
+        <span class="uses-label">Manos Curativas (d4×prof.)</span>
+        <div class="uses-pips" id="uses-heal"></div>
+        <span class="recharge-tag">desc. largo</span>
+      </div>
+      <div class="uses-row">
+        <span class="uses-label">Revelación Celestial</span>
+        <div class="uses-pips" id="uses-revelation"></div>
+        <span class="recharge-tag">desc. largo</span>
+      </div>
+
+      <!-- EXHAUSTION TRACKER -->
+      <div class="exhaustion-row">
+        <span class="exh-label">Agotamiento</span>
+        <div class="exh-pips" id="exh-pips"></div>
+        <span class="exh-effect" id="exh-effect">— Sin agotamiento</span>
+      </div>
+    </div>
+
+    <!-- ATTACKS -->
+    <div class="section">
+      <div class="section-title">
+        Armas y Ataques
+        <span style="font-size:0.48rem;color:rgba(122,196,160,0.35);font-style:italic;">▸ clic en cada ataque para detalles</span>
+      </div>
+      <div class="attacks-list" id="attacks-list">
+
+        <div class="attack-item">
+          <div class="attack-summary" onclick="toggleDetail(this)">
+            <span class="expand-arrow">▸</span>
+            <span class="attack-name">Hoz</span>
+            <span class="attack-bonus">+1</span>
+            <span class="attack-dmg">1d4−1 cort.</span>
+            <span class="attack-note">ligera</span>
+          </div>
+          <div class="action-detail">
+            <textarea class="action-detail-editable">Ataque de arma cuerpo a cuerpo con la Hoz. Bono de ataque +1 (FUE −1 + prof. +2). Daño: 1d4−1 cortante. Arma simple, ligera. Alcance 5 ft.</textarea>
+          </div>
+        </div>
+
+        <div class="attack-item">
+          <div class="attack-summary" onclick="toggleDetail(this)">
+            <span class="expand-arrow">▸</span>
+            <span class="attack-name">Daga</span>
+            <span class="attack-bonus">+3</span>
+            <span class="attack-dmg">1d4+1 perf.</span>
+            <span class="attack-note">ligera · arrojadiza</span>
+          </div>
+          <div class="action-detail">
+            <textarea class="action-detail-editable">Ataque de arma cuerpo a cuerpo o a distancia con la Daga. Bono de ataque +3 (DES +1 + prof. +2). Daño: 1d4+1 perforante. Arma simple, ligera, arrojadiza (alcance 20/60 ft). Lleva 2 dagas.</textarea>
+          </div>
+        </div>
+
+        <div class="attack-item">
+          <div class="attack-summary" onclick="toggleDetail(this)">
+            <span class="expand-arrow">▸</span>
+            <span class="attack-name">Descarga Sobrenatural (truco)</span>
+            <span class="attack-bonus">+4</span>
+            <span class="attack-dmg">1d10 + 2 fuerza</span>
+            <span class="attack-note">120 ft · con Desc. Agónica</span>
+          </div>
+          <div class="action-detail">
+            <textarea class="action-detail-editable">Truco de ataque principal del Brujo. Tiempo de lanzamiento: 1 acción. Alcance: 120 ft. Componentes: V, S. Ataque de hechizo a distancia: +4.
+
+Daño: 1d10 de fuerza. Con la invocación Descarga Agónica, sumas el modificador de Carisma (+2) al daño: total 1d10+2.
+
+Daño aumenta a 2 dados en nivel 5, 3 en nivel 11, 4 en nivel 17.</textarea>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CLASS FEATURES -->
+    <div class="section">
+      <div class="section-title">
+        Rasgos de Clase · Brujo
+        <span style="font-size:0.48rem;color:rgba(122,196,160,0.35);font-style:italic;">▸ clic para expandir</span>
+      </div>
+
+      <div class="ability-item">
+        <div class="ability-summary" onclick="toggleAbility(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="ability-name">Magia de Pacto (Pact Magic)</span>
+        </div>
+        <div class="ability-expand">
+          <textarea class="ability-expand-editable">A diferencia de otros lanzadores, el Brujo tiene un único nivel de ranuras de conjuro que se recupera tanto con descanso CORTO como LARGO.
+
+A nivel 3: 2 ranuras, ambas de nivel 2. Todos tus conjuros de nivel 1 y 2 se lanzan usando estas ranuras de nivel 2 (con el daño/efecto correspondiente a ranura nv.2).
+
+Esto te da mucha más resiliencia entre combates que otros lanzadores, a costa de tener menos ranuras disponibles en un solo encuentro.</textarea>
+        </div>
+      </div>
+
+      <div class="ability-item">
+        <div class="ability-summary" onclick="toggleAbility(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="ability-name">Astucia Mágica ★ Ritual 1 min</span>
+        </div>
+        <div class="ability-expand">
+          <textarea class="ability-expand-editable">Puedes realizar un ritual de 1 minuto de duración para recuperar la mitad de tu nivel de Brujo en ranuras de conjuro gastadas (redondeando hacia abajo).
+
+A nivel 3: recuperas 1 ranura (3÷2 = 1,5 → 1). Al marcar el uso en esta ficha, se libera automáticamente 1 ranura de conjuro gastada en la fila de arriba.
+
+Una vez utilizado, no puedes volver a usarlo hasta completar un descanso largo.</textarea>
+        </div>
+      </div>
+
+      <div class="ability-item">
+        <div class="ability-summary" onclick="toggleAbility(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="ability-name">Conjuros Psíquicos (pasivo)</span>
+        </div>
+        <div class="ability-expand">
+          <textarea class="ability-expand-editable">Cuando lanzas un conjuro de Brujo que hace daño, puedes cambiar el tipo de daño del conjuro a PSÍQUICO. Esto refleja la naturaleza aberrante del patrón de Evie.
+
+Útil contra criaturas con resistencia o inmunidad al tipo de daño original del conjuro, y para evitar resistencias elementales comunes.</textarea>
+        </div>
+      </div>
+
+      <div class="ability-item">
+        <div class="ability-summary" onclick="toggleAbility(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="ability-name">Mente Iluminada ★ Acción</span>
+        </div>
+        <div class="ability-expand">
+          <textarea class="ability-expand-editable">Puedes establecer una conexión telepática con una criatura que veas a 30 ft o menos de ti. La conexión dura 3 minutos (nivel 3 de Brujo) o hasta que termine antes.
+
+Mientras dure, puedes comunicarte telepáticamente con esa criatura y, opcionalmente, leer la superficie de sus pensamientos (a discreción del DM/contexto narrativo).</textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- PACT BOON & INVOCATIONS -->
+    <div class="section">
+      <div class="section-title">Pacto de la Cadena · Patrón: El Primigenio (Cthulhu)</div>
+
+      <div class="ability-item">
+        <div class="ability-summary" onclick="toggleAbility(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="ability-name">Familiar del Pacto ★ Stitch (pseudodragón)</span>
+        </div>
+        <div class="ability-expand">
+          <textarea class="ability-expand-editable">Como parte de una ceremonia ritual de 1 hora, invocas a un familiar especial: STITCH, un pseudodragón con inteligencia y voluntad propias. Es la forma más habitual que adopta el familiar de Evie debido a su Pacto de la Cadena.
+
+A diferencia del familiar normal del truco Encontrar Familiar, los familiares del Pacto de la Cadena pueden adoptar también las formas de imp, quasit o sprite además de las habituales, y son más resistentes en combate. Puedes comunicarte telepáticamente con Stitch mientras esté a 100 ft o menos.
+
+Puedes ordenarle atacar (usando tu Reacción), aunque por defecto evita el combate salvo que se lo ordenes. Ver el bloque de estadísticas completo de Stitch más abajo.</textarea>
+        </div>
+      </div>
+
+      <div class="ability-item">
+        <div class="ability-summary" onclick="toggleAbility(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="ability-name">Descarga Agónica (invocación)</span>
+        </div>
+        <div class="ability-expand">
+          <textarea class="ability-expand-editable">Invocación Sobrenatural permanente. Cuando lanzas Descarga Sobrenatural, sumas tu modificador de Carisma (+2) al daño que causa a una criatura que impactes con el truco.
+
+Aplicado en la sección de Armas y Ataques: el daño total de Descarga Sobrenatural es 1d10+2 de fuerza (o psíquico, vía Conjuros Psíquicos).</textarea>
+        </div>
+      </div>
+
+      <div class="ability-item">
+        <div class="ability-summary" onclick="toggleAbility(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="ability-name">Vigor Infernal ★ Acción Bonus</span>
+        </div>
+        <div class="ability-expand">
+          <textarea class="ability-expand-editable">Acción Bonus. Lanzas el conjuro Falsa Vida sobre ti mismo, sin gastar ranura de conjuro ni componentes. Ganas 12 puntos de golpe temporales (1d4+10, fijado en 12 para simplificar la mesa).
+
+Recarga con descanso largo. Excelente para ganar resiliencia antes de entrar en un combate previsto.</textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- STITCH STATBLOCK -->
+    <div class="section">
+      <div class="section-title">Stitch · Familiar (Pseudodragón)</div>
+
+      <!-- INTERACTIVE MINI-CARD -->
+      <div class="familiar-card">
+        <div class="familiar-header">
+          <span class="familiar-icon">🐲</span>
+          <div>
+            <div class="familiar-title">Stitch</div>
+            <div class="familiar-subtitle">Dragón Diminuto, neutral bueno</div>
+          </div>
+        </div>
+
+        <div class="familiar-statline">
+          <div class="familiar-stat"><span class="familiar-stat-label">CA</span><span class="familiar-stat-value">14</span></div>
+          <div class="familiar-stat"><span class="familiar-stat-label">Iniciativa</span><span class="familiar-stat-value">+2</span></div>
+          <div class="familiar-stat"><span class="familiar-stat-label">Veloc.</span><span class="familiar-stat-value">15 ft</span></div>
+          <div class="familiar-stat"><span class="familiar-stat-label">Vuelo</span><span class="familiar-stat-value">60 ft</span></div>
+          <div class="familiar-stat"><span class="familiar-stat-label">Perc. Pasiva</span><span class="familiar-stat-value">15</span></div>
+        </div>
+
+        <!-- HP TRACKER (PG editable) -->
+        <div class="familiar-hp-row">
+          <span class="hp-label">PG</span>
+          <div id="stitch-hp-display" class="familiar-hp-display" style="color:#90e8a0;">10</div>
+          <span class="familiar-hp-max">/ <input type="number" id="stitch-max-hp-field" class="familiar-hp-input" value="10" min="1" max="999" onchange="updateStitchMaxHP()" title="Edita los PG máximos de Stitch" style="width:34px;"></span>
+          <div class="familiar-hp-bar-wrap"><div id="stitch-hp-bar" class="familiar-hp-bar" style="width:100%;background:#90e8a0"></div></div>
+          <button class="familiar-btn" onclick="changeStitchHP(1)">+</button>
+          <input id="stitch-hp-input" class="familiar-hp-input" type="number" min="1" value="1">
+          <button class="familiar-mini-btn familiar-heal-btn" onclick="applyStitchHeal()">Curar</button>
+          <button class="familiar-mini-btn familiar-dmg-btn" onclick="applyStitchDmg()">Daño</button>
+          <button class="familiar-btn" onclick="changeStitchHP(-1)">−</button>
+        </div>
+
+        <!-- STATE TOGGLES -->
+        <div class="familiar-state-row">
+          <span class="hp-label" style="min-width:auto;">Estado:</span>
+          <button class="familiar-state-toggle" id="stitch-state-summoned" onclick="toggleStitchState('summoned')">Invocado</button>
+          <button class="familiar-state-toggle" id="stitch-state-hidden" onclick="toggleStitchState('hidden')">Oculto</button>
+          <button class="familiar-state-toggle" id="stitch-state-down" onclick="toggleStitchState('down')">Inconsciente (0 PG)</button>
+        </div>
+
+        <!-- ABILITY SCORES (mod normal + mod salvación) -->
+        <div class="stats-bar" style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.05);">
+          <div class="stat">
+            <span class="stat-label">FUE</span>
+            <span class="stat-value">6</span>
+            <span class="stat-mod">−2</span>
+            <span class="stat-save">TS −2</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">DES</span>
+            <span class="stat-value">15</span>
+            <span class="stat-mod">+2</span>
+            <span class="stat-save">TS +2</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">CON</span>
+            <span class="stat-value">13</span>
+            <span class="stat-mod">+1</span>
+            <span class="stat-save">TS +1</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">INT</span>
+            <span class="stat-value">10</span>
+            <span class="stat-mod">+0</span>
+            <span class="stat-save">TS +0</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">SAB</span>
+            <span class="stat-value">12</span>
+            <span class="stat-mod">+1</span>
+            <span class="stat-save">TS +1</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">CAR</span>
+            <span class="stat-value">10</span>
+            <span class="stat-mod">+0</span>
+            <span class="stat-save">TS +0</span>
+          </div>
+        </div>
+
+        <!-- SKILLS / SENSES -->
+        <div style="margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.05); font-size:0.78rem; color:var(--parchment); opacity:0.9; line-height:1.6;">
+          <div><strong style="color:var(--gold-light);">Habilidades:</strong> Percepción +5, Sigilo +4</div>
+          <div><strong style="color:var(--gold-light);">Sentidos:</strong> visión ciega 10 ft, visión en la oscuridad 60 ft, Percepción pasiva 15</div>
+          <div><strong style="color:var(--gold-light);">Idiomas:</strong> entiende común y dracónico, pero no puede hablar</div>
+        </div>
+      </div>
+
+      <!-- ATRIBUTOS -->
+      <div class="ability-item">
+        <div class="ability-summary" onclick="toggleAbility(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="ability-name">Resistencia Mágica (rasgo)</span>
+        </div>
+        <div class="ability-expand">
+          <textarea class="ability-expand-editable">Stitch tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos.</textarea>
+        </div>
+      </div>
+
+      <!-- ACCIONES -->
+      <div class="ability-item">
+        <div class="ability-summary" onclick="toggleAbility(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="ability-name">Ataque Múltiple ★ Acción</span>
+        </div>
+        <div class="ability-expand">
+          <textarea class="ability-expand-editable">Stitch realiza dos ataques de mordisco.</textarea>
+        </div>
+      </div>
+
+      <div class="ability-item">
+        <div class="ability-summary" onclick="toggleAbility(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="ability-name">Mordisco ★ Acción</span>
+        </div>
+        <div class="ability-expand">
+          <textarea class="ability-expand-editable">Tirada de ataque cuerpo a cuerpo: +4, alcance 5 ft.
+Acierto: 4 (1d4+2) de daño perforante.</textarea>
+        </div>
+      </div>
+
+      <div class="ability-item">
+        <div class="ability-summary" onclick="toggleAbility(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="ability-name">Aguijón ★ Acción</span>
+        </div>
+        <div class="ability-expand">
+          <textarea class="ability-expand-editable">Tirada de salvación de Constitución: CD 12, una criatura que Stitch puede ver a 5 ft o menos.
+
+Fallo: 5 (2d4) de daño de veneno y el objetivo tendrá el estado de envenenado durante 1 hora.
+Fallo por 5 o más: el objetivo envenenado también tendrá el estado de inconsciente hasta que reciba daño o hasta que una criatura a 5 ft o menos de él utilice una acción para despertarlo.</textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- SPECIES TRAITS -->
+    <div class="section">
+      <div class="section-title">Rasgos de Especie · Aasimar</div>
+
+      <div class="ability-item">
+        <div class="ability-summary" onclick="toggleAbility(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="ability-name">Manos Curativas ★ 1 acc (desc. largo)</span>
+        </div>
+        <div class="ability-expand">
+          <textarea class="ability-expand-editable">Acción. Tocas a una criatura y esta recupera una cantidad de puntos de golpe igual a un número de d4 igual a tu bonificador por competencia (+2, así que 2d4).
+
+Una vez por descanso largo. Refleja el toque sanador de la sangre celestial.</textarea>
+        </div>
+      </div>
+
+      <div class="ability-item">
+        <div class="ability-summary" onclick="toggleAbility(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="ability-name">Resistencia Celestial (pasivo)</span>
+        </div>
+        <div class="ability-expand">
+          <textarea class="ability-expand-editable">Tienes resistencia al daño NECRÓTICO y RADIANTE de forma permanente. Reduces a la mitad cualquier daño de estos tipos que recibas, antes de aplicar otros modificadores.</textarea>
+        </div>
+      </div>
+
+      <div class="ability-item">
+        <div class="ability-summary" onclick="toggleAbility(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="ability-name">Darkvision 60 ft</span>
+        </div>
+        <div class="ability-expand">
+          <textarea class="ability-expand-editable">Visión en la oscuridad de hasta 60 pies. En oscuridad total ves como si fuera luz tenue (sin distinción de colores). En luz tenue ves como si fuera luz brillante.</textarea>
+        </div>
+      </div>
+
+      <div class="ability-item">
+        <div class="ability-summary" onclick="toggleAbility(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="ability-name">Revelación Celestial ★ Acción Bonus (1/desc. largo)</span>
+        </div>
+        <div class="ability-expand">
+          <textarea class="ability-expand-editable">A partir de nivel 3, una vez por descanso largo, puedes activar tu naturaleza celestial como Acción Bonus durante 1 minuto. Al activarla, eliges UNA de las tres opciones detalladas a continuación. Solo una opción está activa por uso.</textarea>
+        </div>
+      </div>
+
+      <div class="ability-item">
+        <div class="ability-summary" onclick="toggleAbility(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="ability-name">① Alas Celestiales</span>
+        </div>
+        <div class="ability-expand">
+          <textarea class="ability-expand-editable">Un par de alas espectrales brotan de tu espalda (plumas, membrana o luz pura, a tu elección estética). Mientras dure el efecto, ganas una velocidad de vuelo igual a tu velocidad andando (30 ft). Las alas no requieren manos libres ni espacio adicional para desplegarse.
+
+Ideal para movilidad vertical, escapar de zonas de control en el suelo, o sobrevolar terreno peligroso.</textarea>
+        </div>
+      </div>
+
+      <div class="ability-item">
+        <div class="ability-summary" onclick="toggleAbility(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="ability-name">② Resplandor Necrótico</span>
+        </div>
+        <div class="ability-expand">
+          <textarea class="ability-expand-editable">Tu apariencia cambia: ojos brillantes y un manto espectral de zarcillos oscuros emergen de tu espalda durante 1 minuto. La primera vez en cada uno de tus turnos que impactas a una criatura con un ataque o conjuro, puedes infligir 1d6 de daño NECRÓTICO adicional (aumenta con el nivel de personaje: 2d6 a nivel 7, 3d6 a nivel 13, 4d6 a nivel 18).
+
+Además, cualquier criatura hostil que te vea debe superar una TS de Sabiduría o quedar Asustada hasta el final de tu próximo turno.</textarea>
+        </div>
+      </div>
+
+      <div class="ability-item">
+        <div class="ability-summary" onclick="toggleAbility(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="ability-name">③ Sabiduría Atemporal</span>
+        </div>
+        <div class="ability-expand">
+          <textarea class="ability-expand-editable">Tu mirada se llena de una luz interior ancestral. Mientras dure el efecto, tienes VENTAJA en todas las pruebas de característica de Carisma.
+
+Útil para escenas sociales críticas, intimidación sobrenatural o persuasión cuando más importa.</textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- BACKGROUND -->
+    <div class="section">
+      <div class="section-title">Trasfondo: Noble</div>
+      <div class="ability-item">
+        <div class="ability-summary" onclick="toggleAbility(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="ability-name">Posición Privilegiada (rasgo de trasfondo)</span>
+        </div>
+        <div class="ability-expand">
+          <textarea class="ability-expand-editable">Gracias a tu cuna noble, eres bienvenida en círculos sociales altos y tienes contactos entre la nobleza y comerciantes acaudalados. Puedes conseguir audiencias con figuras de autoridad local con relativa facilidad, y la gente de clase alta tiende a tratarte con respeto y cortesía por defecto.</textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- SKILLS -->
+    <div class="section">
+      <div class="section-title">Habilidades y Competencias</div>
+      <div class="skills-grid">
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Acrobacias</span><span class="skill-val">+1</span></div>
+        <div class="skill-row"><div class="skill-prof yes"></div><span class="skill-name">Arcana</span><span class="skill-val">+3</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Atletismo</span><span class="skill-val">−1</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Engaño</span><span class="skill-val">+2</span></div>
+        <div class="skill-row"><div class="skill-prof yes"></div><span class="skill-name">Historia</span><span class="skill-val">+3</span></div>
+        <div class="skill-row"><div class="skill-prof yes"></div><span class="skill-name">Intimidación</span><span class="skill-val">+4</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Interpretación</span><span class="skill-val">+2</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Investigación</span><span class="skill-val">+1</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Juego de Manos</span><span class="skill-val">+1</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Manejo Animales</span><span class="skill-val">+0</span></div>
+        <div class="skill-row"><div class="skill-prof yes"></div><span class="skill-name">Medicina</span><span class="skill-val">+2</span></div>
+        <div class="skill-row"><div class="skill-prof yes"></div><span class="skill-name">Naturaleza</span><span class="skill-val">+3</span></div>
+        <div class="skill-row"><div class="skill-prof yes"></div><span class="skill-name">Percepción</span><span class="skill-val">+2</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Perspicacia</span><span class="skill-val">+0</span></div>
+        <div class="skill-row"><div class="skill-prof yes"></div><span class="skill-name">Persuasión</span><span class="skill-val">+4</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Religión</span><span class="skill-val">+1</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Sigilo</span><span class="skill-val">+1</span></div>
+        <div class="skill-row"><div class="skill-prof"></div><span class="skill-name">Supervivencia</span><span class="skill-val">+0</span></div>
+      </div>
+      <div style="margin-top:10px;">
+        <div class="trait-row"><span class="trait-key">Armaduras:</span><span class="trait-val">Ligera</span></div>
+        <div class="trait-row"><span class="trait-key">Armas:</span><span class="trait-val">Simples</span></div>
+        <div class="trait-row"><span class="trait-key">Herramientas:</span><span class="trait-val">—</span></div>
+      </div>
+    </div>
+
+    <!-- SPELLS -->
+    <div class="section">
+      <div class="section-title">
+        Conjuros Conocidos · Lanzamiento: Carisma
+        <span style="font-size:0.48rem;color:rgba(122,196,160,0.35);font-style:italic;">▸ clic en cada conjuro para detalles</span>
+      </div>
+
+      <div class="spell-section-header">
+        <span class="spell-level-label">Trucos (a voluntad)</span>
+      </div>
+
+      <div class="spell-item">
+        <div class="spell-summary" onclick="toggleSpell(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="spell-level-badge">Truco</span>
+          <span class="spell-name">Luz</span>
+          <span class="spell-cast">1 acc</span>
+          <span class="spell-range">toque</span>
+          <span class="spell-notes">V, S · objeto brilla 1h</span>
+        </div>
+        <div class="spell-detail">
+          <textarea class="spell-detail-editable">LUZ (Light) — Truco de Transmutación
+Tiempo de lanzamiento: 1 acción. Alcance: toque. Componentes: V, S. Duración: 1 hora.
+
+Tocas un objeto de hasta 10 ft de tamaño en cualquier dimensión. Hasta que el conjuro termine, el objeto emite luz brillante en un radio de 20 ft y luz tenue 20 ft adicionales. Puede ser de cualquier color.</textarea>
+        </div>
+      </div>
+
+      <div class="spell-item">
+        <div class="spell-summary" onclick="toggleSpell(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="spell-level-badge">Truco</span>
+          <span class="spell-name">Descarga Sobrenatural</span>
+          <span class="spell-cast">1 acc</span>
+          <span class="spell-range">120 ft</span>
+          <span class="spell-notes">V, S · 1d10+2 fuerza (Desc. Agónica)</span>
+        </div>
+        <div class="spell-detail">
+          <textarea class="spell-detail-editable">DESCARGA SOBRENATURAL (Eldritch Blast) — Truco de Evocación
+Tiempo de lanzamiento: 1 acción. Alcance: 120 ft. Componentes: V, S.
+
+Un rayo crepitante de energía sobrenatural impacta en una criatura al alcance. Ataque de hechizo a distancia: +4. Si impacta: 1d10 de daño de fuerza. Con Descarga Agónica: +2 (CAR) de daño adicional.
+
+A nivel 5: dos rayos. A nivel 11: tres rayos. A nivel 17: cuatro rayos (cada uno puede apuntar a un objetivo distinto).</textarea>
+        </div>
+      </div>
+
+      <div class="spell-item">
+        <div class="spell-summary" onclick="toggleSpell(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="spell-level-badge">Truco</span>
+          <span class="spell-name"><span class="spell-school-tag ench">ENC</span>Fragmento Mental</span>
+          <span class="spell-cast">1 acc</span>
+          <span class="spell-range">60 ft</span>
+          <span class="spell-notes">V, S · 1d6 psíquico · ver notas</span>
+        </div>
+        <div class="spell-detail">
+          <textarea class="spell-detail-editable">FRAGMENTO MENTAL (Mind Sliver) — Truco de Encantamiento
+Tiempo de lanzamiento: 1 acción. Alcance: 60 ft. Componentes: V, S.
+
+Una criatura debe superar una TS de Inteligencia o recibir 1d6 de daño psíquico y restar 1d4 a la próxima tirada de salvación que haga antes del final de tu siguiente turno.
+
+Daño aumenta a 2d6 en nivel 5, 3d6 en nivel 11, 4d6 en nivel 17.</textarea>
+        </div>
+      </div>
+
+      <div class="spell-section-header">
+        <span class="spell-level-label">Conjuros (ranuras de Nv.2 — Magia de Pacto)</span>
+      </div>
+
+      <div class="spell-item">
+        <div class="spell-summary" onclick="toggleSpell(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="spell-level-badge">Nv. 1</span>
+          <span class="spell-name">Represión Infernal</span>
+          <span class="spell-cast">Reacción</span>
+          <span class="spell-range">60 ft</span>
+          <span class="spell-notes">V · desventaja a una criatura</span>
+        </div>
+        <div class="spell-detail">
+          <textarea class="spell-detail-editable">REPRESIÓN INFERNAL (Hellish Rebuke) — Nv.1 Evocación
+Tiempo de lanzamiento: 1 Reacción (cuando recibes daño de una criatura a 60 ft o menos). Alcance: 60 ft. Componentes: V. Sin concentración.
+
+La criatura que te dañó hace una TS de Destreza. Si falla: 2d10 de daño de fuego. Si supera: la mitad. Con ranura superior: +1d10 por nivel adicional.</textarea>
+        </div>
+      </div>
+
+      <div class="spell-item">
+        <div class="spell-summary" onclick="toggleSpell(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="spell-level-badge">Nv. 1</span>
+          <span class="spell-name"><span class="spell-school-tag ench">ENC</span>Susurros Discordantes</span>
+          <span class="spell-cast">1 acc</span>
+          <span class="spell-range">60 ft</span>
+          <span class="spell-notes">V · Conc. 1 min · 3d6 psíquico</span>
+        </div>
+        <div class="spell-detail">
+          <textarea class="spell-detail-editable">SUSURROS DISCORDANTES (Tasha's Hideous Laughter / Dissonant Whispers) — Nv.1 Encantamiento
+Tiempo de lanzamiento: 1 acción. Alcance: 60 ft. Componentes: V. Sin concentración.
+
+Susurras una frase disonante audible solo para una criatura. Ésta hace TS de Sabiduría: si falla, recibe 3d6 de daño psíquico y debe usar su Reacción para alejarse de ti lo máximo posible. Si supera, recibe la mitad y no se ve obligada a moverse.</textarea>
+        </div>
+      </div>
+
+      <div class="spell-item">
+        <div class="spell-summary" onclick="toggleSpell(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="spell-level-badge">Nv. 2</span>
+          <span class="spell-name">Paso Brumoso</span>
+          <span class="spell-cast">Acción Bonus</span>
+          <span class="spell-range">personal</span>
+          <span class="spell-notes">V · teletransporte 30 ft</span>
+        </div>
+        <div class="spell-detail">
+          <textarea class="spell-detail-editable">PASO BRUMOSO (Misty Step) — Nv.2 Conjuración
+Tiempo de lanzamiento: 1 Acción Bonus. Alcance: personal. Componentes: V. Sin concentración.
+
+Brevemente te envuelves en niebla plateada y te teletransportas hasta 30 ft a un espacio desocupado que puedas ver. Excelente para escapar de zonas de control o reposicionarte tácticamente.</textarea>
+        </div>
+      </div>
+
+      <div class="spell-item">
+        <div class="spell-summary" onclick="toggleSpell(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="spell-level-badge">Nv. 2</span>
+          <span class="spell-name"><span class="spell-school-tag illu">ILU</span>Imagen Múltiple</span>
+          <span class="spell-cast">1 acc</span>
+          <span class="spell-range">personal</span>
+          <span class="spell-notes">V, S · Dura 1 min · 3 duplicados</span>
+        </div>
+        <div class="spell-detail">
+          <textarea class="spell-detail-editable">IMAGEN MÚLTIPLE (Mirror Image) — Nv.2 Ilusión
+Tiempo de lanzamiento: 1 acción. Alcance: personal. Componentes: V, S. Sin concentración. Duración: 1 minuto.
+
+Creas 3 duplicados ilusorios de ti misma. Cuando una criatura te ataque, tira un d20 para determinar si impacta a un duplicado en lugar de a ti. Cada duplicado destruido reduce el número de imágenes restantes.</textarea>
+        </div>
+      </div>
+
+      <div class="spell-item">
+        <div class="spell-summary" onclick="toggleSpell(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="spell-level-badge">Nv. 2</span>
+          <span class="spell-name">Clavo Mental</span>
+          <span class="spell-cast">1 acc</span>
+          <span class="spell-range">120 ft</span>
+          <span class="spell-notes">S · Conc. 1h · 3d8 psíquico · TS SAB</span>
+        </div>
+        <div class="spell-detail">
+          <textarea class="spell-detail-editable">CLAVO MENTAL (Mind Spike) — Nv.2 Adivinación
+Tiempo de lanzamiento: 1 acción. Alcance: 120 ft. Componentes: S. Concentración, hasta 1 hora.
+
+Inyectas una descarga de energía psiónica en la mente de una criatura que puedas ver dentro del alcance. El objetivo realiza una TS de Sabiduría y recibe 3d8 de daño psíquico si falla, o la mitad si la supera.
+
+Si falla, siempre sabrás la ubicación del objetivo hasta que termine el conjuro, pero solo mientras ambos estén en el mismo plano de existencia. Mientras tengas este conocimiento, el objetivo no podrá ocultarse de ti, y si tiene el estado de Invisible, no obtendrá ningún beneficio de dicho estado contra ti.
+
+Con un espacio de conjuro de nivel superior: el daño aumenta en 1d8 por cada nivel de espacio de conjuro superior a 2.</textarea>
+        </div>
+      </div>
+
+      <div class="spell-item">
+        <div class="spell-summary" onclick="toggleSpell(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="spell-level-badge">Nv. 2</span>
+          <span class="spell-name">Detectar Pensamientos</span>
+          <span class="spell-cast">1 acc</span>
+          <span class="spell-range">30 ft</span>
+          <span class="spell-notes">V, S, M (1 pc) · Conc. 1 min</span>
+        </div>
+        <div class="spell-detail">
+          <textarea class="spell-detail-editable">DETECTAR PENSAMIENTOS (Detect Thoughts) — Nv.2 Adivinación
+Tiempo de lanzamiento: 1 acción. Alcance: personal. Componentes: V, S, M (una moneda de cobre). Concentración hasta 1 minuto.
+
+Durante la duración, puedes leer la superficie de los pensamientos de una criatura a 30 ft que puedas ver. Puedes profundizar para detectar emociones e intenciones, con riesgo de que la criatura note la intrusión si falla su TS de Sabiduría.</textarea>
+        </div>
+      </div>
+
+      <div class="spell-item">
+        <div class="spell-summary" onclick="toggleSpell(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="spell-level-badge">Nv. 2</span>
+          <span class="spell-name"><span class="spell-school-tag illu">ILU</span>Fuerza Fantasmal</span>
+          <span class="spell-cast">1 acc</span>
+          <span class="spell-range">60 ft</span>
+          <span class="spell-notes">V, S, M · Conc. 1 min · TS INT</span>
+        </div>
+        <div class="spell-detail">
+          <textarea class="spell-detail-editable">FUERZA FANTASMAL (Phantasmal Force) — Nv.2 Ilusión
+Tiempo de lanzamiento: 1 acción. Alcance: 60 ft. Componentes: V, S, M (un pellizco de arena fina). Concentración hasta 1 minuto.
+
+Creas una ilusión sensorial en la mente de una criatura. Ésta hace TS de Inteligencia. Si falla, percibe la ilusión como real y puede recibir daño psíquico si interactúa con ella de forma perjudicial (1d6 cada turno).</textarea>
+        </div>
+      </div>
+
+      <div class="spell-item">
+        <div class="spell-summary" onclick="toggleSpell(this)">
+          <span class="expand-arrow">▸</span>
+          <span class="spell-level-badge">Nv. 2</span>
+          <span class="spell-name"><span class="spell-school-tag ench">ENC</span>Risa Horrible de Tasha</span>
+          <span class="spell-cast">1 acc</span>
+          <span class="spell-range">30 ft</span>
+          <span class="spell-notes">V, S, M · Conc. 1 min · TS SAB CD 12</span>
+        </div>
+        <div class="spell-detail">
+          <textarea class="spell-detail-editable">RISA HORRIBLE DE TASHA (Tasha's Hideous Laughter) — Nv.2 Encantamiento
+Tiempo de lanzamiento: 1 acción. Alcance: 30 ft. Componentes: V, S, M (una pluma de tickling). Concentración hasta 1 minuto.
+
+Una criatura humanoide hace TS de Sabiduría CD 12. Si falla, queda Incapacitada y cae al suelo, retorciéndose de risa, durante la duración o hasta que reciba daño o alguien use una acción para sacudirla.</textarea>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- EQUIPMENT (EDITABLE) -->
+    <div class="section">
+      <div class="section-title">
+        Equipo e Inventario
+        <span style="font-size:0.48rem;color:rgba(122,196,160,0.35);font-style:italic;">✎ editable</span>
+      </div>
+      <textarea class="equip-textarea" id="inventory-text" placeholder="Escribe tu inventario aquí...">Armadura de cuero — CA base 12
+Hoz
+2 dagas
+Canalizador arcano (orbe)
+Libro (de conocimiento oculto)
+10 frascos de aceite
+10 hojas de pergamino
+Lámpara
+Libro
+Mochila, pluma, tinta y yesquero
+Monedas: 44 PO</textarea>
+    </div>
+
+  </div><!-- end card-body -->
+
+  <div class="card-footer">
+    <span class="footer-fluff">Aasimar · Pacto de la Cadena · PHB 2024</span>
+    <span class="xp-val">Brujo Nv.3 · Primigenio · Dados: 3d8</span>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  STORAGE HELPERS
+// ============================================================
+function save(k,v){try{localStorage.setItem('evie_'+k,JSON.stringify(v));}catch(e){}}
+function load(k,d){try{const v=localStorage.getItem('evie_'+k);return v!==null?JSON.parse(v):d;}catch(e){return d;}}
+
+// ============================================================
+//  MAX HP (editable)
+// ============================================================
+let MAX_HP = load('max_hp', 23);
+
+function updateMaxHP(){
+  const field = document.getElementById('max-hp-field');
+  const newMax = parseInt(field.value) || 23;
+  MAX_HP = Math.max(1, newMax);
+  save('max_hp', MAX_HP);
+  document.getElementById('hp-max-label').textContent = MAX_HP;
+  let cur = load('hp', MAX_HP);
+  cur = Math.min(cur, MAX_HP);
+  save('hp', cur);
+  updateHPDisplay(cur);
+}
+
+// ============================================================
+//  TEMPORARY HP
+// ============================================================
+let MAX_THP = 0;
+
+function updateTHPDisplay(cur){
+  const d=document.getElementById('evie-thp-display');
+  const b=document.getElementById('evie-thp-bar');
+  cur=Math.max(0,cur);
+  d.textContent=cur;
+  if(cur===0){
+    d.className='thp-display zero';
+    b.style.width='0%';
+  } else {
+    d.className='thp-display';
+    const ref=MAX_THP||cur;
+    b.style.width=Math.min(100,(cur/ref)*100)+'%';
+  }
+}
+
+function changeTHP(delta){
+  let cur=load('thp',0);
+  cur=Math.max(0,cur+delta);
+  if(cur>MAX_THP)MAX_THP=cur;
+  save('thp',cur);save('thp_max',MAX_THP);
+  updateTHPDisplay(cur);
+}
+
+function setTHP(){
+  const inp=document.getElementById('evie-thp-input');
+  const val=parseInt(inp.value)||0; if(val<0)return;
+  MAX_THP=val;
+  save('thp',val);save('thp_max',val);
+  updateTHPDisplay(val);
+  inp.value=0;
+}
+
+function clearTHP(){
+  MAX_THP=0;
+  save('thp',0);save('thp_max',0);
+  updateTHPDisplay(0);
+}
+
+// ============================================================
+//  HP
+// ============================================================
+function updateHPDisplay(cur){
+  const d=document.getElementById('evie-hp-display'),b=document.getElementById('evie-hp-bar');
+  cur=Math.max(0,Math.min(MAX_HP,cur));
+  d.textContent=cur;
+  const p=(cur/MAX_HP)*100;
+  b.style.width=p+'%';
+  if(p>60){b.style.background='#90e8a0';d.className='hp-display full';}
+  else if(p>25){b.style.background='#ffd080';d.className='hp-display mid';}
+  else{b.style.background='#ff8080';d.className='hp-display low';}
+}
+function changeHP(delta){
+  let cur=load('hp',MAX_HP);
+  cur=Math.max(0,Math.min(MAX_HP,cur+delta));
+  save('hp',cur); updateHPDisplay(cur);
+}
+function applyDmg(){
+  const inp=document.getElementById('evie-hp-input');
+  const dmg=parseInt(inp.value)||0; if(dmg<=0)return;
+  let cur=load('hp',MAX_HP);
+  cur=Math.max(0,cur-dmg);
+  save('hp',cur); updateHPDisplay(cur); inp.value=1;
+}
+function applyHeal(){
+  const inp=document.getElementById('evie-hp-input');
+  const heal=parseInt(inp.value)||0; if(heal<=0)return;
+  let cur=load('hp',MAX_HP);
+  cur=Math.min(MAX_HP,cur+heal);
+  save('hp',cur); updateHPDisplay(cur); inp.value=1;
+}
+
+// ============================================================
+//  STITCH (familiar) — MAX HP editable
+// ============================================================
+let STITCH_MAX_HP = load('stitch_max_hp', 10);
+
+function updateStitchMaxHP(){
+  const field = document.getElementById('stitch-max-hp-field');
+  const newMax = parseInt(field.value) || 10;
+  STITCH_MAX_HP = Math.max(1, newMax);
+  save('stitch_max_hp', STITCH_MAX_HP);
+  let cur = load('stitch_hp', STITCH_MAX_HP);
+  cur = Math.min(cur, STITCH_MAX_HP);
+  save('stitch_hp', cur);
+  updateStitchHPDisplay(cur);
+}
+
+function updateStitchHPDisplay(cur){
+  const d=document.getElementById('stitch-hp-display'),b=document.getElementById('stitch-hp-bar');
+  cur=Math.max(0,Math.min(STITCH_MAX_HP,cur));
+  d.textContent=cur;
+  const p=(cur/STITCH_MAX_HP)*100;
+  b.style.width=p+'%';
+  if(p>60){b.style.background='#90e8a0';d.style.color='#90e8a0';}
+  else if(p>25){b.style.background='#ffd080';d.style.color='#ffd080';}
+  else{b.style.background='#ff8080';d.style.color='#ff8080';}
+}
+function changeStitchHP(delta){
+  let cur=load('stitch_hp',STITCH_MAX_HP);
+  cur=Math.max(0,Math.min(STITCH_MAX_HP,cur+delta));
+  save('stitch_hp',cur); updateStitchHPDisplay(cur);
+}
+function applyStitchDmg(){
+  const inp=document.getElementById('stitch-hp-input');
+  const dmg=parseInt(inp.value)||0; if(dmg<=0)return;
+  let cur=load('stitch_hp',STITCH_MAX_HP);
+  cur=Math.max(0,cur-dmg);
+  save('stitch_hp',cur); updateStitchHPDisplay(cur); inp.value=1;
+}
+function applyStitchHeal(){
+  const inp=document.getElementById('stitch-hp-input');
+  const heal=parseInt(inp.value)||0; if(heal<=0)return;
+  let cur=load('stitch_hp',STITCH_MAX_HP);
+  cur=Math.min(STITCH_MAX_HP,cur+heal);
+  save('stitch_hp',cur); updateStitchHPDisplay(cur); inp.value=1;
+}
+
+// ============================================================
+//  STITCH (familiar) — ESTADO (invocado / oculto / inconsciente)
+// ============================================================
+function toggleStitchState(state){
+  const cur = load('stitch_state', 'summoned');
+  const next = (cur === state) ? null : state;
+  save('stitch_state', next);
+  renderStitchState(next);
+}
+function renderStitchState(state){
+  ['summoned','hidden','down'].forEach(s=>{
+    const btn = document.getElementById('stitch-state-'+s);
+    if(btn) btn.classList.toggle('active', s===state);
+  });
+}
+
+// ============================================================
+//  HIT DICE
+// ============================================================
+function buildHitDice(){
+  const used=load('hd_used',[]);
+  const container=document.getElementById('hit-dice-pips');
+  container.innerHTML='';
+  for(let i=0;i<3;i++){
+    const pip=document.createElement('div');
+    pip.className='hd-pip'+(used[i]?' used':'');
+    pip.title='d8 #'+(i+1)+(used[i]?' (gastado)':'');
+    pip.textContent='d8';
+    pip.onclick=()=>{
+      const u=load('hd_used',[]);
+      u[i]=!u[i];
+      save('hd_used',u);
+      buildHitDice();
+    };
+    container.appendChild(pip);
+  }
+}
+
+// ============================================================
+//  INSPIRATION
+// ============================================================
+function toggleInspiration(){
+  const active=!load('inspiration',false);
+  save('inspiration',active);
+  renderInspiration(active);
+}
+function renderInspiration(active){
+  const el=document.getElementById('evie-inspiration');
+  el.textContent=active?'★':'☆';
+  el.className='insp-pip'+(active?' active':'');
+}
+
+// ============================================================
+//  DEATH SAVES
+// ============================================================
+function toggleDS(type,idx){
+  const key='ds_'+type;
+  const arr=load(key,[false,false,false]);
+  arr[idx]=!arr[idx];
+  save(key,arr); renderDS(type,arr);
+}
+function renderDS(type,arr){
+  arr.forEach((marked,i)=>{
+    const el=document.getElementById('ds-'+type[0]+i);
+    if(marked) el.classList.add('marked'); else el.classList.remove('marked');
+  });
+}
+
+// ============================================================
+//  SPELL SLOTS
+// ============================================================
+function buildSlots(level,total){
+  const key='slots_'+level;
+  const used=load(key,[]);
+  const container=document.getElementById('slots-'+level);
+  if(!container)return;
+  container.innerHTML='';
+  for(let i=0;i<total;i++){
+    const pip=document.createElement('div');
+    pip.className='pip'+(used[i]?' used':'');
+    pip.title='Ranura Nv.'+level+' #'+(i+1);
+    pip.onclick=()=>{used[i]=!used[i];save(key,used);buildSlots(level,total);};
+    container.appendChild(pip);
+  }
+}
+
+function shortRestSlots(){
+  save('slots_2', []);
+  buildSlots(2, 2);
+}
+
+// ============================================================
+//  USES
+// ============================================================
+function buildUses(id,total,onUse){
+  const key='use_'+id;
+  const used=load(key,[]);
+  const container=document.getElementById('uses-'+id);
+  if(!container)return;
+  container.innerHTML='';
+  for(let i=0;i<total;i++){
+    const pip=document.createElement('div');
+    pip.className='use-pip'+(used[i]?' used':'');
+    pip.onclick=()=>{
+      const wasUsed = used[i];
+      used[i]=!used[i];
+      save(key,used);
+      buildUses(id,total,onUse);
+      // Si se acaba de GASTAR (pasa de no-usado a usado), dispara el callback
+      if(!wasUsed && used[i] && typeof onUse === 'function'){
+        onUse();
+      }
+    };
+    container.appendChild(pip);
+  }
+}
+
+// ============================================================
+//  ASTUCIA MÁGICA — recupera espacios al gastarse
+// ============================================================
+const WARLOCK_LEVEL = 3;
+function onArcaneAvarUsed(){
+  const recovered = Math.floor(WARLOCK_LEVEL / 2); // mitad del nivel de brujo, redondeo hacia abajo
+  if(recovered <= 0) return;
+  const slots = load('slots_2', []);
+  let restored = 0;
+  // libera ranuras gastadas (de derecha a izquierda) hasta "recovered"
+  for(let i=slots.length-1; i>=0 && restored<recovered; i--){
+    if(slots[i]){ slots[i]=false; restored++; }
+  }
+  save('slots_2', slots);
+  buildSlots(2,2);
+}
+
+// ============================================================
+//  EXPAND / COLLAPSE INTERACTIONS
+// ============================================================
+function toggleDetail(summaryEl){
+  const detail=summaryEl.nextElementSibling;
+  const arrow=summaryEl.querySelector('.expand-arrow');
+  const isOpen=detail.classList.contains('open');
+  detail.classList.toggle('open',!isOpen);
+  if(arrow) arrow.classList.toggle('open',!isOpen);
+}
+function toggleAbility(summaryEl){
+  const expand=summaryEl.nextElementSibling;
+  const arrow=summaryEl.querySelector('.expand-arrow');
+  const isOpen=expand.classList.contains('open');
+  expand.classList.toggle('open',!isOpen);
+  if(arrow) arrow.classList.toggle('open',!isOpen);
+}
+function toggleSpell(summaryEl){
+  const detail=summaryEl.nextElementSibling;
+  const arrow=summaryEl.querySelector('.expand-arrow');
+  const isOpen=detail.classList.contains('open');
+  detail.classList.toggle('open',!isOpen);
+  if(arrow) arrow.classList.toggle('open',!isOpen);
+}
+
+// ============================================================
+//  INVENTORY SAVE/LOAD
+// ============================================================
+function saveInventory(){
+  const txt=document.getElementById('inventory-text').value;
+  save('inventory',txt);
+}
+
+// ============================================================
+//  EXHAUSTION (PHB 2024)
+// ============================================================
+const EXH_EFFECTS = [
+  '— Sin agotamiento',
+  'Nv.1 · −2 en pruebas con d20 · Veloc. −5 ft',
+  'Nv.2 · −4 en pruebas con d20 · Veloc. −10 ft',
+  'Nv.3 · −6 en pruebas con d20 · Veloc. −15 ft',
+  'Nv.4 · −8 en pruebas con d20 · Veloc. −20 ft',
+  'Nv.5 · −10 en pruebas con d20 · Veloc. −25 ft',
+  'Nv.6 · Muerte'
+];
+const EXH_DANGER = [false,false,false,false,true,true,true];
+
+function buildExhaustion(level){
+  const container = document.getElementById('exh-pips');
+  const effectEl  = document.getElementById('exh-effect');
+  container.innerHTML = '';
+  for(let i=1;i<=6;i++){
+    const pip = document.createElement('div');
+    pip.className = 'exh-pip' + (i<=level?' active':'');
+    pip.title = EXH_EFFECTS[i];
+    pip.onclick = ()=>{
+      const cur = load('exhaustion',0);
+      const next = (i===cur)?i-1:i;
+      save('exhaustion', Math.max(0,next));
+      buildExhaustion(Math.max(0,next));
+    };
+    container.appendChild(pip);
+  }
+  effectEl.textContent = EXH_EFFECTS[level]||EXH_EFFECTS[0];
+  effectEl.className   = 'exh-effect' + (EXH_DANGER[level]?' danger':'');
+}
+
+// ============================================================
+//  RESET / LONG REST
+// ============================================================
+let resetArmed = false;
+let resetTimer = null;
+
+function resetAll(){
+  const btn = document.getElementById('reset-btn');
+  if(!resetArmed){
+    resetArmed = true;
+    btn.textContent = '¿Confirmar descanso largo?';
+    btn.style.borderColor = 'rgba(255,100,100,0.8)';
+    btn.style.color = 'rgba(255,180,180,0.95)';
+    btn.style.background = 'rgba(255,100,100,0.15)';
+    resetTimer = setTimeout(()=>{
+      resetArmed = false;
+      btn.textContent = '🌙 Descanso largo';
+      btn.style.borderColor = '';
+      btn.style.color = '';
+      btn.style.background = '';
+    }, 3000);
+    return;
+  }
+  // confirmado
+  clearTimeout(resetTimer);
+  resetArmed = false;
+  btn.textContent = '🌙 Descanso largo';
+  btn.style.borderColor = '';
+  btn.style.color = '';
+  btn.style.background = '';
+
+  save('hp',MAX_HP);
+  save('inspiration',false);
+  save('ds_success',[false,false,false]);
+  save('ds_failure',[false,false,false]);
+  save('slots_2',[]);
+  save('thp',0);
+  save('thp_max',0);
+  save('use_arcanum',[]);
+  save('use_vigor',[]);
+  save('use_heal',[]);
+  save('use_revelation',[]);
+  save('hd_used',[]);
+  save('stitch_hp', STITCH_MAX_HP);
+  save('stitch_state', 'summoned');
+  const curExh = load('exhaustion', 0);
+  save('exhaustion', Math.max(0, curExh - 1));
+  MAX_THP = 0;
+  init();
+}
+
+// ============================================================
+//  INIT
+// ============================================================
+function init(){
+  MAX_HP = load('max_hp', 23);
+  MAX_THP = load('thp_max', 0);
+  updateTHPDisplay(load('thp',0));
+  document.getElementById('max-hp-field').value = MAX_HP;
+  document.getElementById('hp-max-label').textContent = MAX_HP;
+  updateHPDisplay(load('hp',MAX_HP));
+  buildHitDice();  renderInspiration(load('inspiration',false));
+  renderDS('success',load('ds_success',[false,false,false]));
+  renderDS('failure',load('ds_failure',[false,false,false]));
+  buildSlots(2,2);
+  buildUses('arcanum',1,onArcaneAvarUsed);
+  buildUses('vigor',1);
+  buildUses('heal',1);
+  buildUses('revelation',1);
+  buildExhaustion(load('exhaustion', 0));
+  // Stitch (familiar)
+  STITCH_MAX_HP = load('stitch_max_hp', 10);
+  document.getElementById('stitch-max-hp-field').value = STITCH_MAX_HP;
+  updateStitchHPDisplay(load('stitch_hp', STITCH_MAX_HP));
+  renderStitchState(load('stitch_state', 'summoned'));
+  // load saved inventory
+  const savedInv = load('inventory', null);
+  if(savedInv !== null){
+    document.getElementById('inventory-text').value = savedInv;
+  }
+  // attach inventory save listener
+  document.getElementById('inventory-text').addEventListener('input', saveInventory);
+}
+
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
